@@ -1,118 +1,121 @@
-# Youngbeen Kim — Portfolio Site Content (v1.0)
+# Youngbeen Kim — Portfolio Site Content (English, v2.0)
 
-> Single Source of Truth for static site generation.
-> ⚠️ Do not disclose: Internal system names (CTB/NTC/DPL, etc.), company repo paths, personal identifiers, job search related content.
+> Content source for /en/. Mirrors content.md v2.0.
+
+---
+
+## 0. Header
+
+- Left (logo): **KYBee**
+- Right: KO | EN language links
 
 ---
 
 ## 1. Hero
 
-- **Name**: Youngbeen Kim (김영빈)
+- **Name**: Youngbeen Kim
 - **Title**: Backend Engineer @ Samsung Electronics
-- **Tagline**: A backend engineer who transforms logs into quality metrics and repetitive operations into automated workflows.
+- **Tagline**: A backend engineer who turns logs into quality metrics and repetitive operations into automation
 - **Location**: Suwon, South Korea
 
 ### Links
 - GitHub: https://github.com/KYBee
-- Blog: https://nullnull.tistory.com
+- Blog: https://nullnull.tistory.com (Korean)
 - LinkedIn: https://www.linkedin.com/in/kybee/
-- Email: [TODO — public email]
+- Email: kyb3634@gmail.com
 
 ---
 
 ## 2. About
 
-I work as a backend developer at Samsung Electronics MX Division Cloud Team, responsible for developing and operating user device data backup/restore services. I operate Java/Spring-based distributed servers in high-traffic environments, improving features and handling incidents for systems integrated with AWS (DynamoDB, S3) and Kafka.
-
-I'm passionate about turning operational logs into evidence for quality decisions rather than mere records. I built user experience quality metric pipelines using Airflow/Python and introduced AI Agents into operational processes to automate anomaly analysis and reporting.
-
-I earned the company's Best Reviewer certification through Clean Code and TDD-based code review activities.
+- I build and operate the backend of a backup/restore service for tens of millions of users at Samsung Electronics. (Java/Spring, AWS, Kafka)
+- I'm good at turning operational logs into metrics, and automating repetitive analysis with pipelines and AI agents.
+- Certified in-house Best Reviewer for code review grounded in Clean Code and TDD.
 
 ---
 
 ## 3. Experience
 
-### Samsung Electronics — Backend Engineer (Cloud Service Platform Group)
-**2023.09 – Present · Suwon**
+### Samsung Electronics — Backend Engineer
+**Sep 2023 – Present · Suwon**
 
-#### Key Projects
+#### User-Perceived Backup/Restore Success Rate Metrics
+Defined and automated a metric for whether a user's operation actually succeeded end-to-end — invisible to per-API success rates
 
-**1) User-Perceived Backup/Restore Success Rate Metrics & Dashboard**
-- Problem: Single API success rates couldn't determine if a user's backup/restore job ultimately succeeded. Auto retry, partial complete, and user cancellation cases skewed metrics.
-- What I did: Redefined success rate by grouping API call flows into user job-level transactions. Designed logic to separate skewing cases (user cancellation, auto-resume, etc.). Built daily auto-updating pipeline with Airflow DAG + Grafana visualization. Defined auxiliary metrics for failure cause tracking.
-- Result: **Improved success rate from ~70% to 95%** through metric-based improvement actions.
-- Tech: `Python` `Airflow` `PySpark` `InfluxDB` `Grafana` `S3`
+- Redefined success rate over user-operation transactions; separated distorting cases (retries, user cancellations)
+- Built a daily-refreshing pipeline and dashboard with Airflow + Grafana
+- Drove improvement actions: **success rate 70% → 95%**
 
-**2) SLI/SLO Anomaly Analysis & Reporting Automation (AI Agent Workflow)**
-- Problem: When metric alerts fired, log searching → root cause estimation → Slack sharing was entirely manual with inconsistent methods, taking up to 4 hours.
-- What I did: Extracted analysis conditions from alert payloads and clustered logs by request/trId to resolve root cause distortion. Designed and built automated workflow: Analysis Agent → Report Generation Agent → Slack sharing.
-- Result: **Reduced analysis & reporting time from 4 hours to ~10 minutes**, standardized report format.
-- Tech: `Python` `FastAPI` `Slack API` `PySpark` `Airflow` `Jupyter`
+`Python` `Airflow` `PySpark` `Grafana`
 
-**3) AI Agent Session Control Center "AgentHub" Development & Deployment**
-- Problem: When using multiple AI Agents (Claude/Codex/Gemini) in parallel, sessions scattered across terminals made it easy to miss running/input waiting/approval needed states.
-- What I did: Solo-developed an Electron/React desktop app from planning to deployment that collects tmux session info and groups them by path and agent type. Implemented pane snapshot-based status detection badges, xterm.js + WebSocket web terminal attach, skill registry & prompt injection features.
-- Result: Deployed to internal Tool Store, **ranked 3rd in recommendations among 15 tools**. Actively used by developers.
-- Tech: `TypeScript` `React` `Electron` `tmux` `WebSocket` `xterm.js`
+#### SLI/SLO Anomaly Analysis & Reporting Automation
+Replaced manual log digging and Slack reporting with an AI agent workflow
 
-**4) Service Runtime Modernization — Java 25 / K8S / Graviton Migration Foundation**
-- Problem: Runtime upgrades were tangled with build/test tools, Docker images, CI, JVM options, and metrics collection structure transitions.
-- What I did: Updated Maven/Lombok/AWS SDK/JaCoCo for Java 25 compatibility, updated GitHub Actions reusable workflows & Docker base images, migrated K8S metrics to OTLP (OpenTelemetry), set up ARM nodeAffinity for Graviton validation. Analyzed timeout semantics and DynamoDB behavior differences during AWS SDK v1→v2 migration, corrected acceptance tests.
-- Tech: `Java 25` `Spring Boot` `Kubernetes` `Helm` `OpenTelemetry` `GitHub Actions` `Graviton(ARM)`
+- Automated condition extraction from alert payloads, log collection, and request/trId-level clustering
+- Chained a root-cause-analysis agent and a report agent posting standardized summaries to Slack
+- **Analysis-to-report time: up to 4 hours → ~10 minutes**
 
-#### Other
-- Extended E2E/acceptance tests for major backup/restore scenarios, eliminated flaky tests with embedded Kafka
-- Developed and deployed team log analysis Jupyter/PySpark interface tool (improved to v3)
-- Built weekly work-log automation pipeline: GitHub PR/commit → LLM summary → Obsidian storage
-- **Earned company Best Reviewer certification** — Clean Code, Refactoring, TDD-based review activities
+`Python` `FastAPI` `Slack API` `Airflow`
 
-### Samsung Electronics — Recruiting T/F
-**2023.01 – 2023.09 · Suwon**
+#### "AgentHub" — AI Agent Session Manager
+One screen for the status and control of scattered AI agent sessions — solo, from planning to deployment
 
-### Shinyoung Securities — Development Intern
-**2021.09 – 2021.12 · Seoul** — Node.js, AJAX-based development
+- Built tmux session collection, status badges (running / waiting / approval needed / error), web terminal attach
+- Shipped as an Electron/React desktop app to the internal Tool Store
+- **Ranked #3 in recommendations among 15 tools**, in active daily use by other developers
 
-### maum.ai — Development Intern
-**2020.06 – 2020.12 · Pangyo** — Flask, Python-based development
+`TypeScript` `React` `Electron` `tmux` `WebSocket`
+
+#### Service Runtime Modernization (Java 25 · K8s · Graviton)
+Laid the groundwork to migrate build, CI, and metrics architecture in one coordinated move
+
+- Updated build/test tooling for Java 25; refreshed CI workflows and Docker base images
+- Migrated K8s metrics to OTLP (OpenTelemetry); set up ARM configs for Graviton validation
+- Analyzed AWS SDK v1→v2 timeout and DynamoDB behavior differences; corrected acceptance tests
+
+`Java 25` `Spring Boot` `Kubernetes` `OpenTelemetry` `GitHub Actions`
+
+#### Also
+- Expanded E2E tests for core backup/restore scenarios; removed flaky tests with embedded Kafka
+- Built a team Jupyter/PySpark log-analysis tool; automated weekly work-logs via GitHub + LLM summarization
+
+### Shinyoung Securities — Software Engineering Intern
+**Sep 2021 – Dec 2021 · Seoul** · Node.js
+
+### maum.ai — Software Engineering Intern
+**Jun 2020 – Dec 2020 · Pangyo** · Python, Flask
 
 ---
 
 ## 4. Side Projects & Activities
 
-- **SSAFY Attendance Appeal Generator** (Vue) — Utility tool with real users
-- **CPS** — Classroom Intrusion Detection System (Python), Industrial Security major project
-- **DOWITH** — Routine Building Service
+- **SSAFY Attendance Excuse Generator** (Vue) — a utility with real users
+- **CPS** — classroom intrusion detection system (Python), tied to my industrial security major
 
-### Activities
-SSAFY 8th (Java Track) · UMC (Node.js) · GDSC CAU · Pirogramming 14th · SOPT 26th
+SSAFY 8th · UMC · GDSC CAU · Pirogramming · SOPT
 
 ---
 
 ## 5. Skills
 
-- **Languages**: Java, Python, TypeScript
-- **Backend**: Spring Boot, FastAPI (experienced), Node.js (experienced)
-- **Data/Pipeline**: Airflow, PySpark, InfluxDB, JupyterHub, Kafka
-- **Infrastructure/Deploy**: AWS (DynamoDB, S3, KMS, Lambda), Kubernetes, Helm, Docker, GitHub Actions
+- **Backend**: Java, Spring Boot, Python, FastAPI
+- **Data**: Airflow, PySpark, Kafka, InfluxDB
+- **Infra**: AWS (DynamoDB, S3), Kubernetes, Docker, GitHub Actions
 - **Observability**: OpenTelemetry, Grafana, Prometheus
-- **Frontend/Tools**: React, Electron
 
 ---
 
 ## 6. Education & Certifications
 
-- **Chung-Ang University** — Industrial Security · Software (Double Major) (2016–2022, Graduated with Honors, GPA 4.14/4.5)
-- Engineer Information Processing (2021) · SQLD (2021) · Big Data Analyst (2024)
+- **Chung-Ang University** — B.S. in Industrial Security & Software (double major), 2016–2022, honors, GPA 4.14/4.5
+- Engineer Information Processing · SQLD · Big-Data Analysis Engineer
 
-### Languages
-Korean (Native) · English (Advanced) · Chinese (Intermediate, business communication capable)
+Korean (native) · English (advanced) · Chinese (intermediate)
 
 ---
 
-## 7. Site Constraints (Theme Trap Prevention — Do Not Change)
+## 7. Site Constraints (do not change)
 
-1. Single page (section anchor navigation only)
-2. No dark mode toggle, no animations
-3. Font: Pretendard only (or system font)
-4. Colors: 1 background + 1 text + 1 accent, total 3 colors
-5. GitHub Pages deployment today is the completion criteria
+1. One page per language (/, /en/), KO | EN links in header
+2. No dark mode, no animations
+3. Pretendard font only, 3 colors max
