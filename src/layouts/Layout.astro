@@ -1,0 +1,288 @@
+---
+interface Props {
+  title: string;
+  lang: 'ko' | 'en';
+}
+
+const { title, lang } = Astro.props;
+const isKo = lang === 'ko';
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="#hero" class="logo">{isKo ? '김영빈' : 'Youngbeen Kim'}</a>
+        <div class="nav-links">
+          <a href="#about">{isKo ? '소개' : 'About'}</a>
+          <a href="#experience">{isKo ? '경력' : 'Experience'}</a>
+          <a href="#projects">{isKo ? '프로젝트' : 'Projects'}</a>
+          <a href="#skills">{isKo ? '기술' : 'Skills'}</a>
+          <a href="#education">{isKo ? '학력' : 'Education'}</a>
+          <span class="lang-switch">
+            {isKo ? <strong>KO</strong> : <a href="/">KO</a>}
+            <span class="divider">|</span>
+            {isKo ? <a href="/en/">EN</a> : <strong>EN</strong>}
+          </span>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>&copy; 2024 Youngbeen Kim. All rights reserved.</p>
+    </footer>
+    <style is:global>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #ffffff;
+        --text: #1a1a1a;
+        --accent: #2563eb;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        border-bottom: 1px solid #e5e5e5;
+        z-index: 100;
+      }
+
+      nav {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .logo {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--text);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+
+      .lang-switch {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .lang-switch .divider {
+        color: #999;
+      }
+
+      .lang-switch strong {
+        color: var(--accent);
+      }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+
+      section {
+        margin-bottom: 4rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent);
+      }
+
+      h3 {
+        font-size: 1.2rem;
+        margin: 1.5rem 0 0.75rem;
+      }
+
+      h4 {
+        font-size: 1rem;
+        margin: 1rem 0 0.5rem;
+        color: var(--text);
+      }
+
+      p {
+        margin-bottom: 1rem;
+      }
+
+      ul {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        font-size: 1.25rem;
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+      }
+
+      .tagline {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+      }
+
+      .location {
+        color: #666;
+        font-size: 0.95rem;
+      }
+
+      .links {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .job {
+        margin-bottom: 2rem;
+      }
+
+      .job-header {
+        margin-bottom: 0.5rem;
+      }
+
+      .job-title {
+        font-weight: 600;
+      }
+
+      .job-period {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .project {
+        margin-bottom: 1.5rem;
+        padding-left: 1rem;
+        border-left: 3px solid var(--accent);
+      }
+
+      .project h4 {
+        margin-top: 0;
+      }
+
+      .tech-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .tech-tags code {
+        background: #f3f4f6;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+      }
+
+      .highlight {
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .skills-grid {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .skill-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .skill-label {
+        font-weight: 600;
+        min-width: 120px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        color: #666;
+        font-size: 0.9rem;
+        border-top: 1px solid #e5e5e5;
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .nav-links {
+          gap: 1rem;
+        }
+
+        .skill-row {
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .skill-label {
+          min-width: auto;
+        }
+      }
+    </style>
+  </body>
+</html>

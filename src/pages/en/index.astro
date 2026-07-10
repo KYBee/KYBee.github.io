@@ -1,0 +1,158 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Youngbeen Kim | Backend Engineer" lang="en">
+  <section id="hero">
+    <h1>Youngbeen Kim <span class="ko-name">(김영빈)</span></h1>
+    <p class="subtitle">Backend Engineer @ Samsung Electronics</p>
+    <p class="tagline">A backend engineer who transforms logs into quality metrics and repetitive operations into automated workflows.</p>
+    <p class="location">Suwon, South Korea</p>
+    <div class="links">
+      <a href="https://github.com/KYBee" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://nullnull.tistory.com" target="_blank" rel="noopener">Blog</a>
+      <a href="https://www.linkedin.com/in/kybee/" target="_blank" rel="noopener">LinkedIn</a>
+      <span class="email-placeholder">[Email — TODO]</span>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>About</h2>
+    <p>I work as a backend developer at Samsung Electronics MX Division Cloud Team, responsible for developing and operating user device data backup/restore services. I operate Java/Spring-based distributed servers in high-traffic environments, improving features and handling incidents for systems integrated with AWS (DynamoDB, S3) and Kafka.</p>
+    <p>I'm passionate about turning operational logs into evidence for quality decisions rather than mere records. I built user experience quality metric pipelines using Airflow/Python and introduced AI Agents into operational processes to automate anomaly analysis and reporting.</p>
+    <p>I earned the company's Best Reviewer certification through Clean Code and TDD-based code review activities.</p>
+  </section>
+
+  <section id="experience">
+    <h2>Experience</h2>
+
+    <div class="job">
+      <div class="job-header">
+        <h3>Samsung Electronics — Backend Engineer (Cloud Service Platform Group)</h3>
+        <p class="job-period">2023.09 – Present · Suwon</p>
+      </div>
+
+      <h4>Key Projects</h4>
+
+      <div class="project">
+        <h4>1) User-Perceived Backup/Restore Success Rate Metrics & Dashboard</h4>
+        <ul>
+          <li><strong>Problem:</strong> Single API success rates couldn't determine if a user's backup/restore job ultimately succeeded. Auto retry, partial complete, and user cancellation cases skewed metrics.</li>
+          <li><strong>What I did:</strong> Redefined success rate by grouping API call flows into user job-level transactions. Designed logic to separate skewing cases (user cancellation, auto-resume, etc.). Built daily auto-updating pipeline with Airflow DAG + Grafana visualization. Defined auxiliary metrics for failure cause tracking.</li>
+          <li><strong>Result:</strong> <span class="highlight">Improved success rate from ~70% to 95%</span> through metric-based improvement actions.</li>
+        </ul>
+        <div class="tech-tags">
+          <code>Python</code><code>Airflow</code><code>PySpark</code><code>InfluxDB</code><code>Grafana</code><code>S3</code>
+        </div>
+      </div>
+
+      <div class="project">
+        <h4>2) SLI/SLO Anomaly Analysis & Reporting Automation (AI Agent Workflow)</h4>
+        <ul>
+          <li><strong>Problem:</strong> When metric alerts fired, log searching → root cause estimation → Slack sharing was entirely manual with inconsistent methods, taking up to 4 hours.</li>
+          <li><strong>What I did:</strong> Extracted analysis conditions from alert payloads and clustered logs by request/trId to resolve root cause distortion. Designed and built automated workflow: Analysis Agent → Report Generation Agent → Slack sharing.</li>
+          <li><strong>Result:</strong> <span class="highlight">Reduced analysis & reporting time from 4 hours to ~10 minutes</span>, standardized report format.</li>
+        </ul>
+        <div class="tech-tags">
+          <code>Python</code><code>FastAPI</code><code>Slack API</code><code>PySpark</code><code>Airflow</code><code>Jupyter</code>
+        </div>
+      </div>
+
+      <div class="project">
+        <h4>3) AI Agent Session Control Center "AgentHub" Development & Deployment</h4>
+        <ul>
+          <li><strong>Problem:</strong> When using multiple AI Agents (Claude/Codex/Gemini) in parallel, sessions scattered across terminals made it easy to miss running/input waiting/approval needed states.</li>
+          <li><strong>What I did:</strong> Solo-developed an Electron/React desktop app from planning to deployment that collects tmux session info and groups them by path and agent type. Implemented pane snapshot-based status detection badges, xterm.js + WebSocket web terminal attach, skill registry & prompt injection features.</li>
+          <li><strong>Result:</strong> Deployed to internal Tool Store, <span class="highlight">ranked 3rd in recommendations among 15 tools</span>. Actively used by developers.</li>
+        </ul>
+        <div class="tech-tags">
+          <code>TypeScript</code><code>React</code><code>Electron</code><code>tmux</code><code>WebSocket</code><code>xterm.js</code>
+        </div>
+      </div>
+
+      <div class="project">
+        <h4>4) Service Runtime Modernization — Java 25 / K8S / Graviton Migration Foundation</h4>
+        <ul>
+          <li><strong>Problem:</strong> Runtime upgrades were tangled with build/test tools, Docker images, CI, JVM options, and metrics collection structure transitions.</li>
+          <li><strong>What I did:</strong> Updated Maven/Lombok/AWS SDK/JaCoCo for Java 25 compatibility, updated GitHub Actions reusable workflows & Docker base images, migrated K8S metrics to OTLP (OpenTelemetry), set up ARM nodeAffinity for Graviton validation. Analyzed timeout semantics and DynamoDB behavior differences during AWS SDK v1→v2 migration, corrected acceptance tests.</li>
+        </ul>
+        <div class="tech-tags">
+          <code>Java 25</code><code>Spring Boot</code><code>Kubernetes</code><code>Helm</code><code>OpenTelemetry</code><code>GitHub Actions</code><code>Graviton(ARM)</code>
+        </div>
+      </div>
+
+      <h4>Other</h4>
+      <ul>
+        <li>Extended E2E/acceptance tests for major backup/restore scenarios, eliminated flaky tests with embedded Kafka</li>
+        <li>Developed and deployed team log analysis Jupyter/PySpark interface tool (improved to v3)</li>
+        <li>Built weekly work-log automation pipeline: GitHub PR/commit → LLM summary → Obsidian storage</li>
+        <li><strong>Earned company Best Reviewer certification</strong> — Clean Code, Refactoring, TDD-based review activities</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <h3>Samsung Electronics — Recruiting T/F</h3>
+        <p class="job-period">2023.01 – 2023.09 · Suwon</p>
+      </div>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <h3>Shinyoung Securities — Development Intern</h3>
+        <p class="job-period">2021.09 – 2021.12 · Seoul</p>
+      </div>
+      <p>Node.js, AJAX-based development</p>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <h3>maum.ai — Development Intern</h3>
+        <p class="job-period">2020.06 – 2020.12 · Pangyo</p>
+      </div>
+      <p>Flask, Python-based development</p>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2>Side Projects & Activities</h2>
+    <ul>
+      <li><strong>SSAFY Attendance Appeal Generator</strong> (Vue) — Utility tool with real users</li>
+      <li><strong>CPS</strong> — Classroom Intrusion Detection System (Python), Industrial Security major project</li>
+      <li><strong>DOWITH</strong> — Routine Building Service</li>
+    </ul>
+    <h3>Activities</h3>
+    <p>SSAFY 8th (Java Track) · UMC (Node.js) · GDSC CAU · Pirogramming 14th · SOPT 26th</p>
+  </section>
+
+  <section id="skills">
+    <h2>Skills</h2>
+    <div class="skills-grid">
+      <div class="skill-row"><span class="skill-label">Languages</span><span>Java, Python, TypeScript</span></div>
+      <div class="skill-row"><span class="skill-label">Backend</span><span>Spring Boot, FastAPI (experienced), Node.js (experienced)</span></div>
+      <div class="skill-row"><span class="skill-label">Data/Pipeline</span><span>Airflow, PySpark, InfluxDB, JupyterHub, Kafka</span></div>
+      <div class="skill-row"><span class="skill-label">Infra/Deploy</span><span>AWS (DynamoDB, S3, KMS, Lambda), Kubernetes, Helm, Docker, GitHub Actions</span></div>
+      <div class="skill-row"><span class="skill-label">Observability</span><span>OpenTelemetry, Grafana, Prometheus</span></div>
+      <div class="skill-row"><span class="skill-label">Frontend/Tools</span><span>React, Electron</span></div>
+    </div>
+  </section>
+
+  <section id="education">
+    <h2>Education & Certifications</h2>
+    <p><strong>Chung-Ang University</strong> — Industrial Security · Software (Double Major) (2016–2022, Graduated with Honors, GPA 4.14/4.5)</p>
+    <p>Engineer Information Processing (2021) · SQLD (2021) · Big Data Analyst (2024)</p>
+    <h3>Languages</h3>
+    <p>Korean (Native) · English (Advanced) · Chinese (Intermediate, business communication capable)</p>
+  </section>
+</Layout>
+
+<style>
+  .ko-name {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #666;
+  }
+  .email-placeholder {
+    color: #999;
+  }
+</style>
