@@ -1,0 +1,14 @@
+company: Samsung Electronics
+role: Backend Engineer
+period: Sep 2023 – Present
+location: Suwon
+title: User-Perceived Backup/Restore Success Rate Metrics
+summary: A backup/restore operation only succeeds when a chain of server calls all complete — I defined and automated a metric for that end-to-end, user-level success
+bullets:
+  - Moved from per-API success checks to a success rate defined over user-operation transactions spanning the full call flow
+  - Automated metric extraction with Airflow/Python and daily-refreshing Grafana dashboards, plus auxiliary metrics for failure-cause tracking
+  - Drove improvement actions — success rate ~70% → 95%
+metric: Success rate ~70% → 95%
+tags: [Python, Airflow, PySpark, Grafana]
+lang: en
+order: 10

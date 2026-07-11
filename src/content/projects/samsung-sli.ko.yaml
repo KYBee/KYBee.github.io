@@ -1,0 +1,14 @@
+company: 삼성전자
+role: Backend Engineer
+period: 2023.09 – 현재
+location: 수원
+title: SLI/SLO 이상 분석·리포팅 자동화
+summary: 경고 발생 시 로그 탐색부터 채팅 채널 보고까지 수동이던 분석 업무를 AI Agent workflow로 전환
+bullets:
+  - alert payload에서 분석 조건(서비스, 리전, API, 시간대) 추출 → 로그 수집 → request/trId 단위 클러스터링 자동화
+  - 원인 분석 Agent → 리포트 생성 Agent → 공유로 이어지는 흐름 설계
+  - 분석·보고 시간 최대 4시간 → 약 10분, 리포트 형식 표준화
+metric: 분석·보고 시간 최대 4시간 → 약 10분
+tags: [Python, FastAPI, Airflow]
+lang: ko
+order: 20

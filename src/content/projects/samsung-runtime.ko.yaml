@@ -1,0 +1,13 @@
+company: 삼성전자
+role: Backend Engineer
+period: 2023.09 – 현재
+location: 수원
+title: 서비스 런타임 현대화 (Java 25 · K8S · Graviton)
+summary: 런타임 업그레이드에 얽힌 빌드·CI·메트릭 구조를 한 번에 전환할 수 있는 기반 구축
+bullets:
+  - 빌드/테스트 도구 Java 25 호환 갱신, CI workflow·Docker base image 정비
+  - K8S 메트릭 OTLP(OpenTelemetry) 전환, ARM 설정으로 Graviton 검증 기반 마련
+  - AWS SDK v1→v2 전환 시 timeout·DynamoDB 동작 차이 분석, acceptance test 보정
+tags: [Java 25, Spring Boot, Kubernetes, OpenTelemetry, GitHub Actions]
+lang: ko
+order: 40

@@ -1,0 +1,11 @@
+company: Samsung Electronics
+role: Backend Engineer
+period: Sep 2023 – Present
+location: Suwon
+title: Also
+bullets:
+  - Expanded E2E tests for core backup/restore scenarios; removed flaky tests with embedded Kafka
+  - Built a team Jupyter/PySpark log-analysis tool; automated weekly work-logs via GitHub + LLM summarization
+tags: []
+lang: en
+order: 50

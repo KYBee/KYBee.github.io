@@ -1,0 +1,14 @@
+company: Samsung Electronics
+role: Backend Engineer
+period: Sep 2023 – Present
+location: Suwon
+title: SLI/SLO Anomaly Analysis & Reporting Automation
+summary: Replaced manual log digging and chat-based reporting with an AI agent workflow
+bullets:
+  - Automated extraction of analysis conditions (service, region, API, time window) from alert payloads, log collection, and request/trId-level clustering
+  - Chained a root-cause-analysis agent and a report agent posting standardized summaries
+  - "Analysis-to-report time: up to 4 hours → ~10 minutes"
+metric: "Analysis-to-report time: 4h → ~10min"
+tags: [Python, FastAPI, Airflow]
+lang: en
+order: 20

@@ -1,0 +1,15 @@
+name: Youngbeen Kim
+title: Backend Engineer @ Samsung Electronics
+tagline: A backend engineer who turns logs into quality metrics and repetitive operations into automation
+location: Suwon, South Korea
+links:
+  github: https://github.com/KYBee
+  blog: https://nullnull.tistory.com
+  linkedin: https://www.linkedin.com/in/kybee/
+  email: kyb3634@gmail.com
+bullets:
+  - I build and operate the backend of a backup/restore service for tens of millions of users at Samsung Electronics. (Java/Spring, AWS, Kafka)
+  - I'm good at turning operational logs into metrics, and automating repetitive analysis with pipelines and AI agents.
+  - Certified in-house Best Reviewer for code review grounded in Clean Code and TDD.
+activities: SIPE 5th · SSAFY 8th (Java track) · GDSC CAU · Pirogramming · UMC · SOPT
+lang: en

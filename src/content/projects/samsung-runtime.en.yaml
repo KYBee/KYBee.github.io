@@ -1,0 +1,13 @@
+company: Samsung Electronics
+role: Backend Engineer
+period: Sep 2023 – Present
+location: Suwon
+title: Service Runtime Modernization (Java 25 · K8s · Graviton)
+summary: Laid the groundwork to migrate build, CI, and metrics architecture in one coordinated move
+bullets:
+  - Updated build/test tooling for Java 25; refreshed CI workflows and Docker base images
+  - Migrated K8s metrics to OTLP (OpenTelemetry); set up ARM configs for Graviton validation
+  - Analyzed AWS SDK v1→v2 timeout and DynamoDB behavior differences; corrected acceptance tests
+tags: [Java 25, Spring Boot, Kubernetes, OpenTelemetry, GitHub Actions]
+lang: en
+order: 40

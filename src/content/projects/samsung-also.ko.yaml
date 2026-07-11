@@ -1,0 +1,11 @@
+company: 삼성전자
+role: Backend Engineer
+period: 2023.09 – 현재
+location: 수원
+title: 그 외
+bullets:
+  - 백업/복원 핵심 시나리오 E2E 테스트 확장, embedded Kafka로 flaky 테스트 제거
+  - 팀 로그 분석용 Jupyter/PySpark 도구 개발·배포, GitHub 활동 → LLM 요약 work-log 자동화
+tags: []
+lang: ko
+order: 50

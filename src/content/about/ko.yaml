@@ -1,0 +1,15 @@
+name: 김영빈
+title: Backend Engineer @ Samsung Electronics
+tagline: 로그를 품질 지표로, 반복 운영을 자동화로 바꾸는 백엔드 엔지니어
+location: Suwon, South Korea
+links:
+  github: https://github.com/KYBee
+  blog: https://nullnull.tistory.com
+  linkedin: https://www.linkedin.com/in/kybee/
+  email: kyb3634@gmail.com
+bullets:
+  - 삼성전자에서 수천만 사용자 규모 백업/복원 서비스의 백엔드를 개발·운영합니다. (Java/Spring, AWS, Kafka)
+  - 운영 로그를 지표로 만들고, 반복 분석 업무를 파이프라인과 AI Agent로 자동화하는 일을 잘합니다.
+  - Clean Code·TDD 기반 리뷰 활동으로 사내 Best Reviewer 자격을 취득했습니다.
+activities: SIPE 5기 · SSAFY 8기 (Java 트랙) · GDSC CAU · 피로그래밍 · UMC · SOPT
+lang: ko

@@ -1,0 +1,26 @@
+school: Chung-Ang University
+department: B.S. in Industrial Security & B.S. in Software (double major)
+period: Mar 2016 – Aug 2022
+detail: Graduated with honors · GPA 4.14/4.5 (95.89/100)
+courses:
+  - category: CS
+    items:
+      - Data Structures
+      - Algorithms
+      - Operating Systems
+      - Computer Architecture
+      - Software Engineering
+      - Programming Languages
+      - Network Application Design
+      - Machine Learning
+      - Probability & Statistics
+      - Software Project
+  - category: Security
+    items:
+      - Information Security Theory
+      - Security Data Analysis
+      - Cyber Incident Response
+      - Industrial Security Investigation & Forensics
+languages: Korean (native) · English (advanced) · Chinese (intermediate, business communication)
+lang: en
+order: 10

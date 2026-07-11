@@ -1,0 +1,984 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  lang: 'ko' | 'en';
+}
+
+const { lang } = Astro.props;
+
+const byLang = <T extends { data: { lang: string } }>(entry: T) => entry.data.lang === lang;
+const byOrder = (a: { data: { order?: number } }, b: { data: { order?: number } }) =>
+  (a.data.order ?? 0) - (b.data.order ?? 0);
+
+const [aboutEntries, projectEntries, sideProjectEntries, educationEntries, certEntries, skillEntries] =
+  await Promise.all([
+    getCollection('about', byLang),
+    getCollection('projects', byLang),
+    getCollection('sideProjects', byLang),
+    getCollection('education', byLang),
+    getCollection('certifications', byLang),
+    getCollection('skills', byLang),
+  ]);
+
+const about = aboutEntries[0].data;
+const projects = [...projectEntries].sort(byOrder).map((e) => e.data);
+const sideProjects = [...sideProjectEntries].sort(byOrder).map((e) => e.data);
+const education = [...educationEntries].sort(byOrder).map((e) => e.data)[0];
+const certifications = [...certEntries].sort(byOrder).map((e) => e.data);
+const skills = [...skillEntries].sort(byOrder).map((e) => e.data);
+
+type ProjectData = CollectionEntry<'projects'>['data'];
+type ProjectGroup = { company: string; role: string; period: string; location?: string; items: ProjectData[] };
+
+const projectGroups: ProjectGroup[] = [];
+for (const p of projects) {
+  const last = projectGroups[projectGroups.length - 1];
+  if (last && last.company === p.company && last.role === p.role && last.period === p.period) {
+    last.items.push(p);
+  } else {
+    projectGroups.push({ company: p.company, role: p.role, period: p.period, location: p.location, items: [p] });
+  }
+}
+
+const firstJob = projects[0];
+const secondJob = projects[1];
+
+const reactionSets: [string, string][][] = [
+  [['🔥', '5'], ['👍', '2']],
+  [['🎉', '3'], ['💯', '1']],
+  [['🚀', '4'], ['👏', '2']],
+  [['✅', '3'], ['👍', '1']],
+];
+
+const initials = 'YB';
+
+const copy = {
+  ko: {
+    channelsLabel: '채널',
+    dmLabel: '다이렉트 메시지',
+    channels: {
+      about: '소개',
+      experience: '경력',
+      projects: '프로젝트',
+      skills: '기술',
+      education: '학력-자격',
+    },
+    topics: {
+      about: about.tagline,
+      experience: firstJob ? `${firstJob.company} ${firstJob.role} · ${firstJob.period}` : '',
+      projects: '사이드 프로젝트 & 활동',
+      skills: '사용 기술 스택',
+      education: education ? `${education.school} · ${education.detail}` : '',
+    },
+    previews: {
+      about: about.tagline,
+      experience: [firstJob?.metric, secondJob?.metric].filter(Boolean).join(' · '),
+      projects: sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
+      skills: skills.map((s) => s.category).join(' · '),
+      education: education?.detail ?? '',
+    },
+    pinned: '📌 고정됨',
+    me: `${about.name} (나)`,
+    hamburgerLabel: '메뉴 열기',
+    closeLabel: '닫기',
+    themeLabel: '테마 전환',
+    also: '그 외',
+    certifications: '자격증 & 어학',
+    contactTitle: '연락처',
+    contactTopic: `${about.name}에게 다이렉트 메시지 보내기`,
+  },
+  en: {
+    channelsLabel: 'Channels',
+    dmLabel: 'Direct Messages',
+    channels: {
+      about: 'about',
+      experience: 'experience',
+      projects: 'projects',
+      skills: 'skills',
+      education: 'education',
+    },
+    topics: {
+      about: about.tagline,
+      experience: firstJob ? `${firstJob.company} ${firstJob.role} · ${firstJob.period}` : '',
+      projects: 'Side projects & activities',
+      skills: 'Tech stack',
+      education: education ? `${education.school} · ${education.detail}` : '',
+    },
+    previews: {
+      about: about.tagline,
+      experience: [firstJob?.metric, secondJob?.metric].filter(Boolean).join(' · '),
+      projects: sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
+      skills: skills.map((s) => s.category).join(' · '),
+      education: education?.detail ?? '',
+    },
+    pinned: '📌 Pinned',
+    me: `${about.name} (you)`,
+    hamburgerLabel: 'Open menu',
+    closeLabel: 'Close',
+    themeLabel: 'Toggle theme',
+    also: 'Also',
+    certifications: 'Certifications & Languages',
+    contactTitle: 'Contact',
+    contactTopic: `Send ${about.name} a direct message`,
+  },
+} as const;
+
+const t = copy[lang];
+const channelOrder = ['about', 'experience', 'projects', 'skills', 'education'] as const;
+---
+
+<div class="workspace">
+  <header class="topbar">
+    <button id="hamburger" class="hamburger" aria-label={t.hamburgerLabel} aria-expanded="false" aria-controls="drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+    <span class="topbar-title">KYBee</span>
+    <button class="theme-toggle" aria-label={t.themeLabel}>
+      <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+  </header>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <nav class="drawer" id="drawer" aria-hidden="true" inert>
+    <div class="drawer-header">
+      <span class="workspace-name">KYBee</span>
+      <button class="drawer-close" id="drawer-close" aria-label={t.closeLabel}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <p class="nav-group-label">{t.channelsLabel}</p>
+    <ul class="drawer-channel-list">
+      {channelOrder.map((key) => (
+        <li>
+          <a href={`#${key}`} class="drawer-channel-link" data-channel-link={key}>
+            <span class="drawer-channel-name"># {t.channels[key]}</span>
+            <span class="drawer-preview">{t.previews[key]}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="nav-group-label">{t.dmLabel}</p>
+    <a href="#contact" class="drawer-dm" data-channel-link="contact">
+      <span class="status-dot" aria-hidden="true"></span>
+      {t.me}
+    </a>
+    <div class="drawer-footer">
+      <span class="lang-switch">
+        {lang === 'ko' ? <strong>KO</strong> : <a href="/">KO</a>}
+        <span class="divider">|</span>
+        {lang === 'ko' ? <a href="/en/">EN</a> : <strong>EN</strong>}
+      </span>
+    </div>
+  </nav>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="workspace-name">KYBee</span>
+      <div class="sidebar-header-actions">
+        <span class="lang-switch">
+          {lang === 'ko' ? <strong>KO</strong> : <a href="/">KO</a>}
+          <span class="divider">|</span>
+          {lang === 'ko' ? <a href="/en/">EN</a> : <strong>EN</strong>}
+        </span>
+        <button class="theme-toggle" aria-label={t.themeLabel}>
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <nav class="channel-nav" aria-label={t.channelsLabel}>
+      <p class="nav-group-label">{t.channelsLabel}</p>
+      <ul class="channel-list">
+        {channelOrder.map((key) => (
+          <li>
+            <a href={`#${key}`} class="channel-link" data-channel-link={key}># {t.channels[key]}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="dm-section">
+      <p class="nav-group-label">{t.dmLabel}</p>
+      <a href="#contact" class="dm-item" data-channel-link="contact">
+        <span class="status-dot" aria-hidden="true"></span>
+        {t.me}
+      </a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <section id="about" class="channel">
+      <header class="channel-header">
+        <h1># {t.channels.about}</h1>
+        <p class="channel-topic">{t.topics.about}</p>
+      </header>
+      <div class="message pinned">
+        <div class="avatar">{initials}</div>
+        <div class="message-body">
+          <div class="message-meta">
+            <span class="message-author">{about.name}</span>
+            <span class="message-time">{t.pinned}</span>
+          </div>
+          <p class="message-title">{about.title}</p>
+          <p class="message-summary">{about.location}</p>
+          <ul class="message-bullets">
+            {about.bullets.map((bullet) => <li>{bullet}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" class="channel">
+      <header class="channel-header">
+        <h1># {t.channels.experience}</h1>
+        <p class="channel-topic">{t.topics.experience}</p>
+      </header>
+      {projectGroups.map((group) => (
+        <>
+          <p class="job-divider">
+            {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
+          </p>
+          {group.items.map((item, i) => (
+            <div class="message">
+              <div class="avatar">{initials}</div>
+              <div class="message-body">
+                <div class="message-meta">
+                  <span class="message-author">{about.name}</span>
+                  <span class="message-time">{item.period}</span>
+                </div>
+                {item.title && <p class="message-title">{item.title}</p>}
+                {item.summary && <p class="message-summary">{item.summary}</p>}
+                {item.bullets && (
+                  <ul class="message-bullets">
+                    {item.bullets.map((bullet) => <li>{bullet}</li>)}
+                  </ul>
+                )}
+                {item.metric && <blockquote class="quote-block">{item.metric}</blockquote>}
+                {(item.tags.length > 0 || item.metric) && (
+                  <div class="reactions">
+                    {item.metric &&
+                      reactionSets[i % reactionSets.length].map(([emoji, count]) => (
+                        <span class="reaction-pill">
+                          {emoji} {count}
+                        </span>
+                      ))}
+                    {item.tags.map((tag) => (
+                      <span class="tag-pill">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </>
+      ))}
+    </section>
+
+    <section id="projects" class="channel">
+      <header class="channel-header">
+        <h1># {t.channels.projects}</h1>
+        <p class="channel-topic">{t.topics.projects}</p>
+      </header>
+      {sideProjects.map((project, i) => (
+        <div class="message">
+          <div class="avatar">{initials}</div>
+          <div class="message-body">
+            <div class="message-meta">
+              <span class="message-author">{about.name}</span>
+            </div>
+            <p class="message-title">
+              {project.url ? <a href={project.url} target="_blank" rel="noopener">{project.name}</a> : project.name}
+            </p>
+            <p class="message-summary">{project.description}</p>
+            <div class="reactions">
+              <span class="reaction-pill">{reactionSets[i % reactionSets.length][0][0]} {reactionSets[i % reactionSets.length][0][1]}</span>
+              <span class="tag-pill">{project.tech}</span>
+              {project.badge && <span class="badge-pill">{project.badge}</span>}
+            </div>
+          </div>
+        </div>
+      ))}
+      <p class="channel-footnote">{about.activities}</p>
+    </section>
+
+    <section id="skills" class="channel">
+      <header class="channel-header">
+        <h1># {t.channels.skills}</h1>
+        <p class="channel-topic">{t.topics.skills}</p>
+      </header>
+      <div class="message">
+        <div class="avatar">{initials}</div>
+        <div class="message-body">
+          <div class="message-meta">
+            <span class="message-author">{about.name}</span>
+          </div>
+          {skills.map((group) => (
+            <div class="skill-group">
+              <p class="skill-category">{group.category}</p>
+              <div class="reactions">
+                {group.items.map((item) => (
+                  <span class="tag-pill">{item}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="education" class="channel">
+      <header class="channel-header">
+        <h1># {t.channels.education}</h1>
+        <p class="channel-topic">{t.topics.education}</p>
+      </header>
+      {education && (
+        <div class="message">
+          <div class="avatar">{initials}</div>
+          <div class="message-body">
+            <div class="message-meta">
+              <span class="message-author">{about.name}</span>
+              <span class="message-time">{education.period}</span>
+            </div>
+            <p class="message-title">{education.school}</p>
+            <p class="message-summary">{education.department}</p>
+            <blockquote class="quote-block">{education.detail}</blockquote>
+            {education.courses && (
+              <ul class="message-bullets">
+                {education.courses.map((c) => (
+                  <li>
+                    <strong>{c.category}:</strong> {c.items.join(', ')}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+      <div class="message">
+        <div class="avatar">{initials}</div>
+        <div class="message-body">
+          <div class="message-meta">
+            <span class="message-author">{about.name}</span>
+            <span class="message-time">{t.certifications}</span>
+          </div>
+          <div class="reactions">
+            {certifications.map((cert) => (
+              <span class="tag-pill">{cert.name}{cert.date ? ` · ${cert.date}` : ''}</span>
+            ))}
+          </div>
+          {education?.languages && <p class="message-summary">{education.languages}</p>}
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="channel">
+      <header class="channel-header">
+        <h1>{t.contactTitle}</h1>
+        <p class="channel-topic">{t.contactTopic}</p>
+      </header>
+      <div class="message">
+        <div class="avatar">{initials}</div>
+        <div class="message-body">
+          <div class="message-meta">
+            <span class="message-author">{about.name}</span>
+          </div>
+          <div class="links">
+            <a href={about.links.github} target="_blank" rel="noopener">GitHub</a>
+            <a href={about.links.blog} target="_blank" rel="noopener">Blog</a>
+            <a href={about.links.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+            <a href={`mailto:${about.links.email}`}>Email</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<style>
+  .workspace {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ---------- Sidebar (desktop) ---------- */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 50;
+  }
+
+  .sidebar-header {
+    padding: var(--space-4) var(--space-4) var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--sidebar-border);
+  }
+
+  .workspace-name {
+    font-weight: 700;
+    font-size: var(--fs-lg);
+    color: var(--sidebar-text-active);
+  }
+
+  .sidebar-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--fs-xs);
+    color: var(--sidebar-text-muted);
+  }
+
+  .lang-switch a {
+    color: var(--sidebar-text);
+  }
+
+  .lang-switch strong {
+    color: var(--sidebar-text-active);
+  }
+
+  .lang-switch .divider {
+    color: var(--sidebar-border);
+  }
+
+  .theme-toggle {
+    background: transparent;
+    border: 1px solid var(--sidebar-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-1);
+    cursor: pointer;
+    color: var(--sidebar-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-toggle:hover {
+    color: var(--sidebar-text-active);
+    border-color: var(--sidebar-text-active);
+  }
+
+  [data-theme='dark'] .icon-sun { display: block; }
+  [data-theme='dark'] .icon-moon { display: none; }
+  [data-theme='light'] .icon-sun { display: none; }
+  [data-theme='light'] .icon-moon { display: block; }
+
+  .nav-group-label {
+    padding: var(--space-4) var(--space-4) var(--space-1);
+    font-size: var(--fs-xs);
+    color: var(--sidebar-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .channel-list {
+    list-style: none;
+  }
+
+  .channel-link {
+    display: block;
+    padding: var(--space-1) var(--space-4);
+    margin: 0 var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--sidebar-text);
+    font-size: var(--fs-base);
+  }
+
+  .channel-link:hover {
+    background: var(--sidebar-bg-hover);
+    color: var(--sidebar-text-active);
+  }
+
+  .channel-link.is-active {
+    background: var(--sidebar-bg-active);
+    color: var(--sidebar-text-active);
+    font-weight: 600;
+  }
+
+  .dm-section {
+    margin-top: auto;
+    padding-bottom: var(--space-4);
+  }
+
+  .dm-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-4);
+    margin: 0 var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--sidebar-text);
+    font-size: var(--fs-base);
+  }
+
+  .dm-item:hover,
+  .dm-item.is-active {
+    background: var(--sidebar-bg-hover);
+    color: var(--sidebar-text-active);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sidebar-status-dot);
+    flex-shrink: 0;
+  }
+
+  /* ---------- Topbar + drawer (mobile) ---------- */
+  .topbar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topbar-height);
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text-active);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-3);
+    z-index: 60;
+  }
+
+  .topbar-title {
+    font-weight: 700;
+    font-size: var(--fs-md);
+  }
+
+  .hamburger {
+    background: transparent;
+    border: none;
+    color: var(--sidebar-text-active);
+    padding: var(--space-2);
+    cursor: pointer;
+    display: flex;
+  }
+
+  .drawer-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 70;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .drawer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(80vw, 320px);
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    flex-direction: column;
+    z-index: 80;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    overflow-y: auto;
+  }
+
+  .drawer.is-open,
+  .drawer-backdrop.is-open {
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--sidebar-border);
+  }
+
+  .drawer-close {
+    background: transparent;
+    border: none;
+    color: var(--sidebar-text);
+    cursor: pointer;
+  }
+
+  .drawer-channel-list {
+    list-style: none;
+  }
+
+  .drawer-channel-link {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-2) var(--space-4);
+    color: var(--sidebar-text);
+  }
+
+  .drawer-channel-link.is-active {
+    background: var(--sidebar-bg-active);
+    color: var(--sidebar-text-active);
+  }
+
+  .drawer-channel-name {
+    font-size: var(--fs-base);
+    font-weight: 600;
+  }
+
+  .drawer-preview {
+    font-size: var(--fs-xs);
+    color: var(--sidebar-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .drawer-dm {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    color: var(--sidebar-text);
+  }
+
+  .drawer-dm.is-active {
+    background: var(--sidebar-bg-active);
+    color: var(--sidebar-text-active);
+  }
+
+  .drawer-footer {
+    margin-top: auto;
+    padding: var(--space-4);
+    border-top: 1px solid var(--sidebar-border);
+  }
+
+  /* ---------- Content ---------- */
+  .content {
+    margin-left: var(--sidebar-width);
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .channel {
+    padding: var(--space-6) var(--space-7);
+    border-bottom: 1px solid var(--border);
+    scroll-margin-top: var(--space-4);
+  }
+
+  .channel-header {
+    margin-bottom: var(--space-5);
+  }
+
+  .channel-header h1 {
+    font-size: var(--fs-xl);
+    font-weight: 700;
+  }
+
+  .channel-topic {
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    margin-top: var(--space-1);
+  }
+
+  .message {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+    max-width: 720px;
+  }
+
+  .message.pinned {
+    border-left: 3px solid var(--quote-border);
+    padding-left: var(--space-3);
+  }
+
+  .avatar {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--avatar-bg);
+    color: var(--avatar-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--fs-sm);
+  }
+
+  .message-body {
+    min-width: 0;
+  }
+
+  .message-meta {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-bottom: 2px;
+  }
+
+  .message-author {
+    font-weight: 700;
+    font-size: var(--fs-base);
+  }
+
+  .message-time {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+  }
+
+  .message-title {
+    font-weight: 600;
+    font-size: var(--fs-md);
+    margin-bottom: var(--space-1);
+  }
+
+  .message-summary {
+    color: var(--text-secondary);
+    font-size: var(--fs-base);
+    margin-bottom: var(--space-2);
+  }
+
+  .message-bullets {
+    list-style: disc;
+    margin-left: var(--space-5);
+    margin-bottom: var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--fs-base);
+  }
+
+  .message-bullets li {
+    margin-bottom: var(--space-1);
+  }
+
+  .quote-block {
+    border-left: 3px solid var(--quote-border);
+    background: var(--quote-bg);
+    padding: var(--space-2) var(--space-3);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: var(--space-2);
+    font-weight: 600;
+    font-size: var(--fs-sm);
+  }
+
+  .reactions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+  }
+
+  .reaction-pill,
+  .tag-pill,
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--fs-xs);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--pill-bg);
+    color: var(--pill-text);
+  }
+
+  .tag-pill {
+    font-family: var(--font-mono);
+    border: 1px solid var(--border);
+    background: transparent;
+  }
+
+  .badge-pill {
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .job-divider {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-top: 1px solid var(--border);
+  }
+
+  .job-divider:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .channel-footnote {
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    margin-top: var(--space-2);
+  }
+
+  .skill-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .skill-category {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--accent);
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-1);
+  }
+
+  .links {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-top: var(--space-2);
+  }
+
+  .links a {
+    color: var(--text-secondary);
+    font-size: var(--fs-base);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .links a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 768px) {
+    .sidebar {
+      display: none;
+    }
+
+    .topbar {
+      display: flex;
+    }
+
+    .drawer-backdrop {
+      display: block;
+    }
+
+    .drawer {
+      display: flex;
+    }
+
+    .content {
+      margin-left: 0;
+      padding-top: var(--topbar-height);
+    }
+
+    .channel {
+      padding: var(--space-5) var(--space-4);
+    }
+
+    .channel-header h1 {
+      font-size: var(--fs-lg);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      font-size: var(--fs-xs);
+    }
+
+    .message {
+      gap: var(--space-2);
+    }
+
+    .reactions {
+      row-gap: var(--space-1);
+    }
+  }
+</style>
+
+<script>
+  const themeToggles = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
+  themeToggles.forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  });
+
+  const hamburger = document.getElementById('hamburger');
+  const drawer = document.getElementById('drawer');
+  const drawerBackdrop = document.getElementById('drawer-backdrop');
+  const drawerClose = document.getElementById('drawer-close');
+
+  const openDrawer = () => {
+    drawer?.classList.add('is-open');
+    drawerBackdrop?.classList.add('is-open');
+    drawer?.setAttribute('aria-hidden', 'false');
+    drawer?.removeAttribute('inert');
+    hamburger?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeDrawer = () => {
+    drawer?.classList.remove('is-open');
+    drawerBackdrop?.classList.remove('is-open');
+    drawer?.setAttribute('aria-hidden', 'true');
+    drawer?.setAttribute('inert', '');
+    hamburger?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  };
+
+  hamburger?.addEventListener('click', openDrawer);
+  drawerClose?.addEventListener('click', closeDrawer);
+  drawerBackdrop?.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
+  });
+  drawer?.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeDrawer));
+
+  const navLinks = document.querySelectorAll<HTMLElement>('[data-channel-link]');
+  const sections = document.querySelectorAll<HTMLElement>('.channel');
+
+  const setActive = (id: string) => {
+    navLinks.forEach((link) => {
+      link.classList.toggle('is-active', link.dataset.channelLink === id);
+    });
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActive(entry.target.id);
+        }
+      });
+    },
+    { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+  );
+
+  sections.forEach((section) => observer.observe(section));
+</script>
+

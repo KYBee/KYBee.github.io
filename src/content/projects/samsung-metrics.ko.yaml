@@ -1,0 +1,14 @@
+company: 삼성전자
+role: Backend Engineer
+period: 2023.09 – 현재
+location: 수원
+title: 사용자 체감 백업/복원 성공률 지표 구축
+summary: 백업/복원은 일련의 서버 호출이 모두 완료되어야 성공 — 그 end-to-end 사용자 단위 성공률을 정의하고 자동화
+bullets:
+  - API 단건 성공률 → 전체 호출 흐름을 아우르는 사용자 트랜잭션 단위 성공률로 재정의
+  - Airflow/Python으로 지표 추출 자동화, Grafana 대시보드 매일 갱신, 실패 원인 추적용 보조지표 정의
+  - 지표 기반 개선 액션으로 성공률 약 70% → 95%
+metric: 성공률 약 70% → 95%
+tags: [Python, Airflow, PySpark, Grafana]
+lang: ko
+order: 10

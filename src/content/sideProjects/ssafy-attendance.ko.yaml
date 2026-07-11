@@ -1,0 +1,5 @@
+name: SSAFY 출결 소명서 생성기
+tech: Vue
+description: 실사용자가 있는 유틸리티
+lang: ko
+order: 40

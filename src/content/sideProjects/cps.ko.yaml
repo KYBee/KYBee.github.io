@@ -1,0 +1,5 @@
+name: CPS
+tech: Python
+description: 강의실 침입 탐지 시스템, 산업보안 전공 연계
+lang: ko
+order: 30

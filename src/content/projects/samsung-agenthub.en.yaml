@@ -1,0 +1,14 @@
+company: Samsung Electronics
+role: Backend Engineer
+period: Sep 2023 – Present
+location: Suwon
+title: "\"AgentHub\" — AI Agent Session Manager"
+summary: One screen for the status and control of scattered AI agent sessions — solo, from planning to deployment
+bullets:
+  - Built tmux session collection, status badges (running / waiting / approval needed / error), web terminal attach
+  - Implemented as an Electron/React desktop app and shipped to the internal Tool Store
+  - Ranked #3 in recommendations among 15 tools, in active daily use by other developers
+metric: Ranked #3 in recommendations among 15 tools
+tags: [TypeScript, React, Electron, tmux, WebSocket]
+lang: en
+order: 30
