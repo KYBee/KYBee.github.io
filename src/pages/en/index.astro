@@ -34,126 +34,154 @@ import Layout from '../../layouts/Layout.astro';
         <p class="job-period">Sep 2023 – Present · Suwon</p>
       </div>
 
-      <div class="project">
-        <h4>User-Perceived Backup/Restore Success Rate Metrics</h4>
-        <p class="project-summary">Defined and automated a metric for whether a user's operation actually succeeded end-to-end — invisible to per-API success rates</p>
-        <ul>
-          <li>Redefined success rate over user-operation transactions; separated distorting cases (retries, user cancellations)</li>
-          <li>Built a daily-refreshing pipeline and dashboard with Airflow + Grafana</li>
-          <li>Drove improvement actions: <strong class="highlight">success rate 70% → 95%</strong></li>
-        </ul>
-        <div class="tech-tags">
-          <code>Python</code><code>Airflow</code><code>PySpark</code><code>Grafana</code>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4 class="project-title">User-Perceived Backup/Restore Success Rate Metrics</h4>
+          <p class="project-summary">A backup/restore operation only succeeds when a chain of server calls all complete — I defined and automated a metric for that end-to-end, user-level success</p>
+          <ul class="project-bullets">
+            <li>Moved from per-API success checks to a success rate defined over user-operation transactions spanning the full call flow</li>
+            <li>Automated metric extraction with Airflow/Python and daily-refreshing Grafana dashboards, plus auxiliary metrics for failure-cause tracking</li>
+            <li>Drove improvement actions: <strong class="highlight">success rate ~70% → 95%</strong></li>
+          </ul>
+          <div class="tech-tags">
+            <code>Python</code><code>Airflow</code><code>PySpark</code><code>Grafana</code>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <h4 class="project-title">SLI/SLO Anomaly Analysis & Reporting Automation</h4>
+          <p class="project-summary">Replaced manual log digging and Slack reporting with an AI agent workflow</p>
+          <ul class="project-bullets">
+            <li>Automated extraction of analysis conditions (service, region, API, time window) from alert payloads, log collection, and request/trId-level clustering</li>
+            <li>Chained a root-cause-analysis agent and a report agent posting standardized summaries to Slack</li>
+            <li><strong class="highlight">Analysis-to-report time: up to 4 hours → ~10 minutes</strong></li>
+          </ul>
+          <div class="tech-tags">
+            <code>Python</code><code>FastAPI</code><code>Slack API</code><code>Airflow</code>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <h4 class="project-title">"AgentHub" — AI Agent Session Manager</h4>
+          <p class="project-summary">One screen for the status and control of scattered AI agent sessions — solo, from planning to deployment</p>
+          <ul class="project-bullets">
+            <li>Built tmux session collection, status badges (running / waiting / approval needed / error), web terminal attach</li>
+            <li>Implemented as an Electron/React desktop app and shipped to the internal Tool Store</li>
+          </ul>
+          <div class="tech-tags">
+            <code>TypeScript</code><code>React</code><code>Electron</code><code>tmux</code><code>WebSocket</code>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <h4 class="project-title">Service Runtime Modernization (Java 25 · K8s · Graviton)</h4>
+          <p class="project-summary">Laid the groundwork to migrate build, CI, and metrics architecture in one coordinated move</p>
+          <ul class="project-bullets">
+            <li>Updated build/test tooling for Java 25; refreshed CI workflows and Docker base images</li>
+            <li>Migrated K8s metrics to OTLP (OpenTelemetry); set up ARM configs for Graviton validation</li>
+            <li>Analyzed AWS SDK v1→v2 timeout and DynamoDB behavior differences; corrected acceptance tests</li>
+          </ul>
+          <div class="tech-tags">
+            <code>Java 25</code><code>Spring Boot</code><code>Kubernetes</code><code>OpenTelemetry</code><code>GitHub Actions</code>
+          </div>
         </div>
       </div>
 
-      <div class="project">
-        <h4>SLI/SLO Anomaly Analysis & Reporting Automation</h4>
-        <p class="project-summary">Replaced manual log digging and Slack reporting with an AI agent workflow</p>
+      <div class="also-section">
+        <h4>Also</h4>
         <ul>
-          <li>Automated condition extraction from alert payloads, log collection, and request/trId-level clustering</li>
-          <li>Chained a root-cause-analysis agent and a report agent posting standardized summaries to Slack</li>
-          <li><strong class="highlight">Analysis-to-report time: up to 4 hours → ~10 minutes</strong></li>
+          <li>Expanded E2E tests for core backup/restore scenarios; removed flaky tests with embedded Kafka</li>
+          <li>Built a team Jupyter/PySpark log-analysis tool; automated weekly work-logs via GitHub + LLM summarization</li>
         </ul>
-        <div class="tech-tags">
-          <code>Python</code><code>FastAPI</code><code>Slack API</code><code>Airflow</code>
-        </div>
-      </div>
-
-      <div class="project">
-        <h4>"AgentHub" — AI Agent Session Manager</h4>
-        <p class="project-summary">One screen for the status and control of scattered AI agent sessions — solo, from planning to deployment</p>
-        <ul>
-          <li>Built tmux session collection, status badges (running / waiting / approval needed / error), web terminal attach</li>
-          <li>Shipped as an Electron/React desktop app to the internal Tool Store</li>
-          <li><strong class="highlight">Ranked #3 in recommendations among 15 tools</strong>, in active daily use by other developers</li>
-        </ul>
-        <div class="tech-tags">
-          <code>TypeScript</code><code>React</code><code>Electron</code><code>tmux</code><code>WebSocket</code>
-        </div>
-      </div>
-
-      <div class="project">
-        <h4>Service Runtime Modernization (Java 25 · K8s · Graviton)</h4>
-        <p class="project-summary">Laid the groundwork to migrate build, CI, and metrics architecture in one coordinated move</p>
-        <ul>
-          <li>Updated build/test tooling for Java 25; refreshed CI workflows and Docker base images</li>
-          <li>Migrated K8s metrics to OTLP (OpenTelemetry); set up ARM configs for Graviton validation</li>
-          <li>Analyzed AWS SDK v1→v2 timeout and DynamoDB behavior differences; corrected acceptance tests</li>
-        </ul>
-        <div class="tech-tags">
-          <code>Java 25</code><code>Spring Boot</code><code>Kubernetes</code><code>OpenTelemetry</code><code>GitHub Actions</code>
-        </div>
-      </div>
-
-      <h4>Also</h4>
-      <ul>
-        <li>Expanded E2E tests for core backup/restore scenarios; removed flaky tests with embedded Kafka</li>
-        <li>Built a team Jupyter/PySpark log-analysis tool; automated weekly work-logs via GitHub + LLM summarization</li>
-      </ul>
-    </div>
-
-    <div class="job">
-      <div class="job-header">
-        <h3>Shinyoung Securities — Software Engineering Intern</h3>
-        <p class="job-period">Sep 2021 – Dec 2021 · Seoul · Node.js</p>
       </div>
     </div>
 
-    <div class="job">
-      <div class="job-header">
-        <h3>maum.ai — Software Engineering Intern</h3>
-        <p class="job-period">Jun 2020 – Dec 2020 · Pangyo · Python, Flask</p>
+    <div class="intern-list">
+      <div class="intern-item">
+        <h4>Shinyoung Securities — Software Engineering Intern (IT Planning)</h4>
+        <p>Sep 2021 – Dec 2021 · Seoul</p>
+        <p>Client developer on an MTS (mobile trading system) renewal — built test servers and components with Node.js/JavaScript</p>
+      </div>
+      <div class="intern-item">
+        <h4>MINDsLab (now maum.ai) — Software Engineering Intern (Biz AI)</h4>
+        <p>Jul 2020 – Dec 2020 · Pangyo</p>
+        <p>Backend maintenance for an AI identification/tracking system — test server monitoring and incident response</p>
       </div>
     </div>
   </section>
 
   <section id="projects">
     <h2>Side Projects & Activities</h2>
-    <ul>
-      <li><strong>SSAFY Attendance Excuse Generator</strong> (Vue) — a utility with real users</li>
-      <li><strong>CPS</strong> — classroom intrusion detection system (Python), tied to my industrial security major</li>
+    <ul class="side-project-list">
+      <li>
+        <span class="project-name">DOWITH</span>
+        <span class="project-tech">Django</span>
+        <p class="project-desc">Collaborative habit-building service (Pirogramming)</p>
+      </li>
+      <li>
+        <span class="project-name"><a href="https://github.com/KYBee/Moa" target="_blank" rel="noopener">MOA</a></span>
+        <span class="project-tech">Solo</span>
+        <p class="project-desc">Dorm delivery-mate matching system (GDSC)</p>
+      </li>
+      <li>
+        <span class="project-name">CPS</span>
+        <span class="project-tech">Python</span>
+        <p class="project-desc">Classroom intrusion detection system, tied to my industrial security major</p>
+      </li>
+      <li>
+        <span class="project-name">SSAFY Attendance Excuse Generator</span>
+        <span class="project-tech">Vue</span>
+        <p class="project-desc">A utility with real users</p>
+      </li>
+      <li>
+        <span class="project-name">Booster</span>
+        <span class="project-tech">SOPT</span>
+        <span class="badge">16th APPJAM Grand Prize</span>
+        <p class="project-desc">Print-ahead app concept</p>
+      </li>
     </ul>
-    <p class="activities">SSAFY 8th · UMC · GDSC CAU · Pirogramming · SOPT</p>
+    <p class="activities">SIPE 5th · SSAFY 8th (Java track) · GDSC CAU · Pirogramming · UMC · SOPT</p>
   </section>
 
   <section id="skills">
     <h2>Skills</h2>
     <div class="skills-grid">
-      <div class="skill-row"><span class="skill-label">Backend</span><span>Java, Spring Boot, Python, FastAPI</span></div>
-      <div class="skill-row"><span class="skill-label">Data</span><span>Airflow, PySpark, Kafka, InfluxDB</span></div>
-      <div class="skill-row"><span class="skill-label">Infra</span><span>AWS (DynamoDB, S3), Kubernetes, Docker, GitHub Actions</span></div>
-      <div class="skill-row"><span class="skill-label">Observability</span><span>OpenTelemetry, Grafana, Prometheus</span></div>
+      <div class="skill-row"><span class="skill-label">Backend</span><span class="skill-value">Java, Spring Boot, Python, FastAPI</span></div>
+      <div class="skill-row"><span class="skill-label">Data</span><span class="skill-value">Airflow, PySpark, Kafka, InfluxDB</span></div>
+      <div class="skill-row"><span class="skill-label">Infra</span><span class="skill-value">AWS (DynamoDB, S3), Kubernetes, Docker, GitHub Actions</span></div>
+      <div class="skill-row"><span class="skill-label">Observability</span><span class="skill-value">OpenTelemetry, Grafana, Prometheus</span></div>
     </div>
   </section>
 
   <section id="education">
-    <h2>Education & Certifications</h2>
-    <p><strong>Chung-Ang University</strong> — B.S. in Industrial Security & Software (double major), 2016–2022, honors, GPA 4.14/4.5</p>
-    <p>Engineer Information Processing · SQLD · Big-Data Analysis Engineer</p>
-    <p class="languages">Korean (native) · English (advanced) · Chinese (intermediate)</p>
+    <h2>Education</h2>
+    <div class="edu-section">
+      <h3>Chung-Ang University</h3>
+      <p class="edu-detail">B.S. in Industrial Security & B.S. in Software (double major)</p>
+      <p class="edu-detail">Mar 2016 – Aug 2022 · Graduated with honors · GPA 4.14/4.5 (95.89/100)</p>
+      <p class="edu-courses">
+        <strong>CS:</strong> Data Structures, Algorithms, Operating Systems, Computer Architecture, Software Engineering, Programming Languages, Network Application Design, Machine Learning, Probability & Statistics, Software Project<br/>
+        <strong>Security:</strong> Information Security Theory, Security Data Analysis, Cyber Incident Response, Industrial Security Investigation & Forensics
+      </p>
+    </div>
+
+    <h2>Certifications & Languages</h2>
+    <div class="cert-list">
+      <span class="cert-item">Engineer Information Processing (Jun 2021)</span>
+      <span class="cert-item">SQLD (Dec 2021)</span>
+      <span class="cert-item">Big-Data Analysis Engineer (Dec 2024)</span>
+    </div>
+    <p class="languages">Korean (native) · English (advanced) · Chinese (intermediate, business communication)</p>
   </section>
 </Layout>
 
 <style>
-  .about-list {
-    list-style: disc;
-    margin-left: 1.5rem;
+  .also-section {
+    margin-top: 2rem;
+    padding-top: 1rem;
   }
-  .about-list li {
+  .also-section h4 {
+    color: var(--text-secondary);
     margin-bottom: 0.5rem;
-  }
-  .project-summary {
-    color: #666;
-    font-size: 0.95rem;
-    margin-bottom: 0.75rem;
-  }
-  .activities {
-    color: #666;
-    margin-top: 0.5rem;
-  }
-  .languages {
-    color: #666;
-    margin-top: 1rem;
   }
 </style>
