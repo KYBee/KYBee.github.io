@@ -47,6 +47,8 @@ const about = defineCollection({
     }),
     bullets: z.array(z.string()),
     activities: z.string().optional(),
+    status: z.string(),
+    highlights: z.array(z.string()),
     lang: langEnum,
   }),
 });

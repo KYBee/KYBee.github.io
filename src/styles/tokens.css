@@ -17,6 +17,25 @@
   --fs-xl: 1.75rem;
   --fs-2xl: 2.25rem;
 
+  /* Body typography (readability pass) */
+  --fs-body: 1rem; /* 16px */
+  --lh-body: 1.75;
+  --ls-body: -0.01em;
+
+  --fs-tag: 0.75rem; /* 12px — tech tags */
+  --fs-summary: 0.875rem; /* 14px — one-line summary */
+  --fs-bullet: 0.9375rem; /* 15px — bullet body text */
+  --fs-metric: 0.9375rem; /* 15px — metric pill */
+  --fs-title-md: 1.0625rem; /* 17px — project title / company name */
+  --fs-title-lg: 1.375rem; /* 22px — section/channel title */
+
+  /* Content measure */
+  --content-max-width: 40rem; /* 640px — message body measure */
+  --bullet-max-width: 62ch;
+  --content-padding-x: 3rem; /* 48px desktop gutter */
+  --content-padding-x-mobile: 1.25rem; /* 20px mobile gutter */
+  --profile-panel-width: 360px;
+
   /* Spacing scale */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -26,6 +45,12 @@
   --space-6: 2rem;
   --space-7: 3rem;
   --space-8: 4rem;
+
+  /* Spacing hierarchy (3 tiers) */
+  --space-bullet-gap: 0.5rem; /* 8px — between bullet items */
+  --space-tight: 0.75rem; /* 12px — between elements within a block */
+  --space-block: 3rem; /* 48px — between project blocks; combined with section
+                           padding this yields the 96px section-to-section gap */
 
   /* Radius */
   --radius-sm: 4px;
@@ -50,13 +75,16 @@
   /* Avatar — fixed across themes, kept dark enough for white text (WCAG AA) */
   --avatar-bg: #1164a3;
   --avatar-text: #ffffff;
+
+  /* Status — theme-invariant */
+  --status-online: #2bac76;
 }
 
 [data-theme='light'] {
   --bg: #ffffff;
   --bg-elevated: #f8f8f8;
-  --text: #1a1a1a;
-  --text-secondary: #454245;
+  --text: #1d1c1d;
+  --text-secondary: #52525b;
   --text-muted: #767676;
   --border: #e0e0e2;
   --accent: #1164a3;
@@ -66,13 +94,15 @@
   --pill-bg: #f0f0f2;
   --pill-text: #454245;
   --focus-ring: #1164a3;
+  --pin-bg: #fef9e0;
+  --pin-border: #f2c94c;
 }
 
 [data-theme='dark'] {
   --bg: #1a1d21;
   --bg-elevated: #222529;
-  --text: #d1d2d3;
-  --text-secondary: #ababad;
+  --text: #e4e4e7;
+  --text-secondary: #a1a1aa;
   --text-muted: #868686;
   --border: #35373b;
   --accent: #4fb3ff;
@@ -82,4 +112,6 @@
   --pill-bg: #2c2f33;
   --pill-text: #d1d2d3;
   --focus-ring: #4fb3ff;
+  --pin-bg: rgba(242, 201, 76, 0.1);
+  --pin-border: #d4a72c;
 }
