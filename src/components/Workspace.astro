@@ -56,14 +56,6 @@ const initials = 'YB';
 
 const displayUrl = (url: string) => url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
-let prevPeriodStart = '';
-const renderGroups = projectGroups.map((group) => {
-  const periodStart = group.period.split('–')[0].trim();
-  const showTimeline = periodStart !== prevPeriodStart;
-  prevPeriodStart = periodStart;
-  return { ...group, periodStart, showTimeline };
-});
-
 const copy = {
   ko: {
     channelsLabel: '채널',
@@ -82,7 +74,7 @@ const copy = {
       education: education ? `${education.school} · ${education.detail}` : '',
     },
     previews: {
-      experience: renderGroups.map((g) => g.company).join(' · '),
+      experience: projectGroups.map((g) => g.company).join(' · '),
       'work-projects': samsungItems.slice(0, 2).map((p) => p.title).join(' · '),
       'side-projects': sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
       skills: skills.map((s) => s.category).join(' · '),
@@ -127,7 +119,7 @@ const copy = {
       education: education ? `${education.school} · ${education.detail}` : '',
     },
     previews: {
-      experience: renderGroups.map((g) => g.company).join(' · '),
+      experience: projectGroups.map((g) => g.company).join(' · '),
       'work-projects': samsungItems.slice(0, 2).map((p) => p.title).join(' · '),
       'side-projects': sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
       skills: skills.map((s) => s.category).join(' · '),
@@ -299,33 +291,31 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
           <div class="message-meta">
             <span class="message-author">{about.name}</span>
           </div>
-          {renderGroups.map((group, gi) => (
-            <div class="job-group">
-              {group.showTimeline && (
-                <div class="timeline-divider">
-                  <span class="timeline-pill">{group.periodStart}</span>
-                </div>
-              )}
-              <p class="job-divider">
-                {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
-              </p>
-              {gi === 0 ? (
-                <p class="message-summary">{about.work}</p>
-              ) : (
-                group.items.map((item) => (
-                  <>
-                    {item.summary && <p class="message-summary">{item.summary}</p>}
-                    {item.tags.length > 0 && (
-                      <div class="reactions">
-                        {item.tags.map((tag) => (
-                          <span class="tag-pill">{tag}</span>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ))
-              )}
-            </div>
+          {projectGroups.map((group, gi) => (
+            <>
+              {gi > 0 && <hr class="job-hr" />}
+              <div class="job-group">
+                <p class="job-divider">
+                  {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
+                </p>
+                {gi === 0 ? (
+                  <p class="message-summary">{about.work}</p>
+                ) : (
+                  group.items.map((item) => (
+                    <>
+                      {item.summary && <p class="message-summary">{item.summary}</p>}
+                      {item.tags.length > 0 && (
+                        <div class="reactions">
+                          {item.tags.map((tag) => (
+                            <span class="tag-pill">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ))
+                )}
+              </div>
+            </>
           ))}
         </div>
       </div>
@@ -1153,12 +1143,11 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     font-weight: 600;
   }
 
-  .job-group {
-    margin-bottom: var(--space-block);
-  }
-
-  .job-group:last-child {
-    margin-bottom: 0;
+  .job-hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    max-width: var(--content-max-width);
+    margin: var(--space-block) 0;
   }
 
   .job-divider {
@@ -1167,33 +1156,6 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     font-weight: 600;
     max-width: var(--content-max-width);
     margin: 0 0 var(--space-tight);
-  }
-
-  .timeline-divider {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    max-width: var(--content-max-width);
-    margin: var(--space-block) 0 var(--space-tight);
-  }
-
-  .timeline-divider::before,
-  .timeline-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .timeline-pill {
-    flex-shrink: 0;
-    font-size: var(--fs-xs);
-    font-weight: 600;
-    color: var(--text-muted);
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-pill);
-    padding: 2px var(--space-3);
   }
 
   .channel-footnote {

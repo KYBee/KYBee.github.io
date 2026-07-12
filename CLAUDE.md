@@ -96,14 +96,16 @@
 
 ```
 [아바타] 이름                         ← message 하나, 한 번만
-         ── 2023.09 ──                ← timeline-divider (기간 변경 시)
          회사 — 역할 · 기간 · 근무지    ← job-divider (.job-group으로 묶음)
          한 줄 요약
-         ── 2021.09 ──
+         ────────────                 ← 단순 hr (.job-hr), 얇고 subtle한 구분선만
          회사 — 역할 · 기간 · 근무지
          한 줄 요약 + 기술 태그
 ```
 
+- `# 경력` 채널의 회사 항목 구분은 **심플한 `<hr class="job-hr">`만 사용**한다. 날짜 뱃지 + 가로선으로 된
+  Slack date divider(`.timeline-divider`/`.timeline-pill`)는 이 채널에 쓰지 않는다 — 날짜/기간 정보는 이미
+  job-divider 텍스트 안에 있어 별도 표시가 중복이며 시각적으로 과하다
 - `# 경력`의 회사 요약은 job-divider에 회사·역할·기간·근무지가 이미 들어있으므로 별도 message-time을 쓰지 않는다.
   재직 중인 회사(`gi === 0`)는 `about.work` 한 줄, 나머지는 `item.summary` + 태그를 사용한다
 - `# 기술`도 동일 패턴(아바타+이름 한 번 + `skill-group` 목록)이며, 새 채널에서 "항목별로 게시글을 분리할지 vs
@@ -114,7 +116,7 @@
 ### 레이아웃
 
 - 메인 콘텐츠(`.channel` 내부 요소)는 사이드바 옆에 **좌측 정렬**한다. `.message`, `.channel-header`,
-  `.channel-intro`, `.job-divider`, `.timeline-divider` 등에 `margin-left/right: auto`로 가운데 정렬을 걸지 않는다
+  `.channel-intro`, `.job-divider` 등에 `margin-left/right: auto`로 가운데 정렬을 걸지 않는다
 - 가독성용 `max-width`(`--content-max-width`, 현재 800px)는 메시지 본문/헤더 등 **개별 요소에만** 적용한다.
   `.content`나 `.channel` 같은 컨테이너 자체에 max-width를 걸지 않는다
 
