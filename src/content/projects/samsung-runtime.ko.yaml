@@ -10,4 +10,4 @@ bullets:
   - AWS SDK v1→v2 전환 시 timeout·DynamoDB 동작 차이 분석, acceptance test 보정
 tags: [Java 25, Spring Boot, Kubernetes, OpenTelemetry, GitHub Actions]
 lang: ko
-order: 40
+order: 30

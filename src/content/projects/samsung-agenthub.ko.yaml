@@ -11,4 +11,4 @@ bullets:
 metric: 전체 15개 도구 중 추천 순위 3위
 tags: [TypeScript, React, Electron, tmux, WebSocket]
 lang: ko
-order: 30
+order: 40

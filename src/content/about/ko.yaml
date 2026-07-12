@@ -14,6 +14,10 @@ bullets:
 activities: SIPE 5기 · SSAFY 8기 (Java 트랙) · GDSC CAU · 피로그래밍 · UMC · SOPT
 status: Backend Engineer
 activityStatus: 운영 자동화 중
+highlights:
+  - 성공률 70% → 95%
+  - 분석 4h → 10분
+  - 사내 Tool Store 배포
 affiliation: 삼성전자 · Backend Engineer
 work: 백업/복원 서비스 백엔드 개발·운영
 interests: AI Agent workflow, 운영 자동화

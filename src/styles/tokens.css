@@ -30,7 +30,7 @@
   --fs-title-lg: 1.375rem; /* 22px — section/channel title */
 
   /* Content measure */
-  --content-max-width: 40rem; /* 640px — message body measure */
+  --content-max-width: 50rem; /* 800px — message body measure */
   --bullet-max-width: 62ch;
   --content-padding-x: 3rem; /* 48px desktop gutter */
   --content-padding-x-mobile: 1.25rem; /* 20px mobile gutter */

@@ -10,4 +10,4 @@ bullets:
   - Analyzed AWS SDK v1→v2 timeout and DynamoDB behavior differences; corrected acceptance tests
 tags: [Java 25, Spring Boot, Kubernetes, OpenTelemetry, GitHub Actions]
 lang: en
-order: 40
+order: 30
