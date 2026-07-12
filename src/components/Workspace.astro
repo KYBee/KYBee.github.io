@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import Avatar from './Avatar.astro';
 
 interface Props {
   lang: 'ko' | 'en';
@@ -55,6 +56,14 @@ const initials = 'YB';
 
 const displayUrl = (url: string) => url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
 
+let prevPeriodStart = '';
+const renderGroups = projectGroups.map((group) => {
+  const periodStart = group.period.split('–')[0].trim();
+  const showTimeline = periodStart !== prevPeriodStart;
+  prevPeriodStart = periodStart;
+  return { ...group, periodStart, showTimeline };
+});
+
 const copy = {
   ko: {
     channelsLabel: '채널',
@@ -68,21 +77,18 @@ const copy = {
     },
     topics: {
       experience: firstJob ? `${firstJob.company} ${firstJob.role} · ${firstJob.period}` : '',
-      'work-projects': firstJob ? `${firstJob.company}에서 진행한 프로젝트 상세` : '',
       'side-projects': '사이드 프로젝트 & 활동',
       skills: '사용 기술 스택',
       education: education ? `${education.school} · ${education.detail}` : '',
     },
     previews: {
-      experience: about.highlights.join(' · '),
+      experience: renderGroups.map((g) => g.company).join(' · '),
       'work-projects': samsungItems.slice(0, 2).map((p) => p.title).join(' · '),
       'side-projects': sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
       skills: skills.map((s) => s.category).join(' · '),
       education: education?.detail ?? '',
     },
     workProjectsContext: firstJob ? `${firstJob.company} 재직 중 수행 · ${firstJob.period}` : '',
-    highlightsTitle: '핵심 성과 요약',
-    threadLink: '🧵 업무 상세는 #업무-프로젝트 참고',
     me: `${about.name} (나)`,
     hamburgerLabel: '메뉴 열기',
     closeLabel: '닫기',
@@ -103,10 +109,6 @@ const copy = {
       communities: '커뮤니티',
       whereabouts: '출몰지역',
     },
-    experienceGroups: {
-      core: '주요 업무',
-      internal: '사내 활동 · 도구',
-    },
   },
   en: {
     channelsLabel: 'Channels',
@@ -120,21 +122,18 @@ const copy = {
     },
     topics: {
       experience: firstJob ? `${firstJob.company} ${firstJob.role} · ${firstJob.period}` : '',
-      'work-projects': firstJob ? `Detailed projects from ${firstJob.company}` : '',
       'side-projects': 'Side projects & activities',
       skills: 'Tech stack',
       education: education ? `${education.school} · ${education.detail}` : '',
     },
     previews: {
-      experience: about.highlights.join(' · '),
+      experience: renderGroups.map((g) => g.company).join(' · '),
       'work-projects': samsungItems.slice(0, 2).map((p) => p.title).join(' · '),
       'side-projects': sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
       skills: skills.map((s) => s.category).join(' · '),
       education: education?.detail ?? '',
     },
     workProjectsContext: firstJob ? `Completed while at ${firstJob.company} · ${firstJob.period}` : '',
-    highlightsTitle: 'Key Highlights',
-    threadLink: '🧵 See #work-projects for details',
     me: `${about.name} (you)`,
     hamburgerLabel: 'Open menu',
     closeLabel: 'Close',
@@ -155,23 +154,11 @@ const copy = {
       communities: 'Communities',
       whereabouts: 'Usually found in',
     },
-    experienceGroups: {
-      core: 'Core Work',
-      internal: 'Internal Tools & Activities',
-    },
   },
 } as const;
 
 const t = copy[lang];
 const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 'education'] as const;
-
-let prevPeriodStart = '';
-const renderGroups = projectGroups.map((group) => {
-  const periodStart = group.period.split('–')[0].trim();
-  const showTimeline = periodStart !== prevPeriodStart;
-  prevPeriodStart = periodStart;
-  return { ...group, periodStart, showTimeline };
-});
 ---
 
 <div class="workspace">
@@ -211,7 +198,10 @@ const renderGroups = projectGroups.map((group) => {
     </ul>
     <p class="nav-group-label">{t.dmLabel}</p>
     <button type="button" class="drawer-dm" data-open-profile aria-haspopup="dialog">
-      <span class="status-dot" aria-hidden="true"></span>
+      <span class="dm-avatar">
+        <Avatar initials={initials} size={22} radius="var(--radius-sm)" fontSize="0.65rem" />
+        <span class="status-dot" aria-hidden="true"></span>
+      </span>
       {t.me}
     </button>
     <div class="drawer-footer">
@@ -253,7 +243,10 @@ const renderGroups = projectGroups.map((group) => {
     <div class="dm-section">
       <p class="nav-group-label">{t.dmLabel}</p>
       <button type="button" class="dm-item" data-open-profile aria-haspopup="dialog">
-        <span class="status-dot" aria-hidden="true"></span>
+        <span class="dm-avatar">
+          <Avatar initials={initials} size={22} radius="var(--radius-sm)" fontSize="0.65rem" />
+          <span class="status-dot" aria-hidden="true"></span>
+        </span>
         {t.me}
       </button>
     </div>
@@ -266,7 +259,9 @@ const renderGroups = projectGroups.map((group) => {
         <p class="channel-topic">{t.topics.experience}</p>
       </header>
       <div class="channel-intro">
-        <div class="channel-intro-avatar" aria-hidden="true">{initials}</div>
+        <div class="channel-intro-avatar" aria-hidden="true">
+          <Avatar initials={initials} size={72} radius="var(--radius-lg)" fontSize="1.5rem" />
+        </div>
         <div class="channel-intro-heading">
           <p class="channel-intro-name">{about.name}</p>
           <p class="channel-intro-title">{about.title}</p>
@@ -275,9 +270,6 @@ const renderGroups = projectGroups.map((group) => {
           <span class="status-dot" aria-hidden="true"></span>
           {about.activityStatus}
         </div>
-        <ul class="channel-intro-bullets">
-          {about.bullets.map((bullet) => <li>{bullet}</li>)}
-        </ul>
         <div class="channel-intro-links">
           <a class="channel-intro-link" href={about.links.github} target="_blank" rel="noopener">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
@@ -296,6 +288,9 @@ const renderGroups = projectGroups.map((group) => {
             <span>Email</span>
           </a>
         </div>
+        <ul class="channel-intro-bullets">
+          {about.bullets.map((bullet) => <li>{bullet}</li>)}
+        </ul>
       </div>
       {renderGroups.map((group, gi) => (
         <>
@@ -308,35 +303,20 @@ const renderGroups = projectGroups.map((group) => {
             {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
           </p>
           {gi === 0 ? (
-            <>
-              <div class="message">
-                <div class="avatar">{initials}</div>
-                <div class="message-body">
-                  <div class="message-meta">
-                    <span class="message-author">{about.name}</span>
-                    <span class="message-time">{group.period}</span>
-                  </div>
-                  <p class="message-summary">{about.work}</p>
+            <div class="message">
+              <div class="avatar"><Avatar initials={initials} size={44} /></div>
+              <div class="message-body">
+                <div class="message-meta">
+                  <span class="message-author">{about.name}</span>
+                  <span class="message-time">{group.period}</span>
                 </div>
+                <p class="message-summary">{about.work}</p>
               </div>
-              <div class="message">
-                <div class="avatar">{initials}</div>
-                <div class="message-body">
-                  <div class="message-meta">
-                    <span class="message-author">{about.name}</span>
-                  </div>
-                  <p class="message-title">{t.highlightsTitle}</p>
-                  <div class="reactions">
-                    {about.highlights.map((h) => <span class="highlight-pill">{h}</span>)}
-                  </div>
-                  <a class="thread-link" href="#work-projects">{t.threadLink}</a>
-                </div>
-              </div>
-            </>
+            </div>
           ) : (
             group.items.map((item, i) => (
               <div class="message">
-                <div class="avatar">{initials}</div>
+                <div class="avatar"><Avatar initials={initials} size={44} /></div>
                 <div class="message-body">
                   <div class="message-meta">
                     <span class="message-author">{about.name}</span>
@@ -374,52 +354,39 @@ const renderGroups = projectGroups.map((group) => {
     <section id="work-projects" class="channel">
       <header class="channel-header">
         <h1># {t.channels['work-projects']}</h1>
-        <p class="channel-topic">{t.topics['work-projects']}</p>
-        <p class="channel-context">{t.workProjectsContext}</p>
+        <p class="channel-topic">{t.workProjectsContext}</p>
       </header>
       {samsungItems.map((item, i) => (
-        <>
-          {i === 0 && (
-            <div class="timeline-divider">
-              <span class="timeline-pill">{t.experienceGroups.core}</span>
+        <div class="message">
+          <div class="avatar"><Avatar initials={initials} size={44} /></div>
+          <div class="message-body">
+            <div class="message-meta">
+              <span class="message-author">{about.name}</span>
+              <span class="message-time">{item.company} · {item.period}</span>
             </div>
-          )}
-          {i === 3 && (
-            <div class="timeline-divider">
-              <span class="timeline-pill">{t.experienceGroups.internal}</span>
-            </div>
-          )}
-          <div class="message">
-            <div class="avatar">{initials}</div>
-            <div class="message-body">
-              <div class="message-meta">
-                <span class="message-author">{about.name}</span>
-                <span class="message-time">{item.period}</span>
-              </div>
-              {item.title && <p class="message-title">{item.title}</p>}
-              {item.summary && <p class="message-summary">{item.summary}</p>}
-              {item.bullets && (
-                <ul class="message-bullets">
-                  {item.bullets.map((bullet) => <li>{bullet}</li>)}
-                </ul>
-              )}
-              {item.metric && <blockquote class="quote-block">{item.metric}</blockquote>}
-              {(item.tags.length > 0 || item.metric) && (
-                <div class="reactions">
-                  {item.metric &&
-                    reactionSets[i % reactionSets.length].map(([emoji, count]) => (
-                      <span class="reaction-pill">
-                        {emoji} {count}
-                      </span>
-                    ))}
-                  {item.tags.map((tag) => (
-                    <span class="tag-pill">{tag}</span>
+            {item.title && <p class="message-title">{item.title}</p>}
+            {item.summary && <p class="message-summary">{item.summary}</p>}
+            {item.bullets && (
+              <ul class="message-bullets">
+                {item.bullets.map((bullet) => <li>{bullet}</li>)}
+              </ul>
+            )}
+            {item.metric && <blockquote class="quote-block">{item.metric}</blockquote>}
+            {(item.tags.length > 0 || item.metric) && (
+              <div class="reactions">
+                {item.metric &&
+                  reactionSets[i % reactionSets.length].map(([emoji, count]) => (
+                    <span class="reaction-pill">
+                      {emoji} {count}
+                    </span>
                   ))}
-                </div>
-              )}
-            </div>
+                {item.tags.map((tag) => (
+                  <span class="tag-pill">{tag}</span>
+                ))}
+              </div>
+            )}
           </div>
-        </>
+        </div>
       ))}
     </section>
 
@@ -430,7 +397,7 @@ const renderGroups = projectGroups.map((group) => {
       </header>
       {sideProjects.map((project, i) => (
         <div class="message">
-          <div class="avatar">{initials}</div>
+          <div class="avatar"><Avatar initials={initials} size={44} /></div>
           <div class="message-body">
             <div class="message-meta">
               <span class="message-author">{about.name}</span>
@@ -456,7 +423,7 @@ const renderGroups = projectGroups.map((group) => {
         <p class="channel-topic">{t.topics.skills}</p>
       </header>
       <div class="message">
-        <div class="avatar">{initials}</div>
+        <div class="avatar"><Avatar initials={initials} size={44} /></div>
         <div class="message-body">
           <div class="message-meta">
             <span class="message-author">{about.name}</span>
@@ -482,7 +449,7 @@ const renderGroups = projectGroups.map((group) => {
       </header>
       {education && (
         <div class="message">
-          <div class="avatar">{initials}</div>
+          <div class="avatar"><Avatar initials={initials} size={44} /></div>
           <div class="message-body">
             <div class="message-meta">
               <span class="message-author">{about.name}</span>
@@ -504,7 +471,7 @@ const renderGroups = projectGroups.map((group) => {
         </div>
       )}
       <div class="message">
-        <div class="avatar">{initials}</div>
+        <div class="avatar"><Avatar initials={initials} size={44} /></div>
         <div class="message-body">
           <div class="message-meta">
             <span class="message-author">{about.name}</span>
@@ -543,7 +510,9 @@ const renderGroups = projectGroups.map((group) => {
     </div>
     <div class="profile-body">
       <div class="profile-identity">
-        <div class="profile-avatar" aria-hidden="true">{initials}</div>
+        <div class="profile-avatar" aria-hidden="true">
+          <Avatar initials={initials} size={96} radius="var(--radius-lg)" fontSize="2rem" />
+        </div>
         <p class="profile-name" id="profile-name">{about.name}</p>
         <div class="profile-status">
           <span class="status-dot" aria-hidden="true"></span>
@@ -774,6 +743,22 @@ const renderGroups = projectGroups.map((group) => {
     flex-shrink: 0;
   }
 
+  .dm-avatar {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  .dm-avatar .status-dot {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 9px;
+    height: 9px;
+    border: 2px solid var(--sidebar-bg);
+    box-sizing: content-box;
+  }
+
   /* ---------- Topbar + drawer (mobile) ---------- */
   .topbar {
     display: none;
@@ -949,12 +934,6 @@ const renderGroups = projectGroups.map((group) => {
     margin-top: var(--space-1);
   }
 
-  .channel-context {
-    color: var(--text-muted);
-    font-size: var(--fs-xs);
-    margin-top: var(--space-2);
-  }
-
   .channel-intro {
     display: flex;
     flex-direction: column;
@@ -1038,18 +1017,22 @@ const renderGroups = projectGroups.map((group) => {
   .channel-intro-links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-5);
+    gap: var(--space-3);
   }
 
   .channel-intro-link {
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
     color: var(--text-secondary);
     font-size: var(--fs-sm);
   }
 
   .channel-intro-link:hover {
+    border-color: var(--accent);
     color: var(--accent);
   }
 
@@ -1156,30 +1139,6 @@ const renderGroups = projectGroups.map((group) => {
     padding: var(--space-2) var(--space-3);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     margin: var(--space-tight) 0;
-  }
-
-  .highlight-pill {
-    display: inline-flex;
-    align-items: center;
-    color: var(--accent);
-    background: var(--accent-dim);
-    font-weight: 600;
-    font-size: var(--fs-metric);
-    padding: 0.375rem 0.875rem;
-    border-radius: var(--radius-pill);
-  }
-
-  .thread-link {
-    display: block;
-    width: fit-content;
-    color: var(--accent);
-    font-size: var(--fs-sm);
-    margin-top: var(--space-tight);
-    text-decoration: none;
-  }
-
-  .thread-link:hover {
-    text-decoration: underline;
   }
 
   .reactions {

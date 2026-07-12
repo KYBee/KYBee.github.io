@@ -49,7 +49,6 @@ const about = defineCollection({
     activities: z.string().optional(),
     status: z.string(),
     activityStatus: z.string(),
-    highlights: z.array(z.string()),
     affiliation: z.string(),
     work: z.string(),
     interests: z.string(),

@@ -1,0 +1,45 @@
+---
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+interface Props {
+  initials: string;
+  size: number;
+  radius?: string;
+  fontSize?: string;
+}
+
+const { initials, size, radius = 'var(--radius-md)', fontSize = 'var(--fs-sm)' } = Astro.props;
+
+const exts = ['png', 'jpg', 'jpeg', 'webp'];
+const publicDir = fileURLToPath(new URL('../../public', import.meta.url));
+const profileFile = exts.map((ext) => `profile.${ext}`).find((f) => fs.existsSync(`${publicDir}/${f}`));
+---
+
+{
+  profileFile ? (
+    <img src={`/${profileFile}`} alt={initials} class="avatar-photo" style={`width:${size}px;height:${size}px;border-radius:${radius};`} />
+  ) : (
+    <div class="avatar-fallback" style={`width:${size}px;height:${size}px;border-radius:${radius};font-size:${fontSize};`} aria-hidden="true">
+      {initials}
+    </div>
+  )
+}
+
+<style>
+  .avatar-photo {
+    display: block;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  .avatar-fallback {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    background: var(--avatar-bg);
+    color: var(--avatar-text);
+  }
+</style>
