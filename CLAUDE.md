@@ -119,6 +119,10 @@
   `.channel-intro`, `.job-divider` 등에 `margin-left/right: auto`로 가운데 정렬을 걸지 않는다
 - 가독성용 `max-width`(`--content-max-width`, 현재 800px)는 메시지 본문/헤더 등 **개별 요소에만** 적용한다.
   `.content`나 `.channel` 같은 컨테이너 자체에 max-width를 걸지 않는다
+- **모바일(`max-width: 768px`) 콘텐츠 컨테이너 좌우 패딩은 최소 16px을 확보하고, `.content` 최상위 컨테이너
+  한 곳에서만 적용한다** (`--content-padding-x-mobile`, 현재 20px). `.channel`/`.channel-intro` 등 개별 섹션은
+  모바일에서 좌우 패딩을 0으로 두고 상하 패딩만 갖는다 — 새 채널/섹션을 추가해도 별도 CSS 없이 자동으로
+  좌우 여백이 확보된다. 모바일 전용 요소(`.topbar` 등)도 이 최소값(16px, `--space-4`) 이상을 유지한다
 
 ### 프로필 카드 배열 (channel-intro, 프로필 패널)
 

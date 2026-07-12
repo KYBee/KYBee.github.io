@@ -741,7 +741,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     color: var(--sidebar-text-active);
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--space-3);
+    padding: 0 var(--space-4);
     z-index: 60;
   }
 
@@ -1385,18 +1385,25 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     .content {
       margin-left: 0;
       padding-top: var(--topbar-height);
+      padding-left: var(--content-padding-x-mobile);
+      padding-right: var(--content-padding-x-mobile);
       --lh-body: 1.7;
     }
 
+    /* Horizontal inset comes from .content above — new top-level blocks
+       inherit it automatically and only need to set vertical padding. */
     .channel {
       padding-top: var(--space-5);
       padding-bottom: var(--space-5);
-      padding-left: var(--content-padding-x-mobile);
-      padding-right: var(--content-padding-x-mobile);
+      padding-left: 0;
+      padding-right: 0;
     }
 
     .channel-intro {
-      padding: var(--space-5) var(--content-padding-x-mobile);
+      padding-top: var(--space-5);
+      padding-bottom: var(--space-5);
+      padding-left: 0;
+      padding-right: 0;
     }
 
     .channel-header {
