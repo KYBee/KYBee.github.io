@@ -293,63 +293,42 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
         <h1># {t.channels.experience}</h1>
         <p class="channel-topic">{t.topics.experience}</p>
       </header>
-      {renderGroups.map((group, gi) => (
-        <>
-          {group.showTimeline && (
-            <div class="timeline-divider">
-              <span class="timeline-pill">{group.periodStart}</span>
-            </div>
-          )}
-          <p class="job-divider">
-            {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
-          </p>
-          {gi === 0 ? (
-            <div class="message">
-              <div class="avatar"><Avatar initials={initials} size={44} /></div>
-              <div class="message-body">
-                <div class="message-meta">
-                  <span class="message-author">{about.name}</span>
-                  <span class="message-time">{group.period}</span>
+      <div class="message">
+        <div class="avatar"><Avatar initials={initials} size={44} /></div>
+        <div class="message-body">
+          <div class="message-meta">
+            <span class="message-author">{about.name}</span>
+          </div>
+          {renderGroups.map((group, gi) => (
+            <div class="job-group">
+              {group.showTimeline && (
+                <div class="timeline-divider">
+                  <span class="timeline-pill">{group.periodStart}</span>
                 </div>
+              )}
+              <p class="job-divider">
+                {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
+              </p>
+              {gi === 0 ? (
                 <p class="message-summary">{about.work}</p>
-              </div>
-            </div>
-          ) : (
-            group.items.map((item, i) => (
-              <div class="message">
-                <div class="avatar"><Avatar initials={initials} size={44} /></div>
-                <div class="message-body">
-                  <div class="message-meta">
-                    <span class="message-author">{about.name}</span>
-                    <span class="message-time">{item.period}</span>
-                  </div>
-                  {item.title && <p class="message-title">{item.title}</p>}
-                  {item.summary && <p class="message-summary">{item.summary}</p>}
-                  {item.bullets && (
-                    <ul class="message-bullets">
-                      {item.bullets.map((bullet) => <li>{bullet}</li>)}
-                    </ul>
-                  )}
-                  {item.metric && <blockquote class="quote-block">{item.metric}</blockquote>}
-                  {(item.tags.length > 0 || item.metric) && (
-                    <div class="reactions">
-                      {item.metric &&
-                        reactionSets[i % reactionSets.length].map(([emoji, count]) => (
-                          <span class="reaction-pill">
-                            {emoji} {count}
-                          </span>
+              ) : (
+                group.items.map((item) => (
+                  <>
+                    {item.summary && <p class="message-summary">{item.summary}</p>}
+                    {item.tags.length > 0 && (
+                      <div class="reactions">
+                        {item.tags.map((tag) => (
+                          <span class="tag-pill">{tag}</span>
                         ))}
-                      {item.tags.map((tag) => (
-                        <span class="tag-pill">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </>
-      ))}
+                      </div>
+                    )}
+                  </>
+                ))
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
 
     <section id="work-projects" class="channel">
@@ -1172,6 +1151,14 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     background: var(--accent-dim);
     color: var(--accent);
     font-weight: 600;
+  }
+
+  .job-group {
+    margin-bottom: var(--space-block);
+  }
+
+  .job-group:last-child {
+    margin-bottom: 0;
   }
 
   .job-divider {
