@@ -53,6 +53,8 @@ const reactionSets: [string, string][][] = [
 
 const initials = 'YB';
 
+const displayUrl = (url: string) => url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
+
 const copy = {
   ko: {
     channelsLabel: '채널',
@@ -75,8 +77,6 @@ const copy = {
       skills: skills.map((s) => s.category).join(' · '),
       education: education?.detail ?? '',
     },
-    pinned: '📌 고정됨',
-    pinnedHighlightsTitle: '핵심 성과 요약',
     me: `${about.name} (나)`,
     hamburgerLabel: '메뉴 열기',
     closeLabel: '닫기',
@@ -84,6 +84,19 @@ const copy = {
     also: '그 외',
     certifications: '자격증 & 어학',
     profileOpenLabel: `${about.name} 프로필 보기`,
+    profileTitle: '프로필',
+    backLabel: '뒤로가기',
+    contactInfoTitle: '연락처 정보',
+    emailLabel: '이메일',
+    aboutMeTitle: '내 소개',
+    fieldLabels: {
+      affiliation: '소속',
+      work: '하는 일',
+      interests: '요즘 관심사',
+      strengths: '잘하는 것',
+      communities: '커뮤니티',
+      whereabouts: '출몰지역',
+    },
   },
   en: {
     channelsLabel: 'Channels',
@@ -106,8 +119,6 @@ const copy = {
       skills: skills.map((s) => s.category).join(' · '),
       education: education?.detail ?? '',
     },
-    pinned: '📌 Pinned',
-    pinnedHighlightsTitle: 'Key Highlights',
     me: `${about.name} (you)`,
     hamburgerLabel: 'Open menu',
     closeLabel: 'Close',
@@ -115,6 +126,19 @@ const copy = {
     also: 'Also',
     certifications: 'Certifications & Languages',
     profileOpenLabel: `View ${about.name}'s profile`,
+    profileTitle: 'Profile',
+    backLabel: 'Back',
+    contactInfoTitle: 'Contact information',
+    emailLabel: 'Email',
+    aboutMeTitle: 'About me',
+    fieldLabels: {
+      affiliation: 'Team',
+      work: 'What I do',
+      interests: 'Into these days',
+      strengths: 'Good at',
+      communities: 'Communities',
+      whereabouts: 'Usually found in',
+    },
   },
 } as const;
 
@@ -221,29 +245,50 @@ const renderGroups = projectGroups.map((group) => {
         <h1># {t.channels.experience}</h1>
         <p class="channel-topic">{t.topics.experience}</p>
       </header>
-      <div class="message pin-card">
-        <div class="avatar">{initials}</div>
-        <div class="message-body">
-          <div class="message-meta">
-            <span class="message-author">{about.name}</span>
-            <span class="message-time">{t.pinned}</span>
-          </div>
-          <p class="message-title">{t.pinnedHighlightsTitle}</p>
-          <div class="reactions">
-            {about.highlights.map((h) => <span class="highlight-pill">{h}</span>)}
-          </div>
+      <div class="channel-intro">
+        <div class="channel-intro-avatar" aria-hidden="true">{initials}</div>
+        <div class="channel-intro-heading">
+          <p class="channel-intro-name">{about.name}</p>
+          <p class="channel-intro-title">{about.title}</p>
+        </div>
+        <div class="channel-intro-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          {about.activityStatus}
+        </div>
+        <ul class="channel-intro-bullets">
+          {about.bullets.map((bullet) => <li>{bullet}</li>)}
+        </ul>
+        <div class="channel-intro-links">
+          <a class="channel-intro-link" href={about.links.github} target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
+            <span>GitHub</span>
+          </a>
+          <a class="channel-intro-link" href={about.links.blog} target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            <span>Blog</span>
+          </a>
+          <a class="channel-intro-link" href={about.links.linkedin} target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
+            <span>LinkedIn</span>
+          </a>
+          <a class="channel-intro-link" href={`mailto:${about.links.email}`}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Email</span>
+          </a>
         </div>
       </div>
-      {renderGroups.map((group) => (
+      {renderGroups.map((group, gi) => (
         <>
           {group.showTimeline && (
             <div class="timeline-divider">
               <span class="timeline-pill">{group.periodStart}</span>
             </div>
           )}
-          <p class="job-divider">
-            {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
-          </p>
+          {gi !== 0 && (
+            <p class="job-divider">
+              {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
+            </p>
+          )}
           {group.items.map((item, i) => (
             <div class="message">
               <div class="avatar">{initials}</div>
@@ -390,41 +435,91 @@ const renderGroups = projectGroups.map((group) => {
     inert
   >
     <div class="profile-header">
+      <button class="profile-back" id="profile-back" aria-label={t.backLabel}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </button>
+      <span class="profile-header-title">{t.profileTitle}</span>
       <button class="profile-close" id="profile-close" aria-label={t.closeLabel}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
     </div>
     <div class="profile-body">
-      <div class="profile-avatar" aria-hidden="true">{initials}</div>
-      <div>
+      <div class="profile-identity">
+        <div class="profile-avatar" aria-hidden="true">{initials}</div>
         <p class="profile-name" id="profile-name">{about.name}</p>
-        <p class="profile-title">{about.title}</p>
+        <div class="profile-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          {about.status}
+        </div>
       </div>
-      <div class="profile-status">
-        <span class="status-dot" aria-hidden="true"></span>
-        {about.status}
-      </div>
-      <ul class="profile-bullets">
-        {about.bullets.map((bullet) => <li>{bullet}</li>)}
-      </ul>
-      <hr class="profile-divider" />
-      <div class="profile-links">
-        <a class="profile-link" href={about.links.github} target="_blank" rel="noopener">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
-          <span>GitHub</span>
-        </a>
-        <a class="profile-link" href={about.links.blog} target="_blank" rel="noopener">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-          <span>Blog</span>
-        </a>
-        <a class="profile-link" href={about.links.linkedin} target="_blank" rel="noopener">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
-          <span>LinkedIn</span>
-        </a>
-        <a class="profile-link" href={`mailto:${about.links.email}`}>
+
+      <div class="profile-section">
+        <p class="profile-section-title">{t.contactInfoTitle}</p>
+        <a class="profile-contact-row" href={`mailto:${about.links.email}`}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><polyline points="22,6 12,13 2,6"></polyline></svg>
-          <span>Email</span>
+          <div>
+            <p class="profile-contact-value">{about.links.email}</p>
+            <p class="profile-contact-label">{t.emailLabel}</p>
+          </div>
         </a>
+      </div>
+
+      <hr class="profile-divider" />
+
+      <div class="profile-section">
+        <p class="profile-section-title">{t.aboutMeTitle}</p>
+        <dl class="profile-field-list">
+          <div class="profile-field">
+            <dt>{t.fieldLabels.affiliation}</dt>
+            <dd>{about.affiliation}</dd>
+          </div>
+          <div class="profile-field">
+            <dt>{t.fieldLabels.work}</dt>
+            <dd>{about.work}</dd>
+          </div>
+          <div class="profile-field">
+            <dt>{t.fieldLabels.interests}</dt>
+            <dd>{about.interests}</dd>
+          </div>
+          <div class="profile-field">
+            <dt>{t.fieldLabels.strengths}</dt>
+            <dd>{about.strengths}</dd>
+          </div>
+          <div class="profile-field">
+            <dt>GitHub</dt>
+            <dd>
+              <a class="profile-field-link" href={about.links.github} target="_blank" rel="noopener">
+                {displayUrl(about.links.github)}
+              </a>
+            </dd>
+          </div>
+          <div class="profile-field">
+            <dt>Blog</dt>
+            <dd>
+              <a class="profile-field-link" href={about.links.blog} target="_blank" rel="noopener">
+                {displayUrl(about.links.blog)}
+              </a>
+            </dd>
+          </div>
+          <div class="profile-field">
+            <dt>LinkedIn</dt>
+            <dd>
+              <a class="profile-field-link" href={about.links.linkedin} target="_blank" rel="noopener">
+                {displayUrl(about.links.linkedin)}
+              </a>
+            </dd>
+          </div>
+          {about.activities && (
+            <div class="profile-field">
+              <dt>{t.fieldLabels.communities}</dt>
+              <dd>{about.activities}</dd>
+            </div>
+          )}
+          <div class="profile-field">
+            <dt>{t.fieldLabels.whereabouts}</dt>
+            <dd>{about.whereabouts}</dd>
+          </div>
+        </dl>
       </div>
     </div>
   </aside>
@@ -758,6 +853,104 @@ const renderGroups = projectGroups.map((group) => {
     margin-top: var(--space-1);
   }
 
+  .channel-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    max-width: var(--content-max-width);
+    margin: 0 auto var(--space-block);
+    padding-bottom: var(--space-block);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .channel-intro-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-lg);
+    background: var(--avatar-bg);
+    color: var(--avatar-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+
+  .channel-intro-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .channel-intro-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .channel-intro-title {
+    font-size: var(--fs-base);
+    color: var(--text-secondary);
+  }
+
+  .channel-intro-status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--fs-base);
+    color: var(--text-secondary);
+  }
+
+  .channel-intro-status .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--status-online);
+    flex-shrink: 0;
+  }
+
+  .channel-intro-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--fs-bullet);
+    line-height: var(--lh-body);
+    color: var(--text);
+    max-width: var(--bullet-max-width);
+  }
+
+  .channel-intro-bullets li {
+    position: relative;
+    padding-left: 1.25em;
+  }
+
+  .channel-intro-bullets li::before {
+    content: '•';
+    position: absolute;
+    left: 0.15em;
+    color: var(--text-secondary);
+  }
+
+  .channel-intro-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+  }
+
+  .channel-intro-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+  }
+
+  .channel-intro-link:hover {
+    color: var(--accent);
+  }
+
   .message {
     display: flex;
     gap: var(--space-3);
@@ -771,15 +964,8 @@ const renderGroups = projectGroups.map((group) => {
     transition: background-color 0.1s ease;
   }
 
-  .message:not(.pin-card):hover {
+  .message:hover {
     background: var(--bg-elevated);
-  }
-
-  .message.pin-card {
-    background: var(--pin-bg);
-    border: 1px solid var(--pin-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
   }
 
   .avatar {
@@ -872,17 +1058,6 @@ const renderGroups = projectGroups.map((group) => {
     margin: var(--space-tight) 0;
   }
 
-  .highlight-pill {
-    display: inline-flex;
-    align-items: center;
-    color: var(--accent);
-    background: var(--accent-dim);
-    font-weight: 600;
-    font-size: var(--fs-metric);
-    padding: 0.375rem 0.875rem;
-    border-radius: var(--radius-pill);
-  }
-
   .reactions {
     display: flex;
     flex-wrap: wrap;
@@ -945,7 +1120,7 @@ const renderGroups = projectGroups.map((group) => {
     font-size: var(--fs-xs);
     font-weight: 600;
     color: var(--text-muted);
-    background: var(--bg-elevated);
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-pill);
     padding: 2px var(--space-3);
@@ -1012,8 +1187,14 @@ const renderGroups = projectGroups.map((group) => {
 
   .profile-header {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
     padding: var(--space-3);
+  }
+
+  .profile-back,
+  .profile-header-title {
+    display: none;
   }
 
   .profile-close {
@@ -1030,10 +1211,17 @@ const renderGroups = projectGroups.map((group) => {
   }
 
   .profile-body {
-    padding: 0 var(--space-6) var(--space-6);
+    padding: 0 var(--space-6) var(--space-7);
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-7);
+  }
+
+  .profile-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
   }
 
   .profile-avatar {
@@ -1054,17 +1242,11 @@ const renderGroups = projectGroups.map((group) => {
     font-weight: 700;
   }
 
-  .profile-title {
-    color: var(--text-secondary);
-    font-size: var(--fs-base);
-    margin-top: 2px;
-  }
-
   .profile-status {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--fs-sm);
+    font-size: var(--fs-base);
     color: var(--text-secondary);
   }
 
@@ -1076,14 +1258,46 @@ const renderGroups = projectGroups.map((group) => {
     flex-shrink: 0;
   }
 
-  .profile-bullets {
-    list-style: none;
+  .profile-section {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    font-size: var(--fs-bullet);
-    line-height: var(--lh-body);
+  }
+
+  .profile-section-title {
+    font-size: var(--fs-sm);
+    font-weight: 700;
     color: var(--text);
+    margin-bottom: var(--space-3);
+  }
+
+  .profile-contact-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text);
+    margin: calc(-1 * var(--space-2));
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+  }
+
+  .profile-contact-row:hover {
+    background: var(--bg-elevated);
+  }
+
+  .profile-contact-row svg {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+  }
+
+  .profile-contact-value {
+    font-size: var(--fs-bullet);
+    color: var(--text);
+  }
+
+  .profile-contact-label {
+    font-size: var(--fs-xs);
+    color: var(--label-muted);
+    margin-top: 2px;
   }
 
   .profile-divider {
@@ -1091,28 +1305,33 @@ const renderGroups = projectGroups.map((group) => {
     border-top: 1px solid var(--border);
   }
 
-  .profile-links {
+  .profile-field-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 1.125rem;
   }
 
-  .profile-link {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
+  .profile-field dt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--label-muted);
+    margin-bottom: 2px;
+  }
+
+  .profile-field dd {
+    font-size: var(--fs-bullet);
+    line-height: var(--lh-body);
     color: var(--text);
+    margin: 0;
   }
 
-  .profile-link:hover {
-    background: var(--bg-elevated);
+  .profile-field-link {
+    color: var(--slack-link);
+    text-decoration: none;
   }
 
-  .profile-link svg {
-    flex-shrink: 0;
-    color: var(--text-secondary);
+  .profile-field-link:hover {
+    text-decoration: underline;
   }
 
   /* ---------- Mobile ---------- */
@@ -1174,6 +1393,36 @@ const renderGroups = projectGroups.map((group) => {
 
     .profile-body {
       padding: 0 var(--space-4) var(--space-4);
+    }
+
+    .profile-header {
+      justify-content: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-2);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 2;
+    }
+
+    .profile-back {
+      display: flex;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      padding: var(--space-2);
+    }
+
+    .profile-header-title {
+      display: block;
+      font-weight: 700;
+      font-size: var(--fs-md);
+    }
+
+    .profile-close {
+      display: none;
     }
   }
 </style>
@@ -1245,7 +1494,10 @@ const renderGroups = projectGroups.map((group) => {
   const profilePanel = document.getElementById('profile-panel');
   const profileBackdrop = document.getElementById('profile-backdrop');
   const profileClose = document.getElementById('profile-close');
+  const profileBack = document.getElementById('profile-back');
   let lastFocused: HTMLElement | null = null;
+
+  const isVisible = (el: HTMLElement | null): el is HTMLElement => !!el && el.offsetParent !== null;
 
   const openProfile = (trigger?: HTMLElement) => {
     lastFocused = trigger ?? (document.activeElement as HTMLElement);
@@ -1255,7 +1507,7 @@ const renderGroups = projectGroups.map((group) => {
     profilePanel?.removeAttribute('inert');
     document.body.style.overflow = 'hidden';
     profileTriggers.forEach((el) => el.classList.add('is-active'));
-    profileClose?.focus();
+    [profileBack, profileClose].find(isVisible)?.focus();
   };
 
   const closeProfile = () => {
@@ -1272,6 +1524,7 @@ const renderGroups = projectGroups.map((group) => {
 
   profileTriggers.forEach((el) => el.addEventListener('click', () => openProfile(el)));
   profileClose?.addEventListener('click', closeProfile);
+  profileBack?.addEventListener('click', closeProfile);
   profileBackdrop?.addEventListener('click', closeProfile);
 
   document.addEventListener('keydown', (e) => {
@@ -1280,7 +1533,9 @@ const renderGroups = projectGroups.map((group) => {
       closeProfile();
     }
     if (e.key === 'Tab' && profilePanel?.classList.contains('is-open')) {
-      const focusable = profilePanel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+      const focusable = Array.from(
+        profilePanel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')
+      ).filter(isVisible);
       if (focusable.length === 0) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];

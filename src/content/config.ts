@@ -48,7 +48,12 @@ const about = defineCollection({
     bullets: z.array(z.string()),
     activities: z.string().optional(),
     status: z.string(),
-    highlights: z.array(z.string()),
+    activityStatus: z.string(),
+    affiliation: z.string(),
+    work: z.string(),
+    interests: z.string(),
+    strengths: z.string(),
+    whereabouts: z.string(),
     lang: langEnum,
   }),
 });

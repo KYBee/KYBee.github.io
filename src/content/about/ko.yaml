@@ -12,9 +12,11 @@ bullets:
   - 운영 로그를 지표로 만들고, 반복 분석 업무를 파이프라인과 AI Agent로 자동화하는 일을 잘합니다.
   - Clean Code·TDD 기반 리뷰 활동으로 사내 Best Reviewer 자격을 취득했습니다.
 activities: SIPE 5기 · SSAFY 8기 (Java 트랙) · GDSC CAU · 피로그래밍 · UMC · SOPT
-status: 운영 자동화 중
-highlights:
-  - 성공률 70% → 95%
-  - 분석 4h → 10분
-  - 사내 Tool Store 배포
+status: Backend Engineer
+activityStatus: 운영 자동화 중
+affiliation: 삼성전자 · Backend Engineer
+work: 백업/복원 서비스 백엔드 개발·운영
+interests: AI Agent workflow, 운영 자동화
+strengths: 로그를 지표로 만들기, 반복 업무 없애기
+whereabouts: 수원 어딘가
 lang: ko

@@ -78,6 +78,10 @@
 
   /* Status — theme-invariant */
   --status-online: #2bac76;
+
+  /* Profile panel — theme-invariant Slack-style tones */
+  --label-muted: #9ca3af;
+  --slack-link: #1d9bd1;
 }
 
 [data-theme='light'] {
@@ -94,8 +98,6 @@
   --pill-bg: #f0f0f2;
   --pill-text: #454245;
   --focus-ring: #1164a3;
-  --pin-bg: #fef9e0;
-  --pin-border: #f2c94c;
 }
 
 [data-theme='dark'] {
@@ -112,6 +114,4 @@
   --pill-bg: #2c2f33;
   --pill-text: #d1d2d3;
   --focus-ring: #4fb3ff;
-  --pin-bg: rgba(242, 201, 76, 0.1);
-  --pin-border: #d4a72c;
 }
