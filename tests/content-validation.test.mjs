@@ -1,9 +1,12 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { afterEach, test } from 'node:test';
 import { chmod, mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
+const repoRoot = fileURLToPath(new URL('..', import.meta.url));
 const validatorUrl = new URL('../scripts/lib/content-validation.mjs', import.meta.url);
 const fixtureRoots = new Set();
 let validatorPromise;
@@ -117,6 +120,44 @@ test('accepts a complete bilingual content root', async () => {
     'certifications',
   ]);
   assert.deepEqual(await validateContentRoot(contentRoot), []);
+});
+
+test('CLI exits successfully for a complete bilingual content root', async () => {
+  const contentRoot = await createValidFixture();
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.mjs', contentRoot],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Content validation passed/);
+  assert.equal(result.stderr, '');
+});
+
+test('CLI reports a missing translation without exposing absolute paths', async () => {
+  const contentRoot = await createValidFixture();
+  await rm(join(contentRoot, 'projects/current.en.yaml'));
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.mjs', contentRoot],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\[projects\]/);
+  assert.match(result.stderr, /projects\/current\.ko\.yaml/);
+  assert.match(result.stderr, /projects\/current\.en\.yaml/);
+  assert.match(result.stderr, /opposite-language pair/);
+  assert.equal(result.stderr.includes(contentRoot), false);
 });
 
 test('reports a missing opposite-language pair', async () => {
