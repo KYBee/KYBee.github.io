@@ -1,4 +1,4 @@
-# 포트폴리오 콘텐츠 관리·SEO·폰트 최적화 설계
+# 포트폴리오 콘텐츠 관리·기본 메타데이터·폰트 최적화 설계
 
 ## 1. 배경과 결정
 
@@ -26,13 +26,13 @@
 - 한국어와 영어 파일이 어긋난 상태는 배포 전에 탐지한다.
 - CMS가 저장한 변경은 어떤 GitHub 인증 주체가 어떤 파일을 바꿨는지 Git 기록으로 남는다.
 
-### SEO
+### 기본 메타데이터와 링크 공유
 
 - 한국어 `/`와 영어 `/en/`에 각각 올바른 description과 canonical URL을 제공한다.
 - 두 언어 페이지가 서로의 번역본임을 `hreflang`으로 표시한다.
-- Open Graph와 Twitter 기본 메타데이터를 제공한다.
-- sitemap, robots.txt, favicon을 제공한다.
-- 공개된 프로필 정보만 사용해 `ProfilePage`와 `Person` 구조화 데이터를 제공한다.
+- 링크를 공유했을 때 제목, 설명, 이미지가 표시되도록 Open Graph와 Twitter 메타데이터를 제공한다.
+- 브라우저와 검색 결과에서 사용할 favicon을 제공한다.
+- 검색 순위나 방문자 유입을 목표로 하지 않고, 공개 페이지가 우연히 검색되거나 공유될 때 정확하게 표현되도록 한다.
 
 ### 폰트
 
@@ -46,6 +46,9 @@
 - CMS 사용자 초대나 다중 편집자 권한 체계
 - 자동 번역과 번역 API
 - 블로그 기능
+- 검색 키워드 전략, 검색 순위 개선, Search Console 운영
+- `Person`·`ProfilePage` JSON-LD 구조화 데이터
+- sitemap과 robots.txt
 - 콘텐츠 내용 자체의 재작성
 - 컴포넌트 구조 개편이나 임의의 시각 디자인 변경
 - 현재 사용자 작업이 있는 `src/components/Workspace.astro`의 구조 변경
@@ -171,7 +174,7 @@ Pages CMS는 두 파일을 한 번에 저장하지 못한다. 첫 번째 언어�
 
 - `test`: 콘텐츠 검증기와 CMS 설정 단위 테스트 실행
 - `validate:content`: 실제 `src/content/` 전체 검증
-- `test:site`: 이미 생성된 프로덕션 결과의 SEO·폰트 출력 테스트 실행
+- `test:site`: 이미 생성된 프로덕션 결과의 기본 메타데이터·폰트 출력 테스트 실행
 - `verify`: 단위 테스트, 콘텐츠 검증, 프로덕션 빌드, 사이트 출력 테스트를 순서대로 실행
 
 GitHub Actions는 세 역할로 나눈다.
@@ -190,10 +193,10 @@ GitHub Actions의 기본 토큰으로 생성한 pull request는 새 `pull_reques
 2. 검증기·CMS 설정 단위 테스트
 3. 실제 콘텐츠 쌍 검증
 4. Astro 프로덕션 빌드
-5. 생성된 사이트의 SEO·폰트 출력 테스트
+5. 생성된 사이트의 기본 메타데이터·폰트 출력 테스트
 6. `main` workflow인 경우에만 GitHub Pages 배포
 
-## 8. SEO 설계
+## 8. 기본 메타데이터와 링크 공유 설계
 
 ### 8.1 언어별 메타데이터
 
@@ -217,27 +220,18 @@ Open Graph에는 `website`, title, description, URL, locale, site name과 공유
 
 Twitter에는 같은 이미지와 `summary_large_image`, title, description을 제공한다. 공유 이미지는 사이트 본문 레이아웃을 바꾸지 않는 정적 검색·공유 자산이다.
 
-### 8.2 구조화 데이터
+### 8.2 favicon
 
-페이지마다 `@context: https://schema.org`, `@type: ProfilePage`를 출력하고 `mainEntity`로 `@type: Person`을 포함한다.
+- 1:1 `viewBox`와 48px 이상 표시를 고려한 코드 기반 `public/favicon.svg`를 추가한다.
+- `Layout.astro`에서 `<link rel="icon" type="image/svg+xml" href="/favicon.svg">`를 출력한다.
+- favicon과 공유 이미지는 현재 사이트의 색상 계열과 `YB` 표기만 사용하며 타사 로고를 넣지 않는다.
 
-- 한국어 ProfilePage URL: `https://kybee.github.io/`
-- 영어 ProfilePage URL: `https://kybee.github.io/en/`
-- 두 페이지가 공유하는 Person `@id`: `https://kybee.github.io/#person`
-- `name`: 해당 언어 `about.name`
-- `jobTitle`: 해당 언어 `about.title`
-- `description`: 해당 언어 `about.tagline`
-- `url`: 해당 언어 페이지의 canonical URL
-- GitHub, Blog, LinkedIn을 정확한 허용 목록으로 `sameAs`에 연결
-- 현재 콘텐츠에 공개된 값 외의 개인정보는 추가하지 않음
+### 8.3 의도적으로 하지 않는 것
 
-### 8.3 검색엔진 발견 파일
-
-- `@astrojs/sitemap`으로 `/sitemap-index.xml`과 `/sitemap-0.xml` 생성
-- sitemap index는 chunk를 가리키고, chunk는 `/`와 `/en/`의 절대 URL을 포함
-- `public/robots.txt`에서 전체 크롤링을 허용하고 `https://kybee.github.io/sitemap-index.xml` 안내
-- 1:1 `viewBox`와 48px 이상 표시를 고려한 코드 기반 `public/favicon.svg` 추가
-- `Layout.astro`에서 `<link rel="icon" type="image/svg+xml" href="/favicon.svg">` 출력
+- 검색 키워드를 콘텐츠에 추가하지 않는다.
+- JSON-LD 인물 구조화 데이터를 추가하지 않는다.
+- sitemap과 robots.txt를 추가하지 않는다.
+- `noindex`도 추가하지 않는다. 공개 GitHub Pages가 자연스럽게 검색되는 것은 막지 않되, 검색 유입을 위한 별도 최적화는 하지 않는다.
 
 ## 9. 폰트 설계
 
@@ -262,19 +256,17 @@ CSS 토큰의 첫 번째 글꼴을 `'Pretendard Variable'`로 바꾸고 기존 �
 | `scripts/validate-content.mjs` | 저장소 콘텐츠 검증 진입점 |
 | `tests/content-validation.test.mjs` | 검증기 단위 테스트 |
 | `tests/pages-config.test.mjs` | CMS 설정과 컬렉션 매핑 테스트 |
-| `tests/site-output.test.mjs` | 빌드 결과의 SEO·폰트 메타데이터 테스트 |
+| `tests/site-output.test.mjs` | 빌드 결과의 기본 메타데이터·폰트 테스트 |
 | `package.json`, `package-lock.json` | 명령과 직접 의존성 추가 |
 | `.github/workflows/deploy.yml` | 배포 전 검증 |
 | `.github/workflows/content-check.yml` | PR·GitHub UI·CMS 콘텐츠 검증 |
 | `.github/workflows/content-publish.yml` | 현재 편집 브랜치의 pull request 생성 |
-| `astro.config.mjs` | sitemap 통합 |
-| `src/layouts/Layout.astro` | SEO, 구조화 데이터, 폰트 링크 |
+| `src/layouts/Layout.astro` | description, canonical, hreflang, 공유 메타데이터, favicon, 폰트 링크 |
 | `src/pages/index.astro` | 한국어 프로필 메타데이터 전달 |
 | `src/pages/en/index.astro` | 영어 프로필 메타데이터 전달 |
 | `src/styles/tokens.css` | Pretendard Variable 폰트 토큰 |
-| `public/robots.txt` | 크롤러와 sitemap 안내 |
 | `public/favicon.svg` | 사이트 아이콘 |
-| `public/og/portfolio.png` | 1200×630 검색·공유 이미지 |
+| `public/og/portfolio.png` | 1200×630 링크 공유 이미지 |
 
 기존 사용자 변경이 있는 `CLAUDE.md`와 `src/components/Workspace.astro`는 수정하거나 커밋하지 않는다.
 
@@ -292,9 +284,8 @@ CSS 토큰의 첫 번째 글꼴을 `'Pretendard Variable'`로 바꾸고 기존 �
 - `콘텐츠 검사`와 `게시 요청`이 `ref: current` 및 올바른 workflow를 사용하는지 확인한다.
 - 두 workflow의 `payload`가 선택 값인지, `게시 요청`이 `main`과 잘못된 브랜치 이름을 거부하는지 확인한다.
 - 프로덕션 빌드 결과의 두 HTML에서 description, canonical, 전체 hreflang 집합, Open Graph, Twitter와 공유 이미지 절대 URL을 확인한다.
-- JSON-LD를 `JSON.parse`한 뒤 타입, 언어별 URL, 필드 출처, 허용된 `sameAs`, 두 페이지의 동일한 Person `@id`를 확인한다.
+- JSON-LD와 검색 키워드용 메타 태그를 추가하지 않았는지 확인한다.
 - 새 Pretendard URL의 정확한 일치, 구 정적 URL의 부재, 빌드 CSS의 `'Pretendard Variable'` 적용을 확인한다.
-- sitemap index가 chunk를 가리키고, chunk가 `/`와 `/en/`의 절대 URL을 포함하며, robots.txt가 index를 가리키는지 확인한다.
 - favicon 링크, MIME type, 경로와 SVG의 1:1 `viewBox`를 확인한다.
 
 ### 수동 확인
@@ -312,7 +303,8 @@ CSS 토큰의 첫 번째 글꼴을 `'Pretendard Variable'`로 바꾸고 기존 �
 - 사용자는 로컬 명령 없이 Pages CMS에서 지원 콘텐츠를 관리할 수 있다.
 - 콘텐츠 변경은 편집 브랜치의 GitHub 커밋으로 남고, 필수 검사를 통과한 pull request만 `main`에 병합·배포된다.
 - 한국어와 영어 파일의 구조적 불일치가 자동으로 차단된다.
-- `/`와 `/en/`의 SEO 메타데이터, JSON-LD, 공유 이미지, sitemap, robots.txt, favicon이 빌드 결과에 존재한다.
+- `/`와 `/en/`의 description, canonical, hreflang, 공유 메타데이터와 favicon이 빌드 결과에 존재한다.
+- JSON-LD, sitemap, robots.txt와 검색 키워드 전략은 추가하지 않는다.
 - Pretendard 요청은 버전 고정 Variable 동적 서브셋을 사용한다.
 - 캐시 비활성화 상태의 언어별 Pretendard CSS+폰트 전송량은 750KiB 미만이다.
 - `npm run verify`가 성공한다.
@@ -340,8 +332,6 @@ Pages CMS 로그아웃은 CMS 세션만 종료하며 `github.com` 자체의 로�
 - [Pages CMS GitHub Actions 버튼](https://pagescms.org/docs/configuration/actions/)
 - [Google canonical 안내](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)
 - [Google 다국어 페이지 안내](https://developers.google.com/search/docs/specialty/international/localized-versions)
-- [Google ProfilePage 구조화 데이터 안내](https://developers.google.com/search/docs/appearance/structured-data/profile-page)
 - [Open Graph protocol](https://ogp.me/)
 - [Google favicon 안내](https://developers.google.com/search/docs/appearance/favicon-in-search)
-- [Astro sitemap 통합](https://docs.astro.build/en/guides/integrations-guide/sitemap/)
 - [Pretendard 웹폰트 안내](https://github.com/orioncactus/pretendard/blob/main/packages/pretendard/docs/en/README.md)
