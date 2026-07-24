@@ -55,6 +55,7 @@ const reactionSets: [string, string][][] = [
 const initials = 'YB';
 
 const displayUrl = (url: string) => url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
+const formatRole = (role: string) => role.replace(/\s*\(([^)]+)\)\s*$/, ' · $1');
 
 const copy = {
   ko: {
@@ -68,7 +69,7 @@ const copy = {
       education: '학력-자격',
     },
     topics: {
-      experience: firstJob ? `${firstJob.company} ${firstJob.role} · ${firstJob.period}` : '',
+      experience: firstJob ? firstJob.company : '',
       'side-projects': '사이드 프로젝트 & 활동',
       skills: '사용 기술 스택',
       education: education ? `${education.school} · ${education.detail}` : '',
@@ -113,7 +114,7 @@ const copy = {
       education: 'education',
     },
     topics: {
-      experience: firstJob ? `${firstJob.company} ${firstJob.role} · ${firstJob.period}` : '',
+      experience: firstJob ? firstJob.company : '',
       'side-projects': 'Side projects & activities',
       skills: 'Tech stack',
       education: education ? `${education.school} · ${education.detail}` : '',
@@ -292,30 +293,31 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
             <span class="message-author">{about.name}</span>
           </div>
           {projectGroups.map((group, gi) => (
-            <>
-              {gi > 0 && <hr class="job-hr" />}
-              <div class="job-group">
-                <p class="job-divider">
-                  {group.company} — {group.role} · {group.period}{group.location ? ` · ${group.location}` : ''}
+            <div class="job-group">
+              <div class="job-header">
+                <p class="job-company">{group.company}</p>
+                <p class="job-role">{formatRole(group.role)}</p>
+                <p class="job-meta">
+                  {group.period}{group.location ? ` · ${group.location}` : ''}
                 </p>
-                {gi === 0 ? (
-                  <p class="message-summary">{about.work}</p>
-                ) : (
-                  group.items.map((item) => (
-                    <>
-                      {item.summary && <p class="message-summary">{item.summary}</p>}
-                      {item.tags.length > 0 && (
-                        <div class="reactions">
-                          {item.tags.map((tag) => (
-                            <span class="tag-pill">{tag}</span>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ))
-                )}
               </div>
-            </>
+              {gi === 0 ? (
+                <p class="message-summary">{about.work}</p>
+              ) : (
+                group.items.map((item) => (
+                  <>
+                    {item.summary && <p class="message-summary">{item.summary}</p>}
+                    {item.tags.length > 0 && (
+                      <div class="reactions">
+                        {item.tags.map((tag) => (
+                          <span class="tag-pill">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ))
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -1143,19 +1145,28 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     font-weight: 600;
   }
 
-  .job-hr {
-    border: none;
-    border-top: 1px solid var(--border);
-    max-width: var(--content-max-width);
-    margin: var(--space-block) 0;
-  }
-
-  .job-divider {
-    color: var(--text-secondary);
-    font-size: var(--fs-title-md);
-    font-weight: 600;
+  .job-header {
     max-width: var(--content-max-width);
     margin: 0 0 var(--space-tight);
+  }
+
+  .job-company {
+    color: var(--text);
+    font-size: var(--fs-title-md);
+    font-weight: 700;
+  }
+
+  .job-role {
+    color: var(--text-secondary);
+    font-size: var(--fs-bullet);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .job-meta {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    margin-top: 2px;
   }
 
   .channel-footnote {
@@ -1611,4 +1622,3 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     }
   });
 </script>
-
