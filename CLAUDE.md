@@ -180,6 +180,33 @@ channel-intro 블록은 채널 섹션 밖, 메인 콘텐츠 최상단(모든 채
 - `Workspace.astro`의 `copy` 객체(ko/en 텍스트)에 새 채널이나 라벨을 추가할 때는 반드시 `ko`/`en` 양쪽 키를
   함께 추가한다
 
+## Pages CMS 콘텐츠 운영
+
+### 최초 1회 설정
+
+1. `https://app.pagescms.org`에서 저장소 소유자의 GitHub 계정으로 로그인한다.
+2. Pages CMS GitHub App은 `KYBee.github.io` 저장소에만 접근하도록 설치한다.
+3. 저장소의 Actions 설정에서 **Read and write permissions**와
+   **Allow GitHub Actions to create and approve pull requests**를 활성화한다.
+4. `main` ruleset은 pull request를 필수로 하고, 상태 검사
+   **`Content Check / verify`**를 병합 조건으로 지정한다.
+
+### 콘텐츠 수정·게시 순서
+
+1. 항상 최신 `main`에서 `content/<lowercase-hyphen-name>` 형식의 브랜치를 만든다.
+2. 새 항목의 **Filename**에는 같은 identifier를 써서 `<identifier>.ko.yaml`과
+   `<identifier>.en.yaml`을 각각 직접 입력한다. 두 파일의 `order`도 같게 유지하며 함께 추가·수정하고,
+   삭제할 때도 두 언어 파일을 함께 지운다.
+3. Pages CMS에서 **콘텐츠 검사**를 실행한다.
+4. 검사가 성공하면 **게시 요청**을 실행한다.
+5. 같은 head SHA의 **`Content Check / verify`**가 성공한 뒤에만 pull request를 병합한다.
+
+Pages CMS에서 `main`을 직접 수정하지 않는다. **게시 요청**은 `main`에 있는 신뢰된 workflow를 실행하며,
+관찰한 콘텐츠 브랜치의 정확한 커밋을 검사하고 `src/content/` 밖의 변경이 있으면 pull request 생성을 거부한다.
+
+Actions가 만든 pull request에는 별도의 `pull_request` 실행이 승인 대기로 표시될 수 있다. CMS 저장의 필수 근거는
+같은 head SHA에 연결된 `content/**` push의 **`Content Check / verify`** 성공 결과다.
+
 ## 배포
 
 GitHub Actions를 통해 자동 배포됩니다.
