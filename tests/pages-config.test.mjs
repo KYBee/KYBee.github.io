@@ -173,7 +173,7 @@ test('defines only the validation and confirmed publishing actions', async () =>
         name: 'request-publish',
         label: '게시 요청',
         workflow: 'content-publish.yml',
-        ref: 'current',
+        ref: 'main',
       },
     ],
   );

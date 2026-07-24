@@ -17,7 +17,7 @@ actions:
   - name: request-publish
     label: 게시 요청
     workflow: content-publish.yml
-    ref: current
+    ref: main
     confirm:
       title: 게시를 요청할까요?
       message: 현재 브랜치의 콘텐츠 게시 워크플로를 실행합니다.
