@@ -452,7 +452,7 @@ test('dist CSS spaces adjacent job groups with the compact token', async () => {
 
   assert.match(
     combinedCss,
-    /\.job-group(?:\[[^\]]+\])?\s*\+\s*\.job-group(?:\[[^\]]+\])?\s*\{[^}]*margin-top\s*:\s*var\(--space-5\)/,
+    /(?:^|})\.job-group(\[data-astro-cid-[a-z0-9]+\])\s*\+\s*\.job-group\1\s*\{[^}]*margin-top\s*:\s*var\(--space-5\)/,
     'Expected adjacent job groups to use the 24px spacing token',
   );
 });
