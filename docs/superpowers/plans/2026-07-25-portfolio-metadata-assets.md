@@ -226,4 +226,3 @@ git status --short
 ```
 
 Confirm the slice contains only metadata, localized descriptions, tests, and static sharing assets.
-

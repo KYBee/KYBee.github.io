@@ -132,4 +132,3 @@ git status --short
 ```
 
 Confirm there are no package, lockfile, or self-hosted font additions.
-
