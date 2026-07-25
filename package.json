@@ -5,9 +5,17 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "node --test tests/content-validation.test.mjs tests/pages-config.test.mjs tests/workflows.test.mjs",
+    "validate:content": "node scripts/validate-content.mjs",
+    "test:site": "node --test tests/site-output.test.mjs",
+    "verify": "npm test && npm run validate:content && npm run build && npm run test:site"
   },
   "dependencies": {
     "astro": "^4.16.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "yaml": "2.9.0"
   }
 }

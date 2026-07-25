@@ -1,0 +1,467 @@
+settings:
+  content:
+    merge: false
+  commit:
+    identity: app
+    templates:
+      create: "content(create): {path}"
+      update: "content(update): {path}"
+      delete: "content(delete): {path}"
+      rename: "content(rename): {oldPath} -> {newPath}"
+
+actions:
+  - name: validate-content
+    label: 콘텐츠 검사
+    workflow: content-check.yml
+    ref: current
+  - name: request-publish
+    label: 게시 요청
+    workflow: content-publish.yml
+    ref: main
+    confirm:
+      title: 게시를 요청할까요?
+      message: 현재 브랜치의 콘텐츠 게시 워크플로를 실행합니다.
+      button: 게시 요청
+
+content:
+  - name: about-ko
+    label: 소개 (한국어)
+    type: file
+    path: src/content/about/ko.yaml
+    format: yaml
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - name: name
+        label: 이름
+        type: string
+        required: true
+      - name: title
+        label: 직함
+        type: string
+        required: true
+      - name: tagline
+        label: 한 줄 소개
+        type: text
+        required: true
+      - name: location
+        label: 위치
+        type: string
+        required: true
+      - name: links
+        label: 링크
+        type: object
+        required: true
+        fields:
+          - name: github
+            label: GitHub
+            type: string
+            required: true
+          - name: blog
+            label: 블로그
+            type: string
+            required: true
+          - name: linkedin
+            label: LinkedIn
+            type: string
+            required: true
+          - name: email
+            label: 이메일
+            type: string
+            required: true
+      - name: bullets
+        label: 핵심 소개
+        type: text
+        required: true
+        list: true
+      - name: activities
+        label: 활동
+        type: string
+      - name: status
+        label: 상태
+        type: string
+        required: true
+      - name: activityStatus
+        label: 활동 상태
+        type: string
+        required: true
+      - name: affiliation
+        label: 소속
+        type: string
+        required: true
+      - name: work
+        label: 하는 일
+        type: text
+        required: true
+      - name: interests
+        label: 관심사
+        type: text
+        required: true
+      - name: strengths
+        label: 강점
+        type: text
+        required: true
+      - name: whereabouts
+        label: 근황
+        type: text
+        required: true
+      - name: lang
+        label: 언어
+        type: select
+        required: true
+        readonly: true
+        options:
+          values: [ko, en]
+
+  - name: about-en
+    label: About (English)
+    type: file
+    path: src/content/about/en.yaml
+    format: yaml
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: tagline
+        label: Tagline
+        type: text
+        required: true
+      - name: location
+        label: Location
+        type: string
+        required: true
+      - name: links
+        label: Links
+        type: object
+        required: true
+        fields:
+          - name: github
+            label: GitHub
+            type: string
+            required: true
+          - name: blog
+            label: Blog
+            type: string
+            required: true
+          - name: linkedin
+            label: LinkedIn
+            type: string
+            required: true
+          - name: email
+            label: Email
+            type: string
+            required: true
+      - name: bullets
+        label: Highlights
+        type: text
+        required: true
+        list: true
+      - name: activities
+        label: Activities
+        type: string
+      - name: status
+        label: Status
+        type: string
+        required: true
+      - name: activityStatus
+        label: Activity status
+        type: string
+        required: true
+      - name: affiliation
+        label: Affiliation
+        type: string
+        required: true
+      - name: work
+        label: Work
+        type: text
+        required: true
+      - name: interests
+        label: Interests
+        type: text
+        required: true
+      - name: strengths
+        label: Strengths
+        type: text
+        required: true
+      - name: whereabouts
+        label: Whereabouts
+        type: text
+        required: true
+      - name: lang
+        label: Language
+        type: select
+        required: true
+        readonly: true
+        options:
+          values: [ko, en]
+
+  - name: projects
+    label: 경력 프로젝트
+    type: collection
+    path: src/content/projects
+    format: yaml
+    subfolders: false
+    filename:
+      template: "{primary}.{lang}.yaml"
+      field: create
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [company, title, lang, order]
+      primary: company
+      sort: [order]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: company
+        label: 회사
+        type: string
+        required: true
+      - name: role
+        label: 역할
+        type: string
+        required: true
+      - name: period
+        label: 기간
+        type: string
+        required: true
+      - name: location
+        label: 위치
+        type: string
+      - name: title
+        label: 프로젝트명
+        type: string
+      - name: summary
+        label: 요약
+        type: text
+      - name: bullets
+        label: 주요 내용
+        type: text
+        list:
+          max: 4
+          collapsible: false
+      - name: metric
+        label: 성과 지표
+        type: string
+      - name: tags
+        label: 태그
+        type: string
+        list: true
+        default: []
+      - name: lang
+        label: 언어
+        type: select
+        required: true
+        options:
+          values: [ko, en]
+      - name: order
+        label: 정렬 순서
+        type: number
+        required: true
+
+  - name: side-projects
+    label: 사이드 프로젝트
+    type: collection
+    path: src/content/sideProjects
+    format: yaml
+    subfolders: false
+    filename:
+      template: "{primary}.{lang}.yaml"
+      field: create
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [name, lang, order]
+      primary: name
+      sort: [order]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: name
+        label: 이름
+        type: string
+        required: true
+      - name: tech
+        label: 기술
+        type: string
+        required: true
+      - name: description
+        label: 설명
+        type: text
+        required: true
+      - name: url
+        label: URL
+        type: string
+      - name: badge
+        label: 배지
+        type: string
+      - name: lang
+        label: 언어
+        type: select
+        required: true
+        options:
+          values: [ko, en]
+      - name: order
+        label: 정렬 순서
+        type: number
+        required: true
+
+  - name: skills
+    label: 기술
+    type: collection
+    path: src/content/skills
+    format: yaml
+    subfolders: false
+    filename:
+      template: "{primary}.{lang}.yaml"
+      field: create
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [category, lang, order]
+      primary: category
+      sort: [order]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: category
+        label: 분류
+        type: string
+        required: true
+      - name: items
+        label: 항목
+        type: string
+        required: true
+        list: true
+      - name: lang
+        label: 언어
+        type: select
+        required: true
+        options:
+          values: [ko, en]
+      - name: order
+        label: 정렬 순서
+        type: number
+        required: true
+
+  - name: education
+    label: 학력
+    type: collection
+    path: src/content/education
+    format: yaml
+    subfolders: false
+    operations:
+      create: false
+      rename: false
+      delete: false
+    view:
+      fields: [school, lang, order]
+      primary: school
+      sort: [order]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: school
+        label: 학교
+        type: string
+        required: true
+      - name: department
+        label: 전공
+        type: string
+        required: true
+      - name: period
+        label: 기간
+        type: string
+        required: true
+      - name: detail
+        label: 상세
+        type: text
+        required: true
+      - name: courses
+        label: 교육 과정
+        type: object
+        list: true
+        fields:
+          - name: category
+            label: 분류
+            type: string
+            required: true
+          - name: items
+            label: 항목
+            type: string
+            required: true
+            list: true
+      - name: languages
+        label: 언어
+        type: string
+      - name: lang
+        label: 콘텐츠 언어
+        type: select
+        required: true
+        readonly: true
+        options:
+          values: [ko, en]
+      - name: order
+        label: 정렬 순서
+        type: number
+        required: true
+
+  - name: certifications
+    label: 자격증
+    type: collection
+    path: src/content/certifications
+    format: yaml
+    subfolders: false
+    filename:
+      template: "{primary}.{lang}.yaml"
+      field: create
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [name, lang, order]
+      primary: name
+      sort: [order]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: name
+        label: 자격명
+        type: string
+        required: true
+      - name: date
+        label: 취득일
+        type: string
+      - name: lang
+        label: 언어
+        type: select
+        required: true
+        options:
+          values: [ko, en]
+      - name: order
+        label: 정렬 순서
+        type: number
+        required: true

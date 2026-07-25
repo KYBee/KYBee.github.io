@@ -61,7 +61,7 @@
 
 | 채널 | 소스 | 내용 |
 |---|---|---|
-| `# 경력` | `projects/` (그룹 단위) | 회사 나열만. 회사별로 job-divider(회사·역할·기간·근무지) + 한 줄 소개 메시지 1개. 프로젝트 상세/성과 수치는 넣지 않는다 |
+| `# 경력` | `projects/` (그룹 단위) | 회사 나열만. 회사별로 3줄 헤더(회사 / 역할 / 기간·근무지) + 한 줄 소개 메시지 1개. 프로젝트 상세/성과 수치는 넣지 않는다 |
 | `# 업무-프로젝트` | `projects/` 중 첫 번째 그룹(현재 재직 중인 회사)의 개별 항목 | 프로젝트 상세 카드. 타임스탬프 자리에 `{회사} · {기간}` 표기 |
 | `# 사이드-프로젝트` | `sideProjects/` | 사이드 프로젝트 카드 목록 + 활동 한 줄(`about.activities`) |
 | `# 기술` | `skills/` | 카테고리별 기술 태그 |
@@ -91,22 +91,25 @@
 - 카드 디자인·리액션 이모지·태그 스타일은 변경하지 않고 그대로 재사용한다
 
 **`# 경력`·`# 기술`은 예외**: 회사/항목마다 아바타·이름을 반복해서 게시글로 나누지 않는다. 채널 전체가
-아바타 + 이름(`message-meta`) **한 번**만 나오는 메시지 하나로 감싸이고, 그 안에서 각 회사(또는 카테고리)는
-아바타/이름/타임스탬프 없이 구분선 + 본문만 나열된다:
+아바타 + 이름(`message-meta`) **한 번**만 나오는 메시지 하나로 감싸인다. 그 안에서 각 회사는
+아바타/이름/타임스탬프 없이 3줄 헤더 + 본문으로 나열되고, 기술 카테고리는 기존 `skill-group` 구조를 유지한다:
 
 ```
 [아바타] 이름                         ← message 하나, 한 번만
-         회사 — 역할 · 기간 · 근무지    ← job-divider (.job-group으로 묶음)
+         회사                          ← job-company
+         역할                          ← job-role
+         기간 · 근무지                  ← job-meta (.job-header로 묶음)
          한 줄 요약
-         ────────────                 ← 단순 hr (.job-hr), 얇고 subtle한 구분선만
-         회사 — 역할 · 기간 · 근무지
+         회사
+         역할
+         기간 · 근무지
          한 줄 요약 + 기술 태그
 ```
 
-- `# 경력` 채널의 회사 항목 구분은 **심플한 `<hr class="job-hr">`만 사용**한다. 날짜 뱃지 + 가로선으로 된
-  Slack date divider(`.timeline-divider`/`.timeline-pill`)는 이 채널에 쓰지 않는다 — 날짜/기간 정보는 이미
-  job-divider 텍스트 안에 있어 별도 표시가 중복이며 시각적으로 과하다
-- `# 경력`의 회사 요약은 job-divider에 회사·역할·기간·근무지가 이미 들어있으므로 별도 message-time을 쓰지 않는다.
+- `# 경력` 채널의 회사 헤더는 `job-company` → `job-role` → `job-meta`의 **3줄 계층**으로 렌더링한다.
+  역할 끝의 괄호 정보는 가운데점(`·`)으로 분리하고, `job-meta`에는 기간과 선택적 근무지를 표시한다
+- 회사 그룹 사이에는 `<hr>` 등 **어떤 구분선도 렌더링하지 않는다**. 각 그룹의 3줄 헤더와 본문 흐름만으로 구분한다
+- `# 경력`의 회사 요약은 3줄 헤더에 회사·역할·기간·근무지가 이미 들어있으므로 별도 message-time을 쓰지 않는다.
   재직 중인 회사(`gi === 0`)는 `about.work` 한 줄, 나머지는 `item.summary` + 태그를 사용한다
 - `# 기술`도 동일 패턴(아바타+이름 한 번 + `skill-group` 목록)이며, 새 채널에서 "항목별로 게시글을 분리할지 vs
   하나의 메시지 안에 목록으로 나열할지" 판단이 필요하면 이 두 채널을 기준으로 삼는다 — 같은 화자가 여러 항목을
@@ -116,7 +119,7 @@
 ### 레이아웃
 
 - 메인 콘텐츠(`.channel` 내부 요소)는 사이드바 옆에 **좌측 정렬**한다. `.message`, `.channel-header`,
-  `.channel-intro`, `.job-divider` 등에 `margin-left/right: auto`로 가운데 정렬을 걸지 않는다
+  `.channel-intro`, `.job-header` 등에 `margin-left/right: auto`로 가운데 정렬을 걸지 않는다
 - 가독성용 `max-width`(`--content-max-width`, 현재 800px)는 메시지 본문/헤더 등 **개별 요소에만** 적용한다.
   `.content`나 `.channel` 같은 컨테이너 자체에 max-width를 걸지 않는다
 - **모바일(`max-width: 768px`) 콘텐츠 컨테이너 좌우 패딩은 최소 16px을 확보하고, `.content` 최상위 컨테이너
@@ -176,6 +179,33 @@ channel-intro 블록은 채널 섹션 밖, 메인 콘텐츠 최상단(모든 채
 - `public/profile.*` 이미지는 언어에 관계없이 하나만 두면 양쪽 페이지에 공용으로 쓰인다
 - `Workspace.astro`의 `copy` 객체(ko/en 텍스트)에 새 채널이나 라벨을 추가할 때는 반드시 `ko`/`en` 양쪽 키를
   함께 추가한다
+
+## Pages CMS 콘텐츠 운영
+
+### 최초 1회 설정
+
+1. `https://app.pagescms.org`에서 저장소 소유자의 GitHub 계정으로 로그인한다.
+2. Pages CMS GitHub App은 `KYBee.github.io` 저장소에만 접근하도록 설치한다.
+3. 저장소의 Actions 설정에서 **Read and write permissions**와
+   **Allow GitHub Actions to create and approve pull requests**를 활성화한다.
+4. `main` ruleset은 pull request를 필수로 하고, 상태 검사
+   **`Content Check / verify`**를 병합 조건으로 지정한다.
+
+### 콘텐츠 수정·게시 순서
+
+1. 항상 최신 `main`에서 `content/<lowercase-hyphen-name>` 형식의 브랜치를 만든다.
+2. 새 항목의 **Filename**에는 같은 identifier를 써서 `<identifier>.ko.yaml`과
+   `<identifier>.en.yaml`을 각각 직접 입력한다. 두 파일의 `order`도 같게 유지하며 함께 추가·수정하고,
+   삭제할 때도 두 언어 파일을 함께 지운다.
+3. Pages CMS에서 **콘텐츠 검사**를 실행한다.
+4. 검사가 성공하면 **게시 요청**을 실행한다.
+5. 같은 head SHA의 **`Content Check / verify`**가 성공한 뒤에만 pull request를 병합한다.
+
+Pages CMS에서 `main`을 직접 수정하지 않는다. **게시 요청**은 `main`에 있는 신뢰된 workflow를 실행하며,
+관찰한 콘텐츠 브랜치의 정확한 커밋을 검사하고 `src/content/` 밖의 변경이 있으면 pull request 생성을 거부한다.
+
+Actions가 만든 pull request에는 별도의 `pull_request` 실행이 승인 대기로 표시될 수 있다. CMS 저장의 필수 근거는
+같은 head SHA에 연결된 `content/**` push의 **`Content Check / verify`** 성공 결과다.
 
 ## 배포
 

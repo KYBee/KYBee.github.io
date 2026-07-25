@@ -1,0 +1,277 @@
+name: Content Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS payload as JSON
+        required: false
+        default: "{}"
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: content-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGES_PAYLOAD: ${{ inputs.payload }}
+      REPO: ${{ github.repository }}
+      REPO_OWNER: ${{ github.repository_owner }}
+      REF_TYPE: ${{ github.ref_type }}
+      WORKFLOW_REF: ${{ github.ref_name }}
+      WORKFLOW_SHA: ${{ github.sha }}
+      BASE_BRANCH: main
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate request and open pull request
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          fail() {
+            echo "$1" >&2
+            exit 1
+          }
+
+          if [[ "$REF_TYPE" != "branch" ]]; then
+            fail "Content publishing requires a branch workflow ref."
+          fi
+          if [[ "$WORKFLOW_REF" != "$BASE_BRANCH" ]]; then
+            fail "Content publishing must run from the main workflow ref."
+          fi
+          if [[ ! "$WORKFLOW_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            fail "The workflow SHA must be a 40-character hexadecimal commit."
+          fi
+
+          repo_prefix="$REPO_OWNER/"
+          if [[ "$REPO" != "$repo_prefix"* ]]; then
+            fail "The workflow repository owner is inconsistent."
+          fi
+          repo_name="${REPO#"$repo_prefix"}"
+          if [[ -z "$repo_name" || "$repo_name" == */* ]]; then
+            fail "The workflow repository name is invalid."
+          fi
+
+          if ! jq -e \
+            --arg owner "$REPO_OWNER" \
+            --arg repo "$repo_name" \
+            --arg workflow_ref "$BASE_BRANCH" \
+            --arg workflow_sha "$WORKFLOW_SHA" \
+            '
+              type == "object" and
+              (.source | type) == "string" and
+              (.action | type) == "object" and
+              (.action.name | type) == "string" and
+              (.repository | type) == "object" and
+              (.repository.owner | type) == "string" and
+              (.repository.repo | type) == "string" and
+              (.repository.ref | type) == "string" and
+              (.repository.workflowRef | type) == "string" and
+              (.repository.sha | type) == "string" and
+              .source == "pages-cms" and
+              .action.name == "request-publish" and
+              .repository.owner == $owner and
+              .repository.repo == $repo and
+              .repository.workflowRef == $workflow_ref and
+              .repository.sha == $workflow_sha
+            ' <<< "$PAGES_PAYLOAD" > /dev/null
+          then
+            fail "Invalid or untrusted Pages CMS action payload."
+          fi
+
+          SOURCE_BRANCH="$(jq -er '.repository.ref' <<< "$PAGES_PAYLOAD")"
+          if ! jq -e --arg source_branch "$SOURCE_BRANCH" \
+            '.repository.ref == $source_branch' \
+            <<< "$PAGES_PAYLOAD" > /dev/null
+          then
+            fail "The source branch could not be decoded exactly."
+          fi
+          if [[ ! "$SOURCE_BRANCH" =~ ^content/[a-z0-9][a-z0-9-]*$ ]]; then
+            fail "Branch must match content/<lowercase-hyphen-name>."
+          fi
+          if [[ "$SOURCE_BRANCH" == "$BASE_BRANCH" ]]; then
+            fail "Refusing to publish directly from the base branch."
+          fi
+
+          git fetch --no-tags origin \
+            "+refs/heads/$BASE_BRANCH:refs/remotes/origin/$BASE_BRANCH" \
+            "+refs/heads/$SOURCE_BRANCH:refs/remotes/origin/$SOURCE_BRANCH"
+
+          SOURCE_SHA="$(git rev-parse --verify "refs/remotes/origin/$SOURCE_BRANCH^{commit}")"
+          if [[ ! "$SOURCE_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            fail "The fetched source branch did not resolve to a commit."
+          fi
+          git checkout --detach "$SOURCE_SHA"
+          if [[ "$(git rev-parse HEAD)" != "$SOURCE_SHA" ]]; then
+            fail "The checked-out source does not match the fetched branch."
+          fi
+
+          diff_file="$(mktemp)"
+          trap 'rm -f "$diff_file"' EXIT
+          git diff --no-renames --name-only -z "origin/$BASE_BRANCH...HEAD" > "$diff_file"
+
+          content_changes=0
+          while IFS= read -r -d '' path; do
+            case "$path" in
+              src/content/*)
+                content_changes=$((content_changes + 1))
+                ;;
+              *)
+                printf 'Refusing to publish a non-content path: %q\n' "$path" >&2
+                exit 1
+                ;;
+            esac
+          done < "$diff_file"
+
+          if (( content_changes == 0 )); then
+            fail "At least one src/content/** change is required."
+          fi
+
+          find_pr() {
+            local response
+            response="$(
+              gh api \
+                --method GET \
+                -H "Accept: application/vnd.github+json" \
+                "/repos/$REPO/pulls" \
+                -f state=open \
+                -f base="$BASE_BRANCH" \
+                -f head="$REPO_OWNER:$SOURCE_BRANCH"
+            )"
+            jq -c \
+              --arg repo "$REPO" \
+              --arg source_branch "$SOURCE_BRANCH" \
+              --arg base_branch "$BASE_BRANCH" \
+              '
+                if type != "array" then
+                  error("pull response must be an array")
+                else
+                  [
+                    .[] |
+                    select(
+                      .head.repo.full_name == $repo and
+                      .head.ref == $source_branch and
+                      .base.repo.full_name == $repo and
+                      .base.ref == $base_branch
+                    )
+                  ] as $matches |
+                  if ($matches | length) > 1 then
+                    error("multiple matching pull requests")
+                  else
+                    ($matches[0] // empty)
+                  end
+                end
+              ' <<< "$response"
+          }
+
+          verified_pr_url() {
+            local pull_request="$1"
+            local context="$2"
+            local head_sha
+            local url
+
+            if ! head_sha="$(
+              jq -er '
+                .head.sha |
+                select(type == "string")
+              ' <<< "$pull_request"
+            )"
+            then
+              echo "$context pull request has an invalid head SHA." >&2
+              return 1
+            fi
+            if [[ "$head_sha" != "$SOURCE_SHA" ]]; then
+              echo "$context pull request head SHA does not match the fetched source SHA." >&2
+              return 1
+            fi
+            if ! url="$(
+              jq -er '
+                .html_url |
+                select(type == "string" and length > 0)
+              ' <<< "$pull_request"
+            )"
+            then
+              echo "$context pull request has an invalid URL." >&2
+              return 1
+            fi
+            echo "$url"
+          }
+
+          existing_pr="$(find_pr)"
+          if [[ -n "$existing_pr" ]]; then
+            if ! verified_url="$(verified_pr_url "$existing_pr" "Existing")"; then
+              exit 1
+            fi
+            echo "$verified_url"
+            exit 0
+          fi
+
+          set +e
+          create_output="$(
+            gh pr create \
+              --repo "$REPO" \
+              --base "$BASE_BRANCH" \
+              --head "$SOURCE_BRANCH" \
+              --title "Content update from $SOURCE_BRANCH" \
+              --body "Pages CMS content changes. Merge only after Content Check succeeds." \
+              2>&1
+          )"
+          create_status=$?
+          set -e
+
+          if (( create_status != 0 )); then
+            raced_pr="$(find_pr)"
+            if [[ -n "$raced_pr" ]]; then
+              if ! verified_url="$(verified_pr_url "$raced_pr" "Raced")"; then
+                exit 1
+              fi
+              echo "$verified_url"
+              exit 0
+            fi
+
+            echo "$create_output" >&2
+            exit "$create_status"
+          fi
+
+          created_pr="$(find_pr)"
+          if [[ -z "$created_pr" ]]; then
+            fail "The newly created pull request could not be verified."
+          fi
+          if ! verified_url="$(verified_pr_url "$created_pr" "Created")"; then
+            if ! created_number="$(
+              jq -er '
+                .number |
+                select(type == "number" and . > 0 and . == floor)
+              ' <<< "$created_pr"
+            )"
+            then
+              fail "The newly created pull request could not be closed safely."
+            fi
+            set +e
+            close_output="$(
+              gh pr close "$created_number" \
+                --repo "$REPO" \
+                2>&1
+            )"
+            close_status=$?
+            set -e
+            if (( close_status != 0 )); then
+              echo "$close_output" >&2
+              fail "The mismatched pull request could not be closed."
+            fi
+            fail "Closed the newly created pull request because its head SHA changed."
+          fi
+
+          echo "$verified_url"
