@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import test from 'node:test';
 
 function escapeRegExp(value) {
@@ -30,6 +30,176 @@ function findTags(html, tagName) {
     end: match.index + match[0].length,
     source: match[0],
   }));
+}
+
+function findXmlConstructEnd(source, start, terminator, label) {
+  const end = source.indexOf(terminator, start);
+  assert.notEqual(end, -1, `Expected a closed XML ${label}`);
+  return end + terminator.length;
+}
+
+function readXmlTag(source, start) {
+  let quote;
+
+  for (let index = start + 1; index < source.length; index += 1) {
+    const character = source[index];
+
+    if (quote) {
+      if (character === quote) quote = undefined;
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === '<') {
+      assert.fail(`Malformed XML tag at offset ${start}`);
+    } else if (character === '>') {
+      return {
+        end: index + 1,
+        source: source.slice(start, index + 1),
+      };
+    }
+  }
+
+  assert.fail(`Unclosed XML tag at offset ${start}`);
+}
+
+function assertValidXmlEntities(value, label) {
+  assert.doesNotMatch(
+    value,
+    /&(?!(?:amp|lt|gt|apos|quot);|#\d+;|#x[0-9A-Fa-f]+;)/,
+    `Malformed XML entity in ${label}`,
+  );
+}
+
+function parseXmlAttributes(tag) {
+  const attributes = [];
+  const names = new Set();
+  const attributePattern =
+    /([A-Za-z_:][A-Za-z0-9:._-]*)\s*=\s*(["'])([\s\S]*?)\2/g;
+
+  for (const match of tag.matchAll(attributePattern)) {
+    const name = match[1];
+    assert.equal(
+      names.has(name),
+      false,
+      `Expected no duplicate XML attribute ${name}`,
+    );
+    names.add(name);
+    assertValidXmlEntities(match[3], `attribute ${name}`);
+    attributes.push({ name, value: match[3] });
+  }
+
+  return attributes;
+}
+
+function getXmlAttribute(element, name) {
+  return element.attributes.find((attribute) => attribute.name === name)?.value;
+}
+
+function parseXmlStartElements(source) {
+  const elements = [];
+  const openElements = [];
+  let cursor = 0;
+  let hasRoot = false;
+
+  while (cursor < source.length) {
+    const tagStart = source.indexOf('<', cursor);
+    const textEnd = tagStart === -1 ? source.length : tagStart;
+    const characterData = source.slice(cursor, textEnd);
+    if (openElements.length === 0) {
+      assert.equal(
+        characterData.trim(),
+        '',
+        'Expected no text outside the XML root',
+      );
+    } else {
+      assertValidXmlEntities(characterData, 'character data');
+    }
+    if (tagStart === -1) break;
+
+    if (source.startsWith('<!--', tagStart)) {
+      cursor = findXmlConstructEnd(source, tagStart + 4, '-->', 'comment');
+      continue;
+    }
+    if (source.startsWith('<![CDATA[', tagStart)) {
+      assert.ok(openElements.length > 0, 'Expected CDATA inside the XML root');
+      cursor = findXmlConstructEnd(source, tagStart + 9, ']]>', 'CDATA');
+      continue;
+    }
+    if (source.startsWith('<?', tagStart)) {
+      cursor = findXmlConstructEnd(
+        source,
+        tagStart + 2,
+        '?>',
+        'processing instruction',
+      );
+      continue;
+    }
+    assert.ok(
+      !source.startsWith('<!', tagStart),
+      'Expected no unsupported XML declaration',
+    );
+
+    const tag = readXmlTag(source, tagStart);
+    if (tag.source.startsWith('</')) {
+      const closingMatch =
+        /^<\/([A-Za-z_][A-Za-z0-9:._-]*)\s*>$/.exec(tag.source);
+      assert.ok(closingMatch, 'Expected a valid XML closing element');
+      const openingName = openElements.pop();
+      assert.notEqual(
+        openingName,
+        undefined,
+        `Unexpected XML closing element </${closingMatch[1]}>`,
+      );
+      assert.equal(
+        closingMatch[1],
+        openingName,
+        `Mismatched XML closing element </${closingMatch[1]}> for <${openingName}>`,
+      );
+    } else {
+      if (openElements.length === 0) {
+        assert.equal(hasRoot, false, 'Expected exactly one XML root element');
+        hasRoot = true;
+      }
+
+      const openingMatch =
+        /^<([A-Za-z_][A-Za-z0-9:._-]*)(?=[\s/>])(?:\s+[A-Za-z_:][A-Za-z0-9:._-]*\s*=\s*(?:"[^"<]*"|'[^'<]*'))*\s*(\/?)>$/.exec(
+          tag.source,
+        );
+      assert.ok(openingMatch, 'Expected a valid XML start element');
+      const qualifiedName = openingMatch[1];
+      const element = {
+        attributes: parseXmlAttributes(tag.source),
+        name: qualifiedName.toLowerCase().split(':').at(-1),
+        qualifiedName,
+      };
+      elements.push(element);
+      if (!openingMatch[2]) openElements.push(qualifiedName);
+    }
+    cursor = tag.end;
+  }
+
+  assert.equal(hasRoot, true, 'Expected an XML root element');
+  assert.equal(
+    openElements.length,
+    0,
+    `Unclosed XML element <${openElements.at(-1)}>`,
+  );
+  return elements;
+}
+
+function assertInternalSvgReferences(elements) {
+  for (const element of elements) {
+    for (const { name, value } of element.attributes) {
+      if (name.split(':').at(-1).toLowerCase() === 'href') {
+        assert.match(
+          value.trim(),
+          /^#[^\s]+$/,
+          `Expected ${name} to reference only content inside the SVG`,
+        );
+      }
+    }
+  }
 }
 
 function extractMetadataHead(html) {
@@ -319,3 +489,170 @@ for (const page of metadataCases) {
     );
   });
 }
+
+function assertSvgHelperRegressions() {
+  assert.throws(
+    () => parseXmlStartElements('<svg><path></svg>'),
+    /Mismatched XML closing element/,
+  );
+  assert.throws(
+    () => parseXmlStartElements('<svg><path></path>'),
+    /Unclosed XML element/,
+  );
+  const elements = parseXmlStartElements(
+    [
+      '<svg>',
+      '<!-- <path d="comment" /> -->',
+      '<![CDATA[<path d="cdata" />]]>',
+      '<?icon <path d="processing-instruction" />?>',
+      '</svg>',
+    ].join(''),
+  );
+
+  assert.deepEqual(
+    elements.map((element) => element.name),
+    ['svg'],
+  );
+  const externallyReferencedElements = parseXmlStartElements(
+    [
+      '<svg xmlns:r="http://www.w3.org/1999/xlink">',
+      '<path r:href="https://example.com/icon.svg#mark" />',
+      '</svg>',
+    ].join(''),
+  );
+
+  assert.throws(
+    () => assertInternalSvgReferences(externallyReferencedElements),
+    /Expected r:href to reference only content inside the SVG/,
+  );
+  assert.throws(
+    () => parseXmlStartElements('<svg><path />&</svg>'),
+    /Malformed XML entity/,
+  );
+  assert.throws(
+    () => parseXmlStartElements('<svg aria-label="A & B"><path /></svg>'),
+    /Malformed XML entity/,
+  );
+  const caseVariantHrefElements = parseXmlStartElements(
+    [
+      '<svg>',
+      '<use href="https://example.com/icon.svg#mark" HREF="#local" />',
+      '</svg>',
+    ].join(''),
+  );
+
+  assert.throws(
+    () => assertInternalSvgReferences(caseVariantHrefElements),
+    /Expected href to reference only content inside the SVG/,
+  );
+}
+
+test('dist/favicon.svg is a safe, square, path-based SVG favicon', async () => {
+  assertSvgHelperRegressions();
+  const source = await readFile('dist/favicon.svg', 'utf8');
+  const elements = parseXmlStartElements(source);
+  const root = elements[0];
+
+  assert.ok(root, 'Expected favicon source to contain an SVG element');
+  assert.equal(root.name, 'svg', 'Expected favicon source root to be <svg>');
+  assert.ok(
+    elements.some((element) => element.name === 'path'),
+    'Expected favicon SVG to contain at least one <path>',
+  );
+
+  const numberPattern =
+    /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
+  const viewBox = getXmlAttribute(root, 'viewBox');
+
+  assert.notEqual(viewBox, undefined, 'Expected SVG to define a viewBox');
+  const viewBoxValues = viewBox.trim().split(/[\s,]+/);
+  assert.equal(viewBoxValues.length, 4, 'Expected four viewBox numbers');
+  assert.ok(
+    viewBoxValues.every((value) => numberPattern.test(value)),
+    'Expected viewBox values to be numeric',
+  );
+
+  const [, , viewBoxWidth, viewBoxHeight] = viewBoxValues.map(Number);
+  assert.ok(viewBoxWidth > 0, 'Expected a positive viewBox size');
+  assert.equal(
+    viewBoxWidth,
+    viewBoxHeight,
+    'Expected a square SVG viewBox',
+  );
+
+  const width = getXmlAttribute(root, 'width');
+  const height = getXmlAttribute(root, 'height');
+  assert.equal(
+    width === undefined,
+    height === undefined,
+    'Expected SVG width and height to either both be present or both be omitted',
+  );
+  if (width !== undefined) {
+    assert.match(width, numberPattern, 'Expected SVG width to be numeric');
+    assert.match(height, numberPattern, 'Expected SVG height to be numeric');
+    assert.equal(Number(width), Number(height), 'Expected a square SVG size');
+    assert.ok(Number(width) >= 48, 'Expected SVG size to be at least 48');
+  }
+
+  const forbiddenElements = new Set([
+    'animation',
+    'discard',
+    'image',
+    'mpath',
+    'script',
+    'set',
+    'text',
+  ]);
+  for (const element of elements) {
+    assert.ok(
+      !forbiddenElements.has(element.name) &&
+        !element.name.startsWith('animate'),
+      `Expected no <${element.name}> element in favicon SVG`,
+    );
+
+    for (const { name } of element.attributes) {
+      assert.doesNotMatch(
+        name,
+        /^on[a-z]/i,
+        `Expected no inline event handler attribute ${name}`,
+      );
+    }
+  }
+  assertInternalSvgReferences(elements);
+});
+
+test('dist/og/portfolio.png is a 1200x630 PNG', async () => {
+  const png = await readFile('dist/og/portfolio.png');
+  const pngSignature = Buffer.from([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+  ]);
+
+  assert.deepEqual(
+    png.subarray(0, pngSignature.length),
+    pngSignature,
+    'Expected the PNG file signature',
+  );
+  assert.ok(png.length >= 33, 'Expected a complete PNG IHDR chunk');
+  assert.equal(png.toString('ascii', 12, 16), 'IHDR');
+  assert.equal(png.readUInt32BE(8), 13, 'Expected a 13-byte IHDR payload');
+  assert.equal(png.readUInt32BE(16), 1200, 'Expected a 1200px PNG width');
+  assert.equal(png.readUInt32BE(20), 630, 'Expected a 630px PNG height');
+});
+
+test('dist does not contain root crawler-control artifacts', async () => {
+  const rootEntries = await readdir('dist', { withFileTypes: true });
+  const rootFiles = rootEntries
+    .filter((entry) => entry.isFile() || entry.isSymbolicLink())
+    .map((entry) => entry.name);
+
+  assert.equal(
+    rootFiles.includes('robots.txt'),
+    false,
+    'Expected no root robots.txt file',
+  );
+  assert.deepEqual(
+    rootFiles.filter((name) => name.toLowerCase().startsWith('sitemap')),
+    [],
+    'Expected no root sitemap files',
+  );
+});
