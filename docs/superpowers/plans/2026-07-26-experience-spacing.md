@@ -38,7 +38,7 @@ test('dist CSS spaces adjacent job groups with the compact token', async () => {
 
   assert.match(
     combinedCss,
-    /\.job-group(?:\[[^\]]+\])?\s*\+\s*\.job-group(?:\[[^\]]+\])?\s*\{[^}]*margin-top\s*:\s*var\(--space-5\)/,
+    /(?:^|})\.job-group(\[data-astro-cid-[a-z0-9]+\])\s*\+\s*\.job-group\1\s*\{[^}]*margin-top\s*:\s*var\(--space-5\)/,
     'Expected adjacent job groups to use the 24px spacing token',
   );
 });
@@ -161,9 +161,11 @@ Run:
 
 ```bash
 git status --short
-git log -3 --oneline
+git log -5 --oneline
 ```
 
-Expected: the worktree is clean. The latest three commits are the implementation
-commit, this implementation plan, and the design document, with no unrelated
-changes.
+Expected: the worktree is clean. The latest five commits, newest first, are
+`docs: sync experience spacing plan`, `test: tighten experience spacing
+contract`, `fix: space adjacent experience entries`, `docs: plan experience
+spacing change`, and `docs: define experience spacing design`. There are no
+unrelated changes.
