@@ -202,11 +202,15 @@ function assertInternalSvgReferences(elements) {
   }
 }
 
-function extractMetadataHead(html) {
-  const sanitizedHtml = html.replace(
+function sanitizeMetadataMarkup(html) {
+  return html.replace(
     /<!--[\s\S]*?-->|(<(script|style)(?=[\s/>])(?:[^>"']|"[^"]*"|'[^']*')*>)[\s\S]*?<\/\2\s*>/gi,
     (_match, openingTag) => openingTag ?? '',
   );
+}
+
+function extractMetadataHead(html) {
+  const sanitizedHtml = sanitizeMetadataMarkup(html);
   const headTags = findTags(sanitizedHtml, 'head');
   const openingHead = headTags[0];
 
@@ -249,6 +253,17 @@ function hasJsonLdMimeType(tag) {
     .trim()
     .toLowerCase();
   return mimeType === 'application/ld+json';
+}
+
+function hasForbiddenRobotsDirective(tag) {
+  if (!hasMetaName(tag, 'robots')) return false;
+
+  const directives = (tag.attributes.content ?? '')
+    .toLowerCase()
+    .split(/[\s,]+/);
+  return directives.some(
+    (directive) => directive === 'noindex' || directive === 'none',
+  );
 }
 
 function assertSingleTag(tags, predicate, label) {
@@ -355,25 +370,59 @@ test('JSON-LD MIME type matching ignores parameters', () => {
 
 test('metadata scanning ignores markup outside the sanitized head', () => {
   const html = [
-    '<!-- <head><meta name="description" content="comment"></head> -->',
+    '<!-- <head><meta name="description" content="comment"><script type="application/ld+json;profile=comment"></script></head> -->',
     '<html><head>',
     '<meta name="description" content="real-head">',
-    '<script>const fake = \'<meta name="description" content="script">\'; const close = \'</head>\';</script>',
+    '<script>const fake = \'<meta name="description" content="script">\'; const fakeJsonLd = \'<script type="application/ld+json;profile=script">\'; const close = \'</head>\';</script>',
     '<style>.fake::before { content: \'<meta name="description" content="style">\'; }</style>',
     '<script type="application/ld+json;profile=https://schema.org">{}</script>',
     '</head><body>',
     '<meta name="description" content="body">',
+    '<script type="application/ld+json;profile=body">{}</script>',
     '</body></html>',
   ].join('');
   const metadataHead = extractMetadataHead(html);
+  const sanitizedMarkup = sanitizeMetadataMarkup(html);
   const metaTags = findTags(metadataHead, 'meta');
-  const scriptTags = findTags(metadataHead, 'script');
+  const headScriptTags = findTags(metadataHead, 'script');
+  const documentScriptTags = findTags(sanitizedMarkup, 'script');
 
   assert.deepEqual(
     metaTags.map((tag) => tag.attributes.content),
     ['real-head'],
   );
-  assert.equal(scriptTags.filter(hasJsonLdMimeType).length, 1);
+  assert.equal(headScriptTags.filter(hasJsonLdMimeType).length, 1);
+  assert.equal(documentScriptTags.filter(hasJsonLdMimeType).length, 2);
+});
+
+test('robots directives reject noindex semantics by token', () => {
+  const cases = [
+    ['noindex', true],
+    ['INDEX, NOINDEX, FOLLOW', true],
+    ['none', true],
+    ['NoNe, follow', true],
+    ['index,follow', false],
+    ['noindexing,follow', false],
+  ];
+
+  for (const [content, expected] of cases) {
+    const [robotsTag] = findTags(
+      `<meta name="RoBoTs" content="${content}">`,
+      'meta',
+    );
+
+    assert.equal(
+      hasForbiddenRobotsDirective(robotsTag),
+      expected,
+      `Unexpected robots semantics for ${content}`,
+    );
+  }
+
+  const [descriptionTag] = findTags(
+    '<meta name="description" content="noindex">',
+    'meta',
+  );
+  assert.equal(hasForbiddenRobotsDirective(descriptionTag), false);
 });
 
 for (const page of ['dist/index.html', 'dist/en/index.html']) {
@@ -446,10 +495,12 @@ test('dist CSS defines the Pretendard Variable font-sans contract', async () => 
 for (const page of metadataCases) {
   test(`${page.path} defines the portfolio metadata contract`, async () => {
     const html = await readFile(page.path, 'utf8');
+    const sanitizedMarkup = sanitizeMetadataMarkup(html);
     const metadataHead = extractMetadataHead(html);
+    const documentMetaTags = findTags(sanitizedMarkup, 'meta');
+    const documentScriptTags = findTags(sanitizedMarkup, 'script');
     const linkTags = findTags(metadataHead, 'link');
     const metaTags = findTags(metadataHead, 'meta');
-    const scriptTags = findTags(metadataHead, 'script');
     const titleTags = findTags(metadataHead, 'title');
 
     const titleTag = assertSingleTag(
@@ -532,21 +583,17 @@ for (const page of metadataCases) {
     assert.equal(faviconTag.attributes.href, '/favicon.svg');
 
     assert.equal(
-      scriptTags.filter(hasJsonLdMimeType).length,
+      documentScriptTags.filter(hasJsonLdMimeType).length,
       0,
       `Expected no JSON-LD in ${page.path}`,
     );
     assert.equal(
-      metaTags.filter((tag) => hasMetaName(tag, 'keywords')).length,
+      documentMetaTags.filter((tag) => hasMetaName(tag, 'keywords')).length,
       0,
       `Expected no meta keywords in ${page.path}`,
     );
     assert.equal(
-      metaTags.filter(
-        (tag) =>
-          hasMetaName(tag, 'robots') &&
-          tag.attributes.content?.toLowerCase().includes('noindex'),
-      ).length,
+      documentMetaTags.filter(hasForbiddenRobotsDirective).length,
       0,
       `Expected no noindex robots directive in ${page.path}`,
     );
