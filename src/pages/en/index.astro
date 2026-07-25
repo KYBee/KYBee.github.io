@@ -1,8 +1,20 @@
 ---
+import { getEntry } from 'astro:content';
+
 import Layout from '../../layouts/Layout.astro';
 import Workspace from '../../components/Workspace.astro';
+
+const about = await getEntry('about', 'en');
+
+if (!about) {
+  throw new Error('Required content entry "about/en" is missing.');
+}
 ---
 
-<Layout title="Youngbeen Kim | Backend Engineer" lang="en">
+<Layout
+  title="Youngbeen Kim | Backend Engineer"
+  lang="en"
+  description={about.data.tagline}
+>
   <Workspace lang="en" />
 </Layout>
