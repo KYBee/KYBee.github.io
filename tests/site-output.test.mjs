@@ -824,6 +824,11 @@ function assertPngColorContract(png) {
   assert.equal(ihdr.data[10], 0, 'Expected standard PNG compression');
   assert.equal(ihdr.data[11], 0, 'Expected standard PNG filtering');
   assert.equal(ihdr.data[12], 0, 'Expected a non-interlaced PNG');
+  assert.equal(
+    chunks.some((chunk) => chunk.type === 'tRNS'),
+    false,
+    'Expected PNG without a tRNS transparency chunk',
+  );
 
   const hasSrgbChunk = chunks.some(
     (chunk) =>
@@ -867,6 +872,20 @@ test('PNG color helper rejects RGBA data', () => {
   assert.throws(
     () => assertPngColorContract(rgbaPng),
     /Expected PNG color type 2/,
+  );
+});
+
+test('PNG color helper rejects RGB transparency chunks', () => {
+  const transparentRgbPng = makePngFixture({
+    colorChunks: [
+      makePngChunk('sRGB', Buffer.from([0])),
+      makePngChunk('tRNS', Buffer.alloc(6)),
+    ],
+  });
+
+  assert.throws(
+    () => assertPngColorContract(transparentRgbPng),
+    /Expected PNG without a tRNS transparency chunk/,
   );
 });
 
