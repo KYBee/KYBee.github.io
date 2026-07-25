@@ -684,22 +684,185 @@ test('dist/favicon.svg is a safe, square, path-based SVG favicon', async () => {
   assertInternalSvgReferences(elements);
 });
 
-test('dist/og/portfolio.png is a 1200x630 PNG', async () => {
-  const png = await readFile('dist/og/portfolio.png');
-  const pngSignature = Buffer.from([
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
-  ]);
+const pngSignature = Buffer.from([
+  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+]);
 
+function makePngChunk(type, data = Buffer.alloc(0)) {
+  const chunk = Buffer.alloc(data.length + 12);
+  chunk.writeUInt32BE(data.length, 0);
+  chunk.write(type, 4, 4, 'ascii');
+  data.copy(chunk, 8);
+  return chunk;
+}
+
+function makePngFixture({ colorType = 2, colorChunks = [] } = {}) {
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(1, 0);
+  ihdr.writeUInt32BE(1, 4);
+  ihdr[8] = 8;
+  ihdr[9] = colorType;
+
+  return Buffer.concat([
+    pngSignature,
+    makePngChunk('IHDR', ihdr),
+    ...colorChunks,
+    makePngChunk('IEND'),
+  ]);
+}
+
+function readPngChunks(png) {
   assert.deepEqual(
     png.subarray(0, pngSignature.length),
     pngSignature,
     'Expected the PNG file signature',
   );
-  assert.ok(png.length >= 33, 'Expected a complete PNG IHDR chunk');
-  assert.equal(png.toString('ascii', 12, 16), 'IHDR');
-  assert.equal(png.readUInt32BE(8), 13, 'Expected a 13-byte IHDR payload');
-  assert.equal(png.readUInt32BE(16), 1200, 'Expected a 1200px PNG width');
-  assert.equal(png.readUInt32BE(20), 630, 'Expected a 630px PNG height');
+
+  const chunks = [];
+  let offset = pngSignature.length;
+
+  while (offset < png.length) {
+    assert.ok(
+      offset + 8 <= png.length,
+      'Expected a complete PNG chunk header',
+    );
+    const length = png.readUInt32BE(offset);
+    const type = png.toString('ascii', offset + 4, offset + 8);
+    const dataStart = offset + 8;
+    const chunkEnd = dataStart + length + 4;
+
+    assert.match(type, /^[A-Za-z]{4}$/, 'Expected a valid PNG chunk type');
+    assert.ok(
+      chunkEnd <= png.length,
+      `Expected a complete PNG chunk for ${type}`,
+    );
+    chunks.push({
+      data: png.subarray(dataStart, dataStart + length),
+      length,
+      type,
+    });
+    offset = chunkEnd;
+
+    if (type === 'IEND') {
+      assert.equal(length, 0, 'Expected an empty IEND payload');
+      assert.equal(offset, png.length, 'Expected IEND to be the final chunk');
+      return chunks;
+    }
+  }
+
+  assert.fail('Expected a PNG IEND chunk');
+}
+
+function hasSrgbIccProfile(chunk) {
+  if (chunk.type !== 'iCCP') return false;
+
+  const nameEnd = chunk.data.indexOf(0);
+  return (
+    nameEnd > 0 &&
+    nameEnd <= 79 &&
+    chunk.data.length > nameEnd + 2 &&
+    chunk.data[nameEnd + 1] === 0 &&
+    /srgb/i.test(chunk.data.toString('latin1', 0, nameEnd))
+  );
+}
+
+function assertPngColorContract(png) {
+  const chunks = readPngChunks(png);
+  const ihdr = chunks[0];
+
+  assert.equal(ihdr?.type, 'IHDR', 'Expected IHDR to be the first PNG chunk');
+  assert.equal(ihdr.length, 13, 'Expected a 13-byte IHDR payload');
+  assert.equal(ihdr.data[8], 8, 'Expected an 8-bit PNG');
+  assert.equal(ihdr.data[9], 2, 'Expected PNG color type 2 without alpha');
+  assert.equal(ihdr.data[10], 0, 'Expected standard PNG compression');
+  assert.equal(ihdr.data[11], 0, 'Expected standard PNG filtering');
+  assert.equal(ihdr.data[12], 0, 'Expected a non-interlaced PNG');
+
+  const hasSrgbChunk = chunks.some(
+    (chunk) =>
+      chunk.type === 'sRGB' &&
+      chunk.data.length === 1 &&
+      chunk.data[0] <= 3,
+  );
+  const hasGamma = chunks.some(
+    (chunk) =>
+      chunk.type === 'gAMA' &&
+      chunk.data.length === 4 &&
+      chunk.data.readUInt32BE(0) === 45455,
+  );
+  const srgbChromaticities = [
+    31270, 32900, 64000, 33000, 30000, 60000, 15000, 6000,
+  ];
+  const hasChromaticities = chunks.some(
+    (chunk) =>
+      chunk.type === 'cHRM' &&
+      chunk.data.length === 32 &&
+      srgbChromaticities.every(
+        (value, index) => chunk.data.readUInt32BE(index * 4) === value,
+      ),
+  );
+
+  assert.ok(
+    hasSrgbChunk ||
+      chunks.some(hasSrgbIccProfile) ||
+      (hasGamma && hasChromaticities),
+    'Expected PNG to declare sRGB encoding',
+  );
+  return ihdr.data;
+}
+
+test('PNG color helper rejects RGBA data', () => {
+  const rgbaPng = makePngFixture({
+    colorType: 6,
+    colorChunks: [makePngChunk('sRGB', Buffer.from([0]))],
+  });
+
+  assert.throws(
+    () => assertPngColorContract(rgbaPng),
+    /Expected PNG color type 2/,
+  );
+});
+
+test('PNG color helper rejects untagged RGB data', () => {
+  assert.throws(
+    () => assertPngColorContract(makePngFixture()),
+    /Expected PNG to declare sRGB encoding/,
+  );
+});
+
+test('PNG color helper accepts explicit sRGB declarations', () => {
+  const srgbChunkPng = makePngFixture({
+    colorChunks: [makePngChunk('sRGB', Buffer.from([0]))],
+  });
+  const iccpData = Buffer.concat([
+    Buffer.from('sRGB IEC61966-2.1\0', 'latin1'),
+    Buffer.from([0, 1]),
+  ]);
+  const iccpPng = makePngFixture({
+    colorChunks: [makePngChunk('iCCP', iccpData)],
+  });
+
+  assert.doesNotThrow(() => assertPngColorContract(srgbChunkPng));
+  assert.doesNotThrow(() => assertPngColorContract(iccpPng));
+});
+
+test('PNG chunk helper rejects truncated chunks', () => {
+  const truncatedPng = makePngFixture({
+    colorChunks: [makePngChunk('sRGB', Buffer.from([0]))],
+  }).subarray(0, -1);
+
+  assert.throws(
+    () => assertPngColorContract(truncatedPng),
+    /Expected a complete PNG chunk/,
+  );
+});
+
+test('dist/og/portfolio.png is a 1200x630 PNG', async () => {
+  const png = await readFile('dist/og/portfolio.png');
+  const ihdr = assertPngColorContract(png);
+
+  assert.equal(ihdr.readUInt32BE(0), 1200, 'Expected a 1200px PNG width');
+  assert.equal(ihdr.readUInt32BE(4), 630, 'Expected a 630px PNG height');
 });
 
 test('dist does not contain root crawler-control artifacts', async () => {
