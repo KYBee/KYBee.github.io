@@ -436,6 +436,27 @@ for (const page of ['dist/index.html', 'dist/en/index.html']) {
   });
 }
 
+test('dist CSS spaces adjacent job groups with the compact token', async () => {
+  const cssFiles = (await readdir('dist/_astro'))
+    .filter((fileName) => fileName.endsWith('.css'))
+    .sort();
+
+  assert.ok(cssFiles.length > 0, 'Expected CSS files in dist/_astro');
+  const combinedCss = (
+    await Promise.all(
+      cssFiles.map((fileName) =>
+        readFile(`dist/_astro/${fileName}`, 'utf8'),
+      ),
+    )
+  ).join('\n');
+
+  assert.match(
+    combinedCss,
+    /(?:^|})\.job-group(\[data-astro-cid-[a-z0-9]+\])\s*\+\s*\.job-group\1\s*\{[^}]*margin-top\s*:\s*var\(--space-5\)/,
+    'Expected adjacent job groups to use the 24px spacing token',
+  );
+});
+
 for (const page of fontLinkCases) {
   test(`${page} defines the Pretendard Variable font-link contract`, async () => {
     const html = await readFile(page, 'utf8');
