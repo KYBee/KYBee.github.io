@@ -317,6 +317,13 @@ const alternateLanguages = {
   'x-default': 'https://kybee.github.io/',
 };
 
+const fontLinkCases = ['dist/index.html', 'dist/en/index.html'];
+const jsDelivrOrigin = 'https://cdn.jsdelivr.net';
+const pretendardVariableStylesheet =
+  'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css';
+const oldPretendardStylesheet =
+  'https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css';
+
 test('standard meta names are matched case-insensitively', () => {
   for (const expectedName of ['description', 'keywords', 'robots']) {
     const capitalizedName =
@@ -379,6 +386,62 @@ for (const page of ['dist/index.html', 'dist/en/index.html']) {
     assert.doesNotMatch(html, /class="job-hr"/);
   });
 }
+
+for (const page of fontLinkCases) {
+  test(`${page} defines the Pretendard Variable font-link contract`, async () => {
+    const html = await readFile(page, 'utf8');
+    const metadataHead = extractMetadataHead(html);
+    const linkTags = findTags(metadataHead, 'link');
+    const stylesheetLinks = linkTags.filter((tag) =>
+      hasRel(tag, 'stylesheet'),
+    );
+
+    assert.equal(
+      linkTags.filter(
+        (tag) => tag.attributes.href === oldPretendardStylesheet,
+      ).length,
+      0,
+      `Expected no old Pretendard link in ${page}`,
+    );
+    assertSingleTag(
+      stylesheetLinks,
+      (tag) => tag.attributes.href === pretendardVariableStylesheet,
+      `Pretendard Variable stylesheet link in ${page}`,
+    );
+    assertSingleTag(
+      linkTags,
+      (tag) =>
+        tag.attributes.href === jsDelivrOrigin && hasRel(tag, 'preconnect'),
+      `jsDelivr preconnect link in ${page}`,
+    );
+  });
+}
+
+test('dist CSS defines the Pretendard Variable font-sans contract', async () => {
+  const cssFiles = (await readdir('dist/_astro'))
+    .filter((fileName) => fileName.endsWith('.css'))
+    .sort();
+
+  assert.ok(cssFiles.length > 0, 'Expected CSS files in dist/_astro');
+  const combinedCss = (
+    await Promise.all(
+      cssFiles.map((fileName) =>
+        readFile(`dist/_astro/${fileName}`, 'utf8'),
+      ),
+    )
+  ).join('\n');
+
+  assert.match(
+    combinedCss,
+    /--font-sans\s*:\s*(?:(["'])Pretendard Variable\1|Pretendard Variable)\s*,\s*-apple-system\s*,\s*BlinkMacSystemFont\s*,\s*system-ui\s*,\s*sans-serif\s*(?=;|})/,
+    'Expected --font-sans to use the exact Pretendard Variable system stack',
+  );
+  assert.doesNotMatch(
+    combinedCss,
+    /--font-sans\s*:\s*(?:(["'])Pretendard\1|Pretendard)\s*,/,
+    'Expected --font-sans not to use standalone Pretendard first',
+  );
+});
 
 for (const page of metadataCases) {
   test(`${page.path} defines the portfolio metadata contract`, async () => {
