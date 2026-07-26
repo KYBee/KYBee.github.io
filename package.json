@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "node --test tests/content-validation.test.mjs tests/pages-config.test.mjs tests/workflows.test.mjs",
+    "test": "node --test tests/content-validation.test.mjs tests/pages-config.test.mjs tests/workflows.test.mjs tests/reactions-env.test.mjs tests/reactions-smoke.test.mjs",
     "test:frontend": "vitest run --config vitest.frontend.config.ts",
     "test:worker": "vitest run --config services/reactions/vitest.config.ts",
     "typecheck:site": "astro check",
