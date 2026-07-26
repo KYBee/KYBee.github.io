@@ -16,7 +16,7 @@
     "dev:reactions": "wrangler dev --config services/reactions/wrangler.jsonc",
     "validate:content": "node scripts/validate-content.mjs",
     "test:site": "node --test tests/site-output.test.mjs",
-    "verify": "npm test && npm run validate:content && npm run build && npm run test:site"
+    "verify": "npm test && npm run test:frontend && npm run test:worker && npm run reactions:typecheck && npm run typecheck:site && npm run reactions:dry-run && npm run validate:content && npm run build && npm run test:site"
   },
   "dependencies": {
     "astro": "^4.16.0"
