@@ -1,3 +1,15 @@
 {
-  "extends": "astro/tsconfigs/strict"
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "src/**/*.astro",
+    "src/**/*.ts",
+    "tests/reactions/**/*.ts",
+    "vitest.frontend.config.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "services/reactions/**"
+  ]
 }
