@@ -6,16 +6,30 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "node --test tests/content-validation.test.mjs tests/pages-config.test.mjs tests/workflows.test.mjs",
+    "test": "node --test tests/content-validation.test.mjs tests/pages-config.test.mjs tests/workflows.test.mjs tests/reactions-env.test.mjs tests/reactions-smoke.test.mjs",
+    "test:frontend": "vitest run --config vitest.frontend.config.ts",
+    "test:worker": "vitest run --config services/reactions/vitest.config.ts",
+    "typecheck:site": "astro check",
+    "reactions:typecheck": "tsc --noEmit -p services/reactions/tsconfig.json && tsc --noEmit -p services/reactions/test/tsconfig.json",
+    "reactions:dry-run": "wrangler deploy --dry-run --config services/reactions/wrangler.jsonc",
+    "reactions:migrate:local": "wrangler d1 migrations apply kybee-reactions --local --config services/reactions/wrangler.jsonc",
+    "dev:reactions": "wrangler dev --config services/reactions/wrangler.jsonc",
     "validate:content": "node scripts/validate-content.mjs",
     "test:site": "node --test tests/site-output.test.mjs",
-    "verify": "npm test && npm run validate:content && npm run build && npm run test:site"
+    "verify": "npm test && npm run test:frontend && npm run test:worker && npm run reactions:typecheck && npm run typecheck:site && npm run reactions:dry-run && npm run validate:content && npm run build && npm run test:site"
   },
   "dependencies": {
     "astro": "^4.16.0"
   },
   "devDependencies": {
+    "@astrojs/check": "0.9.4",
+    "@cloudflare/vitest-pool-workers": "0.15.1",
+    "@cloudflare/workers-types": "4.20260426.1",
+    "@types/node": "20.19.43",
+    "happy-dom": "20.11.1",
     "typescript": "5.9.3",
+    "vitest": "4.1.10",
+    "wrangler": "4.86.0",
     "yaml": "2.9.0"
   }
 }

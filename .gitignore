@@ -9,8 +9,7 @@ node_modules/
 npm-debug.log*
 
 # environment variables
-.env
-.env.production
+**/.env*
 
 # macOS
 .DS_Store
@@ -21,3 +20,7 @@ npm-debug.log*
 
 # local feature worktrees
 .worktrees/
+
+# Cloudflare Workers local state and secrets
+**/.wrangler/
+**/.dev.vars*
