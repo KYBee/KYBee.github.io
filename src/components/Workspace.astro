@@ -1,6 +1,14 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import Avatar from './Avatar.astro';
+import ReactionControls from './ReactionControls.astro';
+import {
+  compareEntryOrder,
+  getCurrentProjectEntries,
+  groupProjectEntries,
+} from '../lib/project-groups';
+import { toReactionTargetId } from '../lib/reactions/targets';
+import '../styles/reactions.css';
 
 interface Props {
   lang: 'ko' | 'en';
@@ -9,9 +17,6 @@ interface Props {
 const { lang } = Astro.props;
 
 const byLang = <T extends { data: { lang: string } }>(entry: T) => entry.data.lang === lang;
-const byOrder = (a: { data: { order?: number } }, b: { data: { order?: number } }) =>
-  (a.data.order ?? 0) - (b.data.order ?? 0);
-
 const [aboutEntries, projectEntries, sideProjectEntries, educationEntries, certEntries, skillEntries] =
   await Promise.all([
     getCollection('about', byLang),
@@ -23,34 +28,21 @@ const [aboutEntries, projectEntries, sideProjectEntries, educationEntries, certE
   ]);
 
 const about = aboutEntries[0].data;
-const projects = [...projectEntries].sort(byOrder).map((e) => e.data);
-const sideProjects = [...sideProjectEntries].sort(byOrder).map((e) => e.data);
-const education = [...educationEntries].sort(byOrder).map((e) => e.data)[0];
-const certifications = [...certEntries].sort(byOrder).map((e) => e.data);
-const skills = [...skillEntries].sort(byOrder).map((e) => e.data);
+const projects = [...projectEntries].sort(compareEntryOrder);
+const sideProjects = [...sideProjectEntries].sort(compareEntryOrder);
+const education = [...educationEntries]
+  .sort(compareEntryOrder)
+  .map((entry) => entry.data)[0];
+const certifications = [...certEntries]
+  .sort(compareEntryOrder)
+  .map((entry) => entry.data);
+const skills = [...skillEntries]
+  .sort(compareEntryOrder)
+  .map((entry) => entry.data);
 
-type ProjectData = CollectionEntry<'projects'>['data'];
-type ProjectGroup = { company: string; role: string; period: string; location?: string; items: ProjectData[] };
-
-const projectGroups: ProjectGroup[] = [];
-for (const p of projects) {
-  const last = projectGroups[projectGroups.length - 1];
-  if (last && last.company === p.company && last.role === p.role && last.period === p.period) {
-    last.items.push(p);
-  } else {
-    projectGroups.push({ company: p.company, role: p.role, period: p.period, location: p.location, items: [p] });
-  }
-}
-
-const firstJob = projects[0];
-const samsungItems = projectGroups[0]?.items ?? [];
-
-const reactionSets: [string, string][][] = [
-  [['🔥', '5'], ['👍', '2']],
-  [['🎉', '3'], ['💯', '1']],
-  [['🚀', '4'], ['👏', '2']],
-  [['✅', '3'], ['👍', '1']],
-];
+const projectGroups = groupProjectEntries(projects);
+const workProjectEntries = getCurrentProjectEntries(projects);
+const firstJob = projects[0]?.data;
 
 const initials = 'YB';
 
@@ -75,11 +67,28 @@ const copy = {
       education: education ? `${education.school} · ${education.detail}` : '',
     },
     previews: {
-      experience: projectGroups.map((g) => g.company).join(' · '),
-      'work-projects': samsungItems.slice(0, 2).map((p) => p.title).join(' · '),
-      'side-projects': sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
-      skills: skills.map((s) => s.category).join(' · '),
+      experience: projectGroups
+        .map((group) => group.company)
+        .join(' · '),
+      'work-projects': workProjectEntries
+        .slice(0, 2)
+        .map((entry) => entry.data.title)
+        .join(' · '),
+      'side-projects': sideProjects
+        .slice(0, 2)
+        .map((entry) => entry.data.name)
+        .join(' · '),
+      skills: skills.map((group) => group.category).join(' · '),
       education: education?.detail ?? '',
+    },
+    reactions: {
+      open: '리액션 열기',
+      action: '리액션 추가 또는 취소',
+      countLabel: '{emoji} 리액션 {count}개, 추가 또는 취소',
+      bootstrapError: '리액션을 불러오지 못했어요.',
+      retry: '리액션 다시 시도',
+      retrying: '리액션을 다시 불러오는 중이에요.',
+      writeError: '리액션을 저장하지 못했어요. 다시 눌러 주세요.',
     },
     workProjectsContext: firstJob ? `${firstJob.company} 재직 중 수행 · ${firstJob.period}` : '',
     me: `${about.name} (나)`,
@@ -120,11 +129,28 @@ const copy = {
       education: education ? `${education.school} · ${education.detail}` : '',
     },
     previews: {
-      experience: projectGroups.map((g) => g.company).join(' · '),
-      'work-projects': samsungItems.slice(0, 2).map((p) => p.title).join(' · '),
-      'side-projects': sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
-      skills: skills.map((s) => s.category).join(' · '),
+      experience: projectGroups
+        .map((group) => group.company)
+        .join(' · '),
+      'work-projects': workProjectEntries
+        .slice(0, 2)
+        .map((entry) => entry.data.title)
+        .join(' · '),
+      'side-projects': sideProjects
+        .slice(0, 2)
+        .map((entry) => entry.data.name)
+        .join(' · '),
+      skills: skills.map((group) => group.category).join(' · '),
       education: education?.detail ?? '',
+    },
+    reactions: {
+      open: 'Open reactions',
+      action: 'add or remove reaction',
+      countLabel: '{emoji}, {count} reactions, add or remove',
+      bootstrapError: 'Reactions could not be loaded.',
+      retry: 'Retry reactions',
+      retrying: 'Loading reactions again.',
+      writeError: 'The reaction was not saved. Please try again.',
     },
     workProjectsContext: firstJob ? `Completed while at ${firstJob.company} · ${firstJob.period}` : '',
     me: `${about.name} (you)`,
@@ -292,30 +318,36 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
           <div class="message-meta">
             <span class="message-author">{about.name}</span>
           </div>
-          {projectGroups.map((group, gi) => (
+          {projectGroups.map((group, groupIndex) => (
             <div class="job-group">
               <div class="job-header">
                 <p class="job-company">{group.company}</p>
                 <p class="job-role">{formatRole(group.role)}</p>
                 <p class="job-meta">
-                  {group.period}{group.location ? ` · ${group.location}` : ''}
+                  {group.period}
+                  {group.location ? ` · ${group.location}` : ''}
                 </p>
               </div>
-              {gi === 0 ? (
+              {groupIndex === 0 ? (
                 <p class="message-summary">{about.work}</p>
               ) : (
-                group.items.map((item) => (
-                  <>
-                    {item.summary && <p class="message-summary">{item.summary}</p>}
-                    {item.tags.length > 0 && (
-                      <div class="reactions">
-                        {item.tags.map((tag) => (
-                          <span class="tag-pill">{tag}</span>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ))
+                group.items.map((entry) => {
+                  const item = entry.data;
+                  return (
+                    <>
+                      {item.summary && (
+                        <p class="message-summary">{item.summary}</p>
+                      )}
+                      {item.tags.length > 0 && (
+                        <div class="reactions">
+                          {item.tags.map((tag) => (
+                            <span class="tag-pill">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })
               )}
             </div>
           ))}
@@ -328,38 +360,63 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
         <h1># {t.channels['work-projects']}</h1>
         <p class="channel-topic">{t.workProjectsContext}</p>
       </header>
-      {samsungItems.map((item, i) => (
-        <div class="message">
-          <div class="avatar"><Avatar initials={initials} size={44} /></div>
-          <div class="message-body">
-            <div class="message-meta">
-              <span class="message-author">{about.name}</span>
-              <span class="message-time">{item.company} · {item.period}</span>
-            </div>
-            {item.title && <p class="message-title">{item.title}</p>}
-            {item.summary && <p class="message-summary">{item.summary}</p>}
-            {item.bullets && (
-              <ul class="message-bullets">
-                {item.bullets.map((bullet) => <li>{bullet}</li>)}
-              </ul>
-            )}
-            {item.metric && <blockquote class="quote-block">{item.metric}</blockquote>}
-            {(item.tags.length > 0 || item.metric) && (
+      {workProjectEntries.map((entry) => {
+        const item = entry.data;
+        const targetId = toReactionTargetId('projects', entry.id);
+        const projectName = item.title ?? item.company;
+        return (
+          <div
+            class="message reaction-message"
+            data-reaction-target={targetId}
+            tabindex="-1"
+          >
+            <div class="avatar"><Avatar initials={initials} size={44} /></div>
+            <div class="message-body">
+              <div class="message-meta">
+                <span class="message-author">{about.name}</span>
+                <span class="message-time">
+                  {item.company} · {item.period}
+                </span>
+              </div>
+              {item.title && <p class="message-title">{item.title}</p>}
+              {item.summary && <p class="message-summary">{item.summary}</p>}
+              {item.bullets && (
+                <ul class="message-bullets">
+                  {item.bullets.map((bullet) => <li>{bullet}</li>)}
+                </ul>
+              )}
+              {item.metric && (
+                <blockquote class="quote-block">{item.metric}</blockquote>
+              )}
               <div class="reactions">
-                {item.metric &&
-                  reactionSets[i % reactionSets.length].map(([emoji, count]) => (
-                    <span class="reaction-pill">
-                      {emoji} {count}
-                    </span>
-                  ))}
+                <ReactionControls
+                  targetId={targetId}
+                  projectName={projectName}
+                  openLabel={t.reactions.open}
+                  actionLabel={t.reactions.action}
+                  countLabel={t.reactions.countLabel}
+                  writeError={t.reactions.writeError}
+                />
                 {item.tags.map((tag) => (
                   <span class="tag-pill">{tag}</span>
                 ))}
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
+      <div
+        class="reaction-channel-status"
+        data-reaction-channel-status="work"
+        data-bootstrap-error={t.reactions.bootstrapError}
+        data-retrying={t.reactions.retrying}
+        hidden
+      >
+        <span data-reaction-bootstrap-status aria-live="polite"></span>
+        <button type="button" data-reaction-retry>
+          {t.reactions.retry}
+        </button>
+      </div>
     </section>
 
     <section id="side-projects" class="channel">
@@ -367,25 +424,58 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
         <h1># {t.channels['side-projects']}</h1>
         <p class="channel-topic">{t.topics['side-projects']}</p>
       </header>
-      {sideProjects.map((project, i) => (
-        <div class="message">
-          <div class="avatar"><Avatar initials={initials} size={44} /></div>
-          <div class="message-body">
-            <div class="message-meta">
-              <span class="message-author">{about.name}</span>
-            </div>
-            <p class="message-title">
-              {project.url ? <a href={project.url} target="_blank" rel="noopener">{project.name}</a> : project.name}
-            </p>
-            <p class="message-summary">{project.description}</p>
-            <div class="reactions">
-              <span class="reaction-pill">{reactionSets[i % reactionSets.length][0][0]} {reactionSets[i % reactionSets.length][0][1]}</span>
-              <span class="tag-pill">{project.tech}</span>
-              {project.badge && <span class="badge-pill">{project.badge}</span>}
+      {sideProjects.map((entry) => {
+        const project = entry.data;
+        const targetId = toReactionTargetId('sideProjects', entry.id);
+        return (
+          <div
+            class="message reaction-message"
+            data-reaction-target={targetId}
+            tabindex="-1"
+          >
+            <div class="avatar"><Avatar initials={initials} size={44} /></div>
+            <div class="message-body">
+              <div class="message-meta">
+                <span class="message-author">{about.name}</span>
+              </div>
+              <p class="message-title">
+                {project.url ? (
+                  <a href={project.url} target="_blank" rel="noopener">
+                    {project.name}
+                  </a>
+                ) : project.name}
+              </p>
+              <p class="message-summary">{project.description}</p>
+              <div class="reactions">
+                <ReactionControls
+                  targetId={targetId}
+                  projectName={project.name}
+                  openLabel={t.reactions.open}
+                  actionLabel={t.reactions.action}
+                  countLabel={t.reactions.countLabel}
+                  writeError={t.reactions.writeError}
+                />
+                <span class="tag-pill">{project.tech}</span>
+                {project.badge && (
+                  <span class="badge-pill">{project.badge}</span>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
+      <div
+        class="reaction-channel-status"
+        data-reaction-channel-status="side"
+        data-bootstrap-error={t.reactions.bootstrapError}
+        data-retrying={t.reactions.retrying}
+        hidden
+      >
+        <span data-reaction-bootstrap-status aria-live="polite"></span>
+        <button type="button" data-reaction-retry>
+          {t.reactions.retry}
+        </button>
+      </div>
       <p class="channel-footnote">{about.activities}</p>
     </section>
 
@@ -1119,7 +1209,6 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     margin-top: var(--space-tight);
   }
 
-  .reaction-pill,
   .tag-pill,
   .badge-pill {
     display: inline-flex;
