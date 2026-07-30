@@ -4,6 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-04-26",
   "workers_dev": true,
+  "preview_urls": false,
   "secrets": {
     "required": ["REACTION_HMAC_SECRET"]
   },
@@ -20,6 +21,13 @@
       "name": "ISSUE_RATE_LIMITER",
       "namespace_id": "2026072602",
       "simple": { "limit": 20, "period": 60 }
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kybee-reactions",
+      "database_id": "fac0ecbe-9533-4b4e-a1a9-5154d02e258b"
     }
   ]
 }
