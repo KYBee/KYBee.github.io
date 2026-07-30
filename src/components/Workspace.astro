@@ -1574,6 +1574,13 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
 </style>
 
 <script>
+  import { initReactions } from '../scripts/reactions';
+
+  const publicEnvironment = import.meta.env;
+  void initReactions({
+    apiUrl: publicEnvironment.PUBLIC_REACTIONS_API_URL,
+  });
+
   const themeToggles = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
   themeToggles.forEach((toggle) => {
     toggle.addEventListener('click', () => {

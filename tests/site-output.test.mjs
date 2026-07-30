@@ -409,6 +409,82 @@ test('fake reaction decorations are absent from production output', async () => 
   }
 });
 
+async function combinedReactionClientBundle() {
+  const javascriptFiles = (await readdir('dist/_astro'))
+    .filter((filename) => filename.endsWith('.js'))
+    .sort();
+  assert.ok(
+    javascriptFiles.length > 0,
+    'Expected at least one generated client bundle',
+  );
+  return (
+    await Promise.all(
+      javascriptFiles.map((filename) =>
+        readFile(`dist/_astro/${filename}`, 'utf8'),
+      ),
+    )
+  ).join('\n');
+}
+
+function checkedInD1DatabaseId(source) {
+  const match =
+    /"database_id"\s*:\s*"([0-9a-f-]+)"/iu.exec(source);
+  assert.ok(match, 'Expected the checked-in production D1 binding');
+  return match[1];
+}
+
+test('reaction client bundle is present without exposing private deployment values', async () => {
+  const [koHtml, enHtml, clientBundle, wranglerConfig] =
+    await Promise.all([
+      readFile('dist/index.html', 'utf8'),
+      readFile('dist/en/index.html', 'utf8'),
+      combinedReactionClientBundle(),
+      readFile('services/reactions/wrangler.jsonc', 'utf8'),
+    ]);
+  const output = `${koHtml}\n${enHtml}\n${clientBundle}`;
+
+  assert.match(clientBundle, /\/v1\/reactions\/bootstrap/u);
+  assert.match(
+    clientBundle,
+    /["'`]\/v1\/reactions["'`]/u,
+  );
+
+  for (const html of [koHtml, enHtml]) {
+    const controls = findTags(html, 'div').filter((tag) =>
+      hasAttribute(tag, 'data-reaction-controls'),
+    );
+    assert.ok(
+      controls.length > 0,
+      'Expected server-rendered reaction controls',
+    );
+    assert.equal(
+      controls.every((tag) => hasAttribute(tag, 'hidden')),
+      true,
+      'Expected every control hidden before client bootstrap',
+    );
+  }
+
+  assert.doesNotMatch(
+    output,
+    /Bearer\s+v1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/u,
+  );
+  assert.doesNotMatch(output, /REACTION_HMAC_SECRET/u);
+  assert.doesNotMatch(output, /CLOUDFLARE_ACCOUNT_ID/u);
+  assert.doesNotMatch(
+    output,
+    /reaction-secret-must-not-ship/u,
+  );
+  assert.doesNotMatch(
+    output,
+    /cloudflare-account-must-not-ship/u,
+  );
+  assert.equal(
+    output.includes(checkedInD1DatabaseId(wranglerConfig)),
+    false,
+    'Expected the D1 UUID to remain outside browser output',
+  );
+});
+
 function findXmlConstructEnd(source, start, terminator, label) {
   const end = source.indexOf(terminator, start);
   assert.notEqual(end, -1, `Expected a closed XML ${label}`);
