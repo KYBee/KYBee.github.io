@@ -86,7 +86,7 @@ describe('reaction target manifest', () => {
     expect(calls).toEqual([{
       input: new URL(manifestUrl),
       init: {
-        redirect: 'error',
+        redirect: 'manual',
         cache: 'no-store',
         headers: { Accept: 'application/json' },
         signal: expect.any(AbortSignal),
