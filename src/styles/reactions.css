@@ -10,7 +10,7 @@
 .reaction-action-bar {
   position: absolute;
   z-index: 3;
-  top: calc(var(--space-3) * -1);
+  top: var(--space-2);
 }
 
 .reaction-launcher {
@@ -53,16 +53,25 @@
 
 .reaction-launcher {
   min-width: 2rem;
-  min-height: 2rem;
+  min-height: 2.625rem;
   padding: var(--space-1) var(--space-2);
   font-size: var(--fs-xs);
 }
 
 .reaction-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   min-width: 2rem;
   min-height: 2rem;
   padding: var(--space-1);
   font-size: var(--fs-sm);
+}
+
+.reaction-action-count:not([hidden]) {
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
 }
 
 .reaction-count-chip,
@@ -127,12 +136,12 @@
   opacity: 0.6;
 }
 
-@media (max-width: 767px) {
-  .reaction-launcher,
-  .reaction-action-bar {
-    top: calc(var(--space-2) * -1);
-  }
+.reaction-action[aria-busy='true'][aria-pressed='true'],
+.reaction-count-chip[aria-busy='true'][aria-pressed='true'] {
+  opacity: 1;
+}
 
+@media (max-width: 767px) {
   .reaction-action-bar:not([hidden]) {
     right: calc(var(--space-1) + 2.5rem);
   }
