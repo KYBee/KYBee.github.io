@@ -2,6 +2,18 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import test from 'node:test';
 
+for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
+  test(`${pagePath} uses only static project reaction examples`, async () => {
+    const html = await readFile(pagePath, 'utf8');
+    const pills = html.match(/class="reaction-pill"/gu) ?? [];
+
+    assert.equal(pills.length, 20);
+    assert.doesNotMatch(html, /data-reaction-/u);
+    assert.doesNotMatch(html, /reaction-action|reaction-launcher/u);
+    assert.doesNotMatch(html, /workers\.dev|PUBLIC_REACTIONS_API_URL/u);
+  });
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

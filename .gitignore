@@ -10,7 +10,12 @@ npm-debug.log*
 
 # environment variables
 .env
+.env.local
 .env.production
+
+# local browser verification artifacts
+.playwright-cli/
+output/playwright/
 
 # macOS
 .DS_Store

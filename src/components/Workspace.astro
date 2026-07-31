@@ -344,19 +344,16 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
               </ul>
             )}
             {item.metric && <blockquote class="quote-block">{item.metric}</blockquote>}
-            {(item.tags.length > 0 || item.metric) && (
-              <div class="reactions">
-                {item.metric &&
-                  reactionSets[i % reactionSets.length].map(([emoji, count]) => (
-                    <span class="reaction-pill">
-                      {emoji} {count}
-                    </span>
-                  ))}
-                {item.tags.map((tag) => (
-                  <span class="tag-pill">{tag}</span>
-                ))}
-              </div>
-            )}
+            <div class="reactions">
+              {reactionSets[i % reactionSets.length].map(([emoji, count]) => (
+                <span class="reaction-pill">
+                  {emoji} {count}
+                </span>
+              ))}
+              {item.tags.map((tag) => (
+                <span class="tag-pill">{tag}</span>
+              ))}
+            </div>
           </div>
         </div>
       ))}
@@ -379,7 +376,11 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
             </p>
             <p class="message-summary">{project.description}</p>
             <div class="reactions">
-              <span class="reaction-pill">{reactionSets[i % reactionSets.length][0][0]} {reactionSets[i % reactionSets.length][0][1]}</span>
+              {reactionSets[i % reactionSets.length].map(([emoji, count]) => (
+                <span class="reaction-pill">
+                  {emoji} {count}
+                </span>
+              ))}
               <span class="tag-pill">{project.tech}</span>
               {project.badge && <span class="badge-pill">{project.badge}</span>}
             </div>
