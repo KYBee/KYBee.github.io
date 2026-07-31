@@ -100,7 +100,7 @@ describe('reaction Worker bootstrap route', () => {
     expect(calls).toEqual([{
       input: new URL(MANIFEST_URL),
       init: {
-        redirect: 'manual',
+        redirect: 'error',
         cache: 'no-store',
         headers: { Accept: 'application/json' },
         signal: expect.any(AbortSignal),

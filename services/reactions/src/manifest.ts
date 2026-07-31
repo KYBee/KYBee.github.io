@@ -196,7 +196,7 @@ export function createManifestVerifier({
         cache: 'no-store';
         signal: AbortSignal;
       } = {
-        redirect: 'manual',
+        redirect: 'error',
         cache: 'no-store',
         headers: { Accept: 'application/json' },
         signal: abortController.signal,
