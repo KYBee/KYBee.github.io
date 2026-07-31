@@ -199,15 +199,7 @@ export function createReactionDataController(options: {
         if (!action) continue;
         const selected = snapshot.selected.includes(emoji);
         const pending = pendingKeys.has(keyFor(target, emoji));
-        const count = snapshot.counts[emoji];
         action.setAttribute('aria-pressed', String(selected));
-        const actionCount = action.querySelector<HTMLElement>(
-          '[data-reaction-action-count]',
-        );
-        if (actionCount) {
-          actionCount.textContent = count > 0 ? String(count) : '';
-          actionCount.hidden = count === 0;
-        }
         action.disabled = pending;
         if (pending) action.setAttribute('aria-busy', 'true');
         else action.removeAttribute('aria-busy');
