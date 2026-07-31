@@ -17,6 +17,7 @@ import type { VisitorTokenStore } from
 import {
   TEST_VISITOR_TOKEN,
   actionButton,
+  actionCount,
   bootstrapResponse,
   countChip,
   createChannelStatus,
@@ -173,6 +174,10 @@ describe('reaction data bootstrap', () => {
     expect(actionButton(alpha, '🔥').getAttribute('aria-pressed')).toBe(
       'true',
     );
+    expect(actionCount(alpha, '👍').textContent).toBe('2');
+    expect(actionCount(alpha, '👍').hidden).toBe(false);
+    expect(actionCount(alpha, '🎉').textContent).toBe('');
+    expect(actionCount(alpha, '🎉').hidden).toBe(true);
     expect(countChip(alpha, '🔥')?.getAttribute('aria-pressed')).toBe(
       'true',
     );
@@ -287,6 +292,8 @@ describe('reaction data mutations', () => {
     action.click();
     action.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(action.getAttribute('aria-pressed')).toBe('true');
+    expect(actionCount(message, '🔥').textContent).toBe('1');
+    expect(actionCount(message, '🔥').hidden).toBe(false);
     expect(countChip(message, '🔥')?.textContent).toBe('🔥 1');
     expect(action.disabled).toBe(true);
     expect(action.getAttribute('aria-busy')).toBe('true');

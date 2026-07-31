@@ -101,7 +101,7 @@ export function createReactionMessage(options: {
           ${REACTION_EMOJIS.map(
             (emoji) => `<button type="button" data-reaction-emoji="${emoji}"
               aria-pressed="false" ${actionsDisabled ? 'disabled' : ''}>
-              ${emoji}</button>`,
+              ${emoji}<span data-reaction-action-count hidden></span></button>`,
           ).join('')}
         </div>
         <div data-reaction-counts></div>
@@ -209,6 +209,16 @@ export function actionButton(
   emoji: ReactionEmoji,
 ): HTMLButtonElement {
   return requiredElement(message, `[data-reaction-emoji="${emoji}"]`);
+}
+
+export function actionCount(
+  message: ParentNode,
+  emoji: ReactionEmoji,
+): HTMLElement {
+  return requiredElement(
+    actionButton(message, emoji),
+    '[data-reaction-action-count]',
+  );
 }
 
 export function countChip(
