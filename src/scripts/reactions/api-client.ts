@@ -84,6 +84,7 @@ export function createReactionApi(
       headers,
       body: JSON.stringify(body),
       cache: 'no-store',
+      keepalive: method === 'PUT',
     });
 
     let value: unknown;

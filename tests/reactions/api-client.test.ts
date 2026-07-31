@@ -43,6 +43,7 @@ describe('reaction API client', () => {
     );
     expect(init?.method).toBe('POST');
     expect(init?.cache).toBe('no-store');
+    expect(init?.keepalive).toBe(false);
     expect(headers.get('Accept')).toBe('application/json');
     expect(headers.get('Content-Type')).toBe('application/json');
     expect(headers.has('Authorization')).toBe(false);
@@ -86,6 +87,7 @@ describe('reaction API client', () => {
     const [url, init] = fetchImpl.mock.calls[0];
     expect(url).toBe('http://127.0.0.1:4321/v1/reactions');
     expect(init?.method).toBe('PUT');
+    expect(init?.keepalive).toBe(true);
     expect(JSON.parse(String(init?.body))).toEqual({
       targetId: 'side:booster',
       emoji: '🔥',
