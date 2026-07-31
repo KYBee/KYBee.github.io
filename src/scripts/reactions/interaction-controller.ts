@@ -20,6 +20,8 @@ export function createReactionInteractionController(options: {
   const cleanups: Array<() => void> = [];
   let activeMessage: HTMLElement | null = null;
   let suppressFocusOpen = false;
+  let pointerDownMessage: HTMLElement | null = null;
+  let pointerDownWasOpen = false;
 
   const parts = (message: HTMLElement) => {
     const controls = message.querySelector<HTMLElement>(
@@ -73,6 +75,11 @@ export function createReactionInteractionController(options: {
     const elements = parts(message);
     if (!elements) continue;
 
+    listen(message, 'pointerdown', () => {
+      if (hoverMediaQuery.matches) return;
+      pointerDownMessage = message;
+      pointerDownWasOpen = activeMessage === message;
+    });
     listen(message, 'pointerenter', () => {
       hovered.add(message);
       if (hoverMediaQuery.matches) open(message);
@@ -94,7 +101,8 @@ export function createReactionInteractionController(options: {
         if (
           activeMessage === message &&
           !hovered.has(message) &&
-          !message.contains(document.activeElement)
+          !message.contains(document.activeElement) &&
+          !message.querySelector('[aria-busy="true"]')
         ) {
           closeMessage(message);
         }
@@ -105,6 +113,9 @@ export function createReactionInteractionController(options: {
       if (hoverMediaQuery.matches) return;
       const target = event.target;
       if (!(target instanceof Element)) return;
+      const pointerStartedHere = pointerDownMessage === message;
+      const wasOpenAtPointerDown = pointerDownWasOpen;
+      pointerDownMessage = null;
       if (
         target.closest(
           'a, button, input, select, textarea, [role="button"], ' +
@@ -114,7 +125,9 @@ export function createReactionInteractionController(options: {
         return;
       }
 
-      const shouldOpen = activeMessage !== message;
+      const shouldOpen = pointerStartedHere
+        ? !wasOpenAtPointerDown
+        : activeMessage !== message;
       suppressFocusOpen = true;
       message.focus({ preventScroll: true });
       if (shouldOpen) open(message);
@@ -150,6 +163,7 @@ export function createReactionInteractionController(options: {
     destroy() {
       close();
       hovered.clear();
+      pointerDownMessage = null;
       for (const cleanup of cleanups.splice(0)) cleanup();
     },
   };

@@ -21,6 +21,10 @@ npm-debug.log*
 # local feature worktrees
 .worktrees/
 
+# local browser validation artifacts
+.playwright-cli/
+output/playwright/
+
 # Cloudflare Workers local state and secrets
 **/.wrangler/
 **/.dev.vars*

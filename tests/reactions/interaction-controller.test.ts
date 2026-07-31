@@ -83,6 +83,31 @@ describe('reaction interaction controller', () => {
     expectOpen(first, true);
   });
 
+  it('keeps the panel active when a pending button loses focus', async () => {
+    const action = actionButton(first, '🔥');
+    action.focus();
+    action.setAttribute('aria-busy', 'true');
+    action.disabled = true;
+    const outside = document.createElement('button');
+    document.body.append(outside);
+    outside.focus();
+    action.dispatchEvent(new FocusEvent('focusout', {
+      bubbles: true,
+      relatedTarget: outside,
+    }));
+    await flushAsyncWork();
+    expectOpen(first, true);
+
+    action.removeAttribute('aria-busy');
+    action.disabled = false;
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+    );
+    await flushAsyncWork();
+    expectOpen(first, false);
+    expect(document.activeElement).toBe(opener(first));
+  });
+
   it('Escape closes, restores launcher focus, and does not reopen', async () => {
     const firstOpener = opener(first);
     firstOpener.focus();
@@ -112,6 +137,22 @@ describe('reaction interaction controller', () => {
     summary(first).click();
     expectOpen(first, true);
     expect(document.activeElement).toBe(first);
+  });
+
+  it('uses the pointerdown state when a mobile tap focuses before click', () => {
+    hover.setMatches(false);
+    summary(first).dispatchEvent(
+      new Event('pointerdown', { bubbles: true }),
+    );
+    first.focus();
+    summary(first).click();
+    expectOpen(first, true);
+
+    summary(first).dispatchEvent(
+      new Event('pointerdown', { bubbles: true }),
+    );
+    summary(first).click();
+    expectOpen(first, false);
   });
 
   it('closes an open hoverless message on its second content tap', async () => {
