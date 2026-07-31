@@ -487,14 +487,14 @@ export function createReactionDataController(options: {
     }
   };
 
-  root.addEventListener('click', handleClick);
+  root.addEventListener('click', handleClick, true);
   root.addEventListener('click', handleRetry);
 
   return {
     bootstrap,
     destroy() {
       destroyed = true;
-      root.removeEventListener('click', handleClick);
+      root.removeEventListener('click', handleClick, true);
       root.removeEventListener('click', handleRetry);
       pendingKeys.clear();
     },
