@@ -9,7 +9,13 @@ node_modules/
 npm-debug.log*
 
 # environment variables
-**/.env*
+.env
+.env.local
+.env.production
+
+# local browser verification artifacts
+.playwright-cli/
+output/playwright/
 
 # macOS
 .DS_Store
@@ -20,11 +26,3 @@ npm-debug.log*
 
 # local feature worktrees
 .worktrees/
-
-# local browser validation artifacts
-.playwright-cli/
-output/playwright/
-
-# Cloudflare Workers local state and secrets
-**/.wrangler/
-**/.dev.vars*

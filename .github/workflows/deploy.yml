@@ -16,8 +16,6 @@ concurrency:
 
 jobs:
   build:
-    env:
-      PUBLIC_REACTIONS_API_URL: ${{ vars.PUBLIC_REACTIONS_API_URL }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,8 +27,6 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
-      - name: Validate production reactions API
-        run: node scripts/validate-reactions-env.mjs --required
       - name: Build with Astro
         uses: withastro/action@v3
         with:
@@ -43,10 +39,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
-    concurrency:
-      group: production-release
-      cancel-in-progress: false
-      queue: max
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
