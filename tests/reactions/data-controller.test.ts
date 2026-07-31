@@ -301,6 +301,22 @@ describe('reaction data mutations', () => {
     expect(api.setReaction).toHaveBeenCalledTimes(1);
   });
 
+  it('captures an action before a message handler stops propagation', () => {
+    const pending = deferred<SetReactionResponse>();
+    api.setReaction.mockReturnValueOnce(pending.promise);
+    const message = page.messages.workBeta;
+    message.addEventListener('click', (event) => event.stopPropagation());
+    const action = actionButton(message, '🎉');
+
+    action.click();
+
+    expect(action.getAttribute('aria-pressed')).toBe('true');
+    expect(actionCount(message, '🎉').textContent).toBe('1');
+    expect(api.setReaction).toHaveBeenCalledWith({
+      targetId: 'work:beta', emoji: '🎉', active: true,
+    }, TEST_VISITOR_TOKEN);
+  });
+
   it('removes a zero chip and moves focus to the opener', async () => {
     controller.destroy();
     page = createReactionPageFixture();
