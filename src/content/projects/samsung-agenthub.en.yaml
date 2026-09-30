@@ -5,7 +5,7 @@ location: "Suwon"
 title: "AgentHub: AI Agent Session Manager"
 summary: "I built a tool to monitor agents across multiple terminals, spot input and approval waits, and resume work from one screen."
 bullets:
-  - "Grouped tmux sessions by working directory and highlighted states that needed attention or intervention."
+  - "Grouped tmux sessions by working directory. I highlighted states that needed attention or intervention."
   - "Connected users directly to each session terminal to enter instructions and continue their work."
   - "Handled planning, Electron and React app development, and internal Tool Store deployment independently. Other developers use the tool in their work."
 metric: "Ranked #3 in recommendations among 15 tools"

@@ -9,8 +9,8 @@ links:
   email: kyb3634@gmail.com
 bullets:
   - 삼성전자에서 수천만 사용자 규모 백업, 복원 서비스의 백엔드를 개발하고 운영합니다. (Java, Spring Boot, AWS, Kafka)
-  - 운영 로그로 사용자 체감 품질을 확인하고, 실패 원인을 찾아 서비스 기능과 운영 방식을 개선합니다.
-  - 반복되는 분석 업무는 AI Agent로 자동화하고, 테스트와 코드 리뷰로 변경 후 기존 동작을 확인합니다. 사내 Best Reviewer 자격을 취득했습니다.
+  - 운영 로그로 사용자 체감 품질을 확인합니다. 실패 원인을 찾아 서비스 기능과 운영 방식을 개선합니다.
+  - 반복되는 분석 업무는 AI Agent로 자동화합니다. 테스트와 코드 리뷰로 변경 후 기존 동작을 확인합니다. 사내 Best Reviewer 자격을 취득했습니다.
 activities: SIPE 5기, SSAFY 8기 (Java 트랙), GDSC CAU, 피로그래밍, UMC, SOPT
 status: Backend Engineer
 activityStatus: 실시간 접속 중

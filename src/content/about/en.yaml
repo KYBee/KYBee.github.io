@@ -9,8 +9,8 @@ links:
   email: kyb3634@gmail.com
 bullets:
   - I build and operate the backend of a backup and restore service for tens of millions of users at Samsung Electronics. (Java, Spring Boot, AWS, Kafka)
-  - I use operational logs to measure user experience, find failure causes, and improve service behavior and operations.
-  - I automate repetitive analysis with AI agents and use tests and code reviews to check existing behavior after changes. I hold the in-house Best Reviewer certification.
+  - I use operational logs to measure user experience. I find failure causes and improve service behavior and operations.
+  - I automate repetitive analysis with AI agents. I use tests and code reviews to check existing behavior after changes. I hold the in-house Best Reviewer certification.
 activities: SIPE 5th, SSAFY 8th (Java track), GDSC CAU, Pirogramming, UMC, SOPT
 status: Backend Engineer
 activityStatus: Online now

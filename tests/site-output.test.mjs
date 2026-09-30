@@ -7,7 +7,7 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     const html = await readFile(pagePath, 'utf8');
     const pills = html.match(/class="reaction-pill"/gu) ?? [];
 
-    assert.equal(pills.length, 22);
+    assert.equal(pills.length, 26);
     assert.doesNotMatch(html, /data-reaction-/u);
     assert.doesNotMatch(html, /reaction-action|reaction-launcher/u);
     assert.doesNotMatch(html, /workers\.dev|PUBLIC_REACTIONS_API_URL/u);
