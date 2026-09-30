@@ -2,7 +2,7 @@ company: Shinyoung Securities
 role: Software Engineering Intern (IT Planning)
 period: Sep 2021 – Dec 2021
 location: Seoul
-summary: During the mobile trading system renewal, I first added a Node.js test server and checks, then migrated screens and modules in stages. I compared each stage with the previous version and documented test criteria and differences for the team.
+summary: During the mobile trading system renewal, I first added a Node.js test server and checks. I migrated screens and modules in stages, comparing results with the previous version at each step. I documented test criteria and differences for the team.
 tags: [JavaScript, Node.js]
 lang: en
 order: 60

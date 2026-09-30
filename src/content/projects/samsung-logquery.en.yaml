@@ -1,0 +1,13 @@
+company: "Samsung Electronics"
+role: "Backend Engineer"
+period: "Jan 2023 – Present"
+location: "Suwon"
+title: "A Shared Log Query Tool with Jupyter and PySpark"
+summary: "When support for the existing log analysis tool ended, teammates had to write their own queries in Jupyter. I built a shared interface that retrieves logs from a few input conditions."
+bullets:
+  - "Teammates enter a module, region, time period, and keyword to query S3 logs with PySpark. This reduces the work of finding log paths and repeatedly writing query code."
+  - "Flattened nested fields into columns and provided keyword filtering. Teammates can use the results directly in further analysis."
+  - "Demonstrated the tool in a team knowledge sharing session and shared the documentation and notebook. I incorporated feedback from actual use through version three."
+tags: [Python, Jupyter Notebook, PySpark, S3]
+lang: en
+order: 45

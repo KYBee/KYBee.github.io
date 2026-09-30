@@ -3,12 +3,12 @@ role: "Backend Engineer"
 period: "Jan 2023 – Present"
 location: "Suwon"
 title: "SLI/SLO Anomaly Analysis and Reporting Automation"
-summary: "I built AI agents that collect relevant logs and return possible causes and supporting evidence in the original alert thread."
+summary: "When a metric fell below its threshold, engineers gathered logs from multiple servers and compared them with server code to investigate the cause. I automated this analysis, which took up to four hours, by dividing it among three agents."
 bullets:
-  - "Collected logs using the service, region, API, and time window in each alert, linked them by transaction, and selected the logs needed for analysis."
-  - "Used RAG to retrieve similar past incidents and compared them with supporting logs and server code to narrow down possible causes."
-  - "Reviewed early results, updated agent instructions after incorrect conclusions, and saved reviewed error patterns for future analysis."
-  - "Posted possible causes and evidence in the original alert thread. Direct measurements of the same analysis task showed a reduction from up to four hours to about ten minutes."
+  - "The log extraction agent collects logs matching the alert's service, region, API, and time window. It groups logs from the same transaction and selects those needed for analysis."
+  - "The cause analysis agent uses RAG to find similar past incidents. It compares them with supporting logs and server code to narrow down possible causes."
+  - "The reporting agent posts possible causes and evidence in the original alert thread. Engineers can request analysis and review the evidence where they received the alert."
+  - "I reviewed early results and updated agent instructions after incorrect conclusions. I saved reviewed error patterns for future analysis. Direct measurements of the same task showed a reduction to about ten minutes."
 metric: "Analysis and reporting time: up to 4 hours → ~10 minutes"
 tags: [Python, FastAPI, PySpark, RAG]
 lang: en

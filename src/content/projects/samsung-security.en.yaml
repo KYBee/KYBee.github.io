@@ -3,11 +3,12 @@ role: "Backend Engineer"
 period: "Jan 2023 – Present"
 location: "Suwon"
 title: "Automating Vulnerable Package Analysis and Update PRs"
-summary: "I automated the recurring work of reviewing Dependabot issues, analyzing update options, and preparing pull requests."
+summary: "I built Security Bot to keep up with Dependabot security issues across legacy repositories. It automates issue collection, version analysis, and update PR preparation."
 bullets:
-  - "Collected security issues with GitHub Actions and gave the LLM CVE details, current versions, and package configurations to analyze update options."
-  - "When the target version was clear, a script updated package configuration and created a PR. Cases requiring a decision included candidate versions and supporting reasons."
-  - "Maintainers reviewed changes and test results before merging. A web dashboard showed security issues and PR status across repositories."
+  - "GitHub Actions periodically checks repositories and groups security issues by package."
+  - "The LLM analyzes CVE details, current versions, and package configurations to suggest a target version."
+  - "When the target version is clear, a script updates package configuration and creates a PR with a review request. Cases requiring a decision include candidate versions and supporting reasons."
+  - "Maintainers review changes and test results before merging. I also built a web dashboard showing issues and PR status across repositories. The bot and dashboard remain in regular use."
 tags: [GitHub Actions, Python, LLM]
 lang: en
 order: 55

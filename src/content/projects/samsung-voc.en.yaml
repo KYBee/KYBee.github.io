@@ -1,0 +1,14 @@
+company: "Samsung Electronics"
+role: "Backend Engineer"
+period: "Jan 2023 – Present"
+location: "Suwon"
+title: "Building a Web Tool for Backup VOC Analysis"
+summary: "Client developers had to ask server developers for logs to investigate customer issues. Repeated requests delayed resolution, so I built a web tool that lets them look up the information directly."
+bullets:
+  - "Selected five lookup functions that client developers commonly used. I handled the design, frontend, and backend development."
+  - "Users enter user information, a time period, and a lookup function. The backend pipeline calls internal APIs or runs Athena queries through Lambda and displays the results."
+  - "Added filters and Markdown export to support analysis and response. Client developers can now retrieve the information and logs they need without going through server developers."
+metric: "VOC resolution: at least a day → within a day"
+tags: [Python, FastAPI, AWS Lambda, Athena, S3]
+lang: en
+order: 25
