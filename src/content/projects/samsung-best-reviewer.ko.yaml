@@ -1,0 +1,13 @@
+company: "삼성전자"
+role: "Backend Engineer"
+period: "2023.01 – 현재"
+location: "수원"
+title: "Best Reviewer 자격 취득과 코드 품질 개선"
+summary: "Clean Code, Refactoring, TDD 교육을 이수하고 현업 적용과 면접을 거쳐 사내 SW 전문가 인증인 Best Reviewer 자격을 취득했습니다."
+bullets:
+  - "기존 동작을 테스트로 확인한 뒤 책임이 섞인 로직을 나누며 레거시 코드를 점진적으로 리팩토링했습니다."
+  - "코드 리뷰 템플릿에 변경 이유, 영향 범위와 테스트 방법을 남기고, 반복되는 리뷰 기준을 팀에 공유했습니다."
+  - "AI 코드 리뷰 가이드라인과 Agent Skill을 만들어 실제 개발과 리뷰에 사용했습니다. 기능 구현과 수정 시 테스트로 기존 동작에 미치는 영향을 확인하도록 했습니다."
+tags: [Clean Code, Refactoring, TDD]
+lang: ko
+order: 50

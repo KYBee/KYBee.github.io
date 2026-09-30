@@ -1,6 +1,6 @@
 name: MOA
-tech: Solo
-description: 기숙사 배달 메이트 매칭 시스템 (GDSC)
+tech: JavaScript, Django, MySQL, AWS EC2
+description: 기숙사생들이 같은 가게에 함께 주문해 최소 주문금액과 배달비 부담을 줄일 수 있는 매칭 서비스입니다. 기획부터 JavaScript 프론트엔드, Django와 MySQL 백엔드, AWS EC2 배포까지 혼자 진행하고 실제 사용자 의견을 반영했습니다.
 url: https://github.com/KYBee/Moa
 lang: ko
 order: 20

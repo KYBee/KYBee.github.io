@@ -1,5 +1,5 @@
 name: SSAFY Attendance Excuse Generator
-tech: Vue
-description: A utility with real users
+tech: Vue, AWS EC2
+description: I built a service that generates attendance excuse PDFs from form inputs, simplifying a process that required printing, handwriting, and scanning. Built with Vue and deployed on AWS EC2, it ran for about three years and was used over 10,000 times.
 lang: en
-order: 40
+order: 5

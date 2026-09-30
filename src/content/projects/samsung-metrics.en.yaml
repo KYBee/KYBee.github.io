@@ -1,14 +1,14 @@
-company: Samsung Electronics
-role: Backend Engineer
-period: Sep 2023 – Present
-location: Suwon
-title: User-Perceived Backup/Restore Success Rate Metrics
-summary: A backup/restore operation only succeeds when a chain of server calls all complete — I defined and automated a metric for that end-to-end, user-level success
+company: "Samsung Electronics"
+role: "Backend Engineer"
+period: "Jan 2023 – Present"
+location: "Suwon"
+title: "User-Perceived Backup and Restore Quality"
+summary: "I grouped API calls into complete operations to measure whether users actually finished their backups and restores."
 bullets:
-  - Moved from per-API success checks to a success rate defined over user-operation transactions spanning the full call flow
-  - Automated metric extraction with Airflow/Python and daily-refreshing Grafana dashboards, plus auxiliary metrics for failure-cause tracking
-  - Drove improvement actions — success rate ~70% → 95%
-metric: Success rate ~70% → 95%
-tags: [Python, Airflow, PySpark, Grafana]
+  - "Defined success by the final outcome of each user operation and checked the results against operational logs."
+  - "Processed logs with Spark, calculated daily metrics with Airflow, and visualized them in Grafana. Failed tasks could be rerun without restarting the entire pipeline."
+  - "Used metrics by failure stage, region, and API to find causes and improve service behavior and operations. Daily user-perceived backup success rose from about 70% to about 95%."
+metric: "Daily user-perceived backup success rate ~70% → ~95%"
+tags: [Python, Airflow, PySpark, InfluxDB, Grafana]
 lang: en
 order: 10

@@ -1,0 +1,13 @@
+company: "Samsung Electronics"
+role: "Backend Engineer"
+period: "Jan 2023 – Present"
+location: "Suwon"
+title: "Reducing Duplicate File Storage"
+summary: "I worked with teammates to address identical APK files being stored repeatedly for different users."
+bullets:
+  - "Designed and implemented file deduplication based on file hashes."
+  - "Verified the effect by comparing total APK sizes in backup metadata with actual storage usage."
+metric: "Duplicate storage reduced by about 90%"
+tags: [Java, Spring Boot, S3]
+lang: en
+order: 30
