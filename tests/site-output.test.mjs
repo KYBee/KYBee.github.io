@@ -7,7 +7,7 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     const html = await readFile(pagePath, 'utf8');
     const pills = html.match(/class="reaction-pill"/gu) ?? [];
 
-    assert.equal(pills.length, 20);
+    assert.equal(pills.length, 22);
     assert.doesNotMatch(html, /data-reaction-/u);
     assert.doesNotMatch(html, /reaction-action|reaction-launcher/u);
     assert.doesNotMatch(html, /workers\.dev|PUBLIC_REACTIONS_API_URL/u);
@@ -322,7 +322,7 @@ const metadataCases = [
     path: 'dist/index.html',
     title: '김영빈 | Backend Engineer',
     description:
-      '로그를 품질 지표로, 반복 운영을 자동화로 바꾸는 백엔드 엔지니어',
+      '백엔드를 개발하고, 운영 로그로 문제를 찾아 서비스와 업무 흐름을 개선하는 엔지니어',
     canonical: 'https://kybee.github.io/',
     locale: 'ko_KR',
     alternateLocale: 'en_US',
@@ -331,7 +331,7 @@ const metadataCases = [
     path: 'dist/en/index.html',
     title: 'Youngbeen Kim | Backend Engineer',
     description:
-      'A backend engineer who turns logs into quality metrics and repetitive operations into automation',
+      'A backend engineer who uses operational logs to improve services and everyday workflows',
     canonical: 'https://kybee.github.io/en/',
     locale: 'en_US',
     alternateLocale: 'ko_KR',

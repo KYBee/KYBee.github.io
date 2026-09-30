@@ -1,6 +1,6 @@
 name: MOA
-tech: Solo
-description: Dorm delivery-mate matching system (GDSC)
+tech: JavaScript, Django, MySQL, AWS EC2
+description: A service connecting dorm residents ordering from the same restaurant to share delivery costs and meet minimum orders. I handled planning, the JavaScript frontend, Django and MySQL backend, AWS EC2 deployment, and feedback from actual users independently.
 url: https://github.com/KYBee/Moa
 lang: en
 order: 20

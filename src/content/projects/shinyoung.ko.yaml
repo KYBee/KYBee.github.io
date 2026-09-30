@@ -1,8 +1,8 @@
 company: 신영증권
-role: 개발 인턴 (IT기획부)
+role: 개발 인턴 (IT기획팀)
 period: 2021.09 – 2021.12
 location: 서울
-summary: MTS(모바일트레이딩시스템) 리뉴얼 프로젝트의 클라이언트 개발자 — Node.js/JavaScript로 테스트 서버 및 컴포넌트 개발
-tags: [Node.js]
+summary: MTS 리뉴얼에서 Node.js 테스트 서버와 검증 항목을 먼저 보강하고, 화면과 모듈을 점진적으로 이전했습니다. 단계마다 기존 버전과 실행 결과를 비교하고, 테스트 기준과 발견한 차이를 문서화해 공유했습니다.
+tags: [JavaScript, Node.js]
 lang: ko
 order: 60

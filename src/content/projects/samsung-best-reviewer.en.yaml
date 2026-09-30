@@ -1,0 +1,13 @@
+company: "Samsung Electronics"
+role: "Backend Engineer"
+period: "Jan 2023 – Present"
+location: "Suwon"
+title: "Best Reviewer Certification and Code Quality Improvements"
+summary: "I earned the in-house Best Reviewer certification through Clean Code, Refactoring, and TDD training, practical application, and an interview."
+bullets:
+  - "Checked existing behavior with tests, then separated mixed responsibilities while gradually refactoring legacy code."
+  - "Created a code review template covering reasons for changes, affected behavior, and testing methods, and shared recurring review criteria with the team."
+  - "Created AI code review guidelines and agent skills used in development and reviews, with tests to check how new features and changes affect existing behavior."
+tags: [Clean Code, Refactoring, TDD]
+lang: en
+order: 50
