@@ -12,6 +12,25 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     assert.doesNotMatch(html, /reaction-action|reaction-launcher/u);
     assert.doesNotMatch(html, /workers\.dev|PUBLIC_REACTIONS_API_URL/u);
   });
+
+  test(`${pagePath} provides project navigation with valid destinations`, async () => {
+    const html = await readFile(pagePath, 'utf8');
+    const index = html.match(/<details\b[^>]*\bid="project-index"[^>]*>([\s\S]*?)<\/details>/u);
+    assert.ok(index, 'Expected a pinned project index');
+    const links = [...index[1].matchAll(/href="#(project-[^"]+)"/gu)];
+    const projectMessages = findTags(html, 'div').filter((tag) =>
+      tag.attributes.class?.split(/\s+/u).includes('work-project'),
+    );
+    assert.ok(links.length > 0, 'Expected project links');
+    assert.equal(links.length, projectMessages.length, 'Every project should have a shortcut');
+    const ids = findTags(html, 'div').map((tag) => tag.attributes.id);
+    for (const [, destination] of links) {
+      assert.equal(ids.filter((id) => id === destination).length, 1, `Invalid project destination: ${destination}`);
+    }
+    const intro = html.match(/<div\b[^>]*class="channel-intro-links"[^>]*>([\s\S]*?)<\/div>/u);
+    assert.ok(intro, 'Expected introduction links');
+    assert.match(intro[1], /href="#work-projects"/u, 'Expected an introduction project shortcut');
+  });
 }
 
 function escapeRegExp(value) {

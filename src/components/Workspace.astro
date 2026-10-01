@@ -23,13 +23,16 @@ const [aboutEntries, projectEntries, sideProjectEntries, educationEntries, certE
   ]);
 
 const about = aboutEntries[0].data;
-const projects = [...projectEntries].sort(byOrder).map((e) => e.data);
+const projects = [...projectEntries].sort(byOrder).map((e) => ({
+  ...e.data,
+  anchorId: `project-${e.id.replace(/\.(ko|en)(?:\.ya?ml)?$/, '')}`,
+}));
 const sideProjects = [...sideProjectEntries].sort(byOrder).map((e) => e.data);
 const education = [...educationEntries].sort(byOrder).map((e) => e.data)[0];
 const certifications = [...certEntries].sort(byOrder).map((e) => e.data);
 const skills = [...skillEntries].sort(byOrder).map((e) => e.data);
 
-type ProjectData = CollectionEntry<'projects'>['data'];
+type ProjectData = CollectionEntry<'projects'>['data'] & { anchorId: string };
 type ProjectGroup = { company: string; role: string; period: string; location?: string; items: ProjectData[] };
 
 const projectGroups: ProjectGroup[] = [];
@@ -82,7 +85,12 @@ const copy = {
       education: education?.detail ?? '',
     },
     workProjectsContext: firstJob ? `${firstJob.company} 재직 중 수행 · ${firstJob.period}` : '',
-    me: `${about.name} (나)`,
+    me: `${about.name} · 프로필`,
+    projectShortcut: '업무 프로젝트 보기',
+    pinnedProjects: '고정된 프로젝트 바로가기',
+    projectNavigationLabel: '업무 프로젝트 목록',
+    projectCount: `${samsungItems.length}개`,
+    profileHint: '프로필 보기',
     hamburgerLabel: '메뉴 열기',
     closeLabel: '닫기',
     themeLabel: '테마 전환',
@@ -127,7 +135,12 @@ const copy = {
       education: education?.detail ?? '',
     },
     workProjectsContext: firstJob ? `Completed while at ${firstJob.company} · ${firstJob.period}` : '',
-    me: `${about.name} (you)`,
+    me: `${about.name} · Profile`,
+    projectShortcut: 'View work projects',
+    pinnedProjects: 'Pinned project shortcuts',
+    projectNavigationLabel: 'Work project list',
+    projectCount: `${samsungItems.length} projects`,
+    profileHint: 'View profile',
     hamburgerLabel: 'Open menu',
     closeLabel: 'Close',
     themeLabel: 'Toggle theme',
@@ -171,7 +184,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
   </header>
 
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
-  <nav class="drawer" id="drawer" aria-hidden="true" inert>
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label={t.channelsLabel} aria-hidden="true" inert>
     <div class="drawer-header">
       <span class="workspace-name">KYBee</span>
       <button class="drawer-close" id="drawer-close" aria-label={t.closeLabel}>
@@ -204,7 +217,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
         {lang === 'ko' ? <a href="/en/">EN</a> : <strong>EN</strong>}
       </span>
     </div>
-  </nav>
+  </div>
 
   <aside class="sidebar">
     <div class="sidebar-header">
@@ -251,7 +264,10 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
         <Avatar initials={initials} size={72} radius="var(--radius-lg)" fontSize="1.5rem" />
       </div>
       <div class="channel-intro-heading">
-        <p class="channel-intro-name">{about.name}</p>
+        <button class="channel-intro-name" type="button" data-open-profile aria-haspopup="dialog" aria-label={t.profileOpenLabel}>
+          {about.name}
+          <span class="profile-hint">{t.profileHint} <span aria-hidden="true">→</span></span>
+        </button>
         <p class="channel-intro-title">{about.title}</p>
       </div>
       <div class="channel-intro-status">
@@ -259,6 +275,11 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
         {about.activityStatus}
       </div>
       <div class="channel-intro-links">
+        <a class="channel-intro-link intro-projects-link" href="#work-projects">
+          <span aria-hidden="true">#</span>
+          <span>{t.projectShortcut}</span>
+          <span aria-hidden="true">→</span>
+        </a>
         <a class="channel-intro-link" href={about.links.github} target="_blank" rel="noopener">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
           <span>GitHub</span>
@@ -281,7 +302,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       </ul>
     </div>
 
-    <section id="experience" class="channel">
+    <section id="experience" class="channel" tabindex="-1">
       <header class="channel-header">
         <h1># {t.channels.experience}</h1>
         <p class="channel-topic">{t.topics.experience}</p>
@@ -323,20 +344,35 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       </div>
     </section>
 
-    <section id="work-projects" class="channel">
+    <section id="work-projects" class="channel" tabindex="-1">
       <header class="channel-header">
         <h1># {t.channels['work-projects']}</h1>
         <p class="channel-topic">{t.workProjectsContext}</p>
       </header>
+      <details class="project-index" id="project-index" open>
+        <summary>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m16 3 5 5-4 1-3 5-4-4 5-3 1-4Z"></path><path d="m10 14-7 7"></path></svg>
+          <span>{t.pinnedProjects}</span>
+          <span class="project-count">{t.projectCount}</span>
+          <span class="index-chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <nav aria-label={t.projectNavigationLabel}>
+          <ul>
+            {samsungItems.map((item) => (
+              <li><a href={`#${item.anchorId}`}>{item.title ?? item.company}</a></li>
+            ))}
+          </ul>
+        </nav>
+      </details>
       {samsungItems.map((item, i) => (
-        <div class="message">
+        <div class="message work-project" id={item.anchorId} tabindex="-1">
           <div class="avatar"><Avatar initials={initials} size={44} /></div>
           <div class="message-body">
             <div class="message-meta">
               <span class="message-author">{about.name}</span>
               <span class="message-time">{item.company} · {item.period}</span>
             </div>
-            {item.title && <p class="message-title">{item.title}</p>}
+            {item.title && <h2 class="message-title">{item.title}</h2>}
             {item.summary && <p class="message-summary">{item.summary}</p>}
             {item.bullets && (
               <ul class="message-bullets">
@@ -359,7 +395,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       ))}
     </section>
 
-    <section id="side-projects" class="channel">
+    <section id="side-projects" class="channel" tabindex="-1">
       <header class="channel-header">
         <h1># {t.channels['side-projects']}</h1>
         <p class="channel-topic">{t.topics['side-projects']}</p>
@@ -390,7 +426,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       <p class="channel-footnote">{about.activities}</p>
     </section>
 
-    <section id="skills" class="channel">
+    <section id="skills" class="channel" tabindex="-1">
       <header class="channel-header">
         <h1># {t.channels.skills}</h1>
         <p class="channel-topic">{t.topics.skills}</p>
@@ -415,7 +451,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       </div>
     </section>
 
-    <section id="education" class="channel">
+    <section id="education" class="channel" tabindex="-1">
       <header class="channel-header">
         <h1># {t.channels.education}</h1>
         <p class="channel-topic">{t.topics.education}</p>
@@ -636,6 +672,9 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     display: flex;
     align-items: center;
     justify-content: center;
+    width: var(--control-size);
+    height: var(--control-size);
+    flex-shrink: 0;
   }
 
   .theme-toggle:hover {
@@ -643,10 +682,10 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     border-color: var(--sidebar-text-active);
   }
 
-  [data-theme='dark'] .icon-sun { display: block; }
-  [data-theme='dark'] .icon-moon { display: none; }
-  [data-theme='light'] .icon-sun { display: none; }
-  [data-theme='light'] .icon-moon { display: block; }
+  :global([data-theme='dark']) .icon-sun { display: block; }
+  :global([data-theme='dark']) .icon-moon { display: none; }
+  :global([data-theme='light']) .icon-sun { display: none; }
+  :global([data-theme='light']) .icon-moon { display: block; }
 
   .nav-group-label {
     padding: var(--space-4) var(--space-4) var(--space-1);
@@ -760,6 +799,10 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     padding: var(--space-2);
     cursor: pointer;
     display: flex;
+    width: var(--control-size);
+    height: var(--control-size);
+    align-items: center;
+    justify-content: center;
   }
 
   .drawer-backdrop {
@@ -809,6 +852,11 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     border: none;
     color: var(--sidebar-text);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-size);
+    height: var(--control-size);
   }
 
   .drawer-channel-list {
@@ -854,6 +902,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     font-size: var(--fs-base);
     text-align: left;
     cursor: pointer;
+    min-height: var(--control-size);
   }
 
   .drawer-dm.is-active {
@@ -865,6 +914,14 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     margin-top: auto;
     padding: var(--space-4);
     border-top: 1px solid var(--sidebar-border);
+  }
+
+  .drawer-footer a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--control-size);
+    min-height: var(--control-size);
   }
 
   /* ---------- Content ---------- */
@@ -907,6 +964,77 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     margin-top: var(--space-1);
   }
 
+  .project-index {
+    max-width: var(--content-max-width);
+    margin-bottom: var(--space-block);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+  }
+
+  .project-index summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .project-index summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .project-index summary svg {
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .project-count {
+    margin-left: auto;
+    color: var(--text-secondary);
+    font-size: var(--fs-xs);
+    white-space: nowrap;
+  }
+
+  .index-chevron {
+    color: var(--text-secondary);
+  }
+
+  .project-index[open] .index-chevron {
+    transform: rotate(180deg);
+  }
+
+  .project-index ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1) var(--space-4);
+    padding: 0 var(--space-3) var(--space-3);
+  }
+
+  .project-index a {
+    display: flex;
+    align-items: center;
+    min-height: var(--control-size);
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+  }
+
+  .project-index a:hover {
+    background: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  .work-project {
+    scroll-margin-top: calc(var(--space-8) + var(--space-6));
+  }
+
   .channel-intro {
     display: flex;
     flex-direction: column;
@@ -940,6 +1068,26 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text);
+    font-family: inherit;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 0;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .profile-hint {
+    font-size: var(--fs-xs);
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+
+  .channel-intro-name:hover .profile-hint {
+    color: var(--accent);
   }
 
   .channel-intro-title {
@@ -1001,6 +1149,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     border-radius: var(--radius-pill);
     color: var(--text-secondary);
     font-size: var(--fs-sm);
+    min-height: var(--control-size);
   }
 
   .channel-intro-link:hover {
@@ -1008,7 +1157,16 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     color: var(--accent);
   }
 
+  .intro-projects-link {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
   .message {
+    --message-avatar-size: 44px;
+    --message-avatar-font: var(--fs-sm);
     display: flex;
     gap: var(--space-3);
     max-width: var(--content-max-width);
@@ -1025,8 +1183,8 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
 
   .avatar {
     flex-shrink: 0;
-    width: 44px;
-    height: 44px;
+    width: var(--message-avatar-size);
+    height: var(--message-avatar-size);
     border-radius: var(--radius-md);
     background: var(--avatar-bg);
     color: var(--avatar-text);
@@ -1250,6 +1408,10 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     cursor: pointer;
     padding: var(--space-2);
     display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-size);
+    height: var(--control-size);
   }
 
   .profile-close:hover {
@@ -1380,8 +1542,8 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     text-decoration: underline;
   }
 
-  /* ---------- Mobile ---------- */
-  @media (max-width: 768px) {
+  /* ---------- Drawer navigation on mobile and tablets ---------- */
+  @media (max-width: 1024px) {
     .sidebar {
       display: none;
     }
@@ -1401,9 +1563,8 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     .content {
       margin-left: 0;
       padding-top: var(--topbar-height);
-      padding-left: var(--content-padding-x-mobile);
-      padding-right: var(--content-padding-x-mobile);
-      --lh-body: 1.7;
+      padding-left: var(--content-padding-x-tablet);
+      padding-right: var(--content-padding-x-tablet);
     }
 
     /* Horizontal inset comes from .content above — new top-level blocks
@@ -1426,19 +1587,66 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       top: var(--topbar-height);
     }
 
+    .work-project {
+      scroll-margin-top: calc(var(--topbar-height) + var(--space-8) + var(--space-6));
+    }
+  }
+
+  /* ---------- Compact message layout on mobile ---------- */
+  @media (max-width: 768px) {
+    .content {
+      padding-left: var(--content-padding-x-mobile);
+      padding-right: var(--content-padding-x-mobile);
+      --lh-body: 1.7;
+    }
+
     .channel-header h1 {
       font-size: var(--fs-lg);
     }
 
-    .avatar {
-      width: 32px;
-      height: 32px;
-      font-size: var(--fs-xs);
+    .message {
+      --message-avatar-size: 32px;
+      --message-avatar-font: var(--fs-xs);
+      display: grid;
+      grid-template-columns: var(--message-avatar-size) minmax(0, 1fr);
+      gap: var(--space-2);
     }
 
-    .message {
-      flex-direction: column;
-      gap: var(--space-2);
+    .avatar {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: start;
+    }
+
+    .message-body {
+      display: contents;
+    }
+
+    .message-meta {
+      grid-column: 2;
+      grid-row: 1;
+      min-height: var(--message-avatar-size);
+      align-self: center;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+      row-gap: 0;
+    }
+
+    .message-body > :not(.message-meta) {
+      grid-column: 1 / -1;
+    }
+
+    .message-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .project-index ul {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .intro-projects-link {
+      flex-basis: 100%;
+      justify-content: center;
     }
 
     .reactions {
@@ -1471,6 +1679,10 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       color: var(--text);
       cursor: pointer;
       padding: var(--space-2);
+      width: var(--control-size);
+      height: var(--control-size);
+      align-items: center;
+      justify-content: center;
     }
 
     .profile-header-title {
@@ -1486,6 +1698,11 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
 </style>
 
 <script>
+  const projectIndex = document.querySelector<HTMLDetailsElement>('.project-index');
+  if (projectIndex && window.matchMedia('(max-width: 768px)').matches) {
+    projectIndex.open = false;
+  }
+
   const themeToggles = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
   themeToggles.forEach((toggle) => {
     toggle.addEventListener('click', () => {
@@ -1501,6 +1718,34 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
   const drawer = document.getElementById('drawer');
   const drawerBackdrop = document.getElementById('drawer-backdrop');
   const drawerClose = document.getElementById('drawer-close');
+  const profilePanel = document.getElementById('profile-panel');
+  const backgroundRegions = document.querySelectorAll<HTMLElement>('.topbar, .sidebar, .content, footer');
+  const isVisible = (el: HTMLElement | null): el is HTMLElement => !!el && el.offsetParent !== null;
+
+  const syncOverlayState = () => {
+    const isOpen = !!(drawer?.classList.contains('is-open') || profilePanel?.classList.contains('is-open'));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    backgroundRegions.forEach((region) => { region.inert = isOpen; });
+  };
+
+  const trapFocus = (event: KeyboardEvent, container: HTMLElement) => {
+    const focusable = Array.from(
+      container.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+    ).filter(isVisible);
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!focusable.includes(document.activeElement as HTMLElement)) {
+      event.preventDefault();
+      (event.shiftKey ? last : first).focus();
+    } else if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   const openDrawer = () => {
     drawer?.classList.add('is-open');
@@ -1508,22 +1753,31 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     drawer?.setAttribute('aria-hidden', 'false');
     drawer?.removeAttribute('inert');
     hamburger?.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
+    syncOverlayState();
+    drawerClose?.focus();
   };
 
-  const closeDrawer = () => {
+  const closeDrawer = (restoreFocus = true) => {
+    if (!drawer?.classList.contains('is-open')) return;
     drawer?.classList.remove('is-open');
     drawerBackdrop?.classList.remove('is-open');
     drawer?.setAttribute('aria-hidden', 'true');
     drawer?.setAttribute('inert', '');
     hamburger?.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    syncOverlayState();
+    if (restoreFocus) {
+      const target = isVisible(hamburger) ? hamburger : document.querySelector<HTMLElement>('.sidebar .channel-link.is-active, .sidebar .channel-link');
+      target?.focus();
+    }
   };
 
   hamburger?.addEventListener('click', openDrawer);
-  drawerClose?.addEventListener('click', closeDrawer);
-  drawerBackdrop?.addEventListener('click', closeDrawer);
-  drawer?.querySelectorAll('a, [data-open-profile]').forEach((el) => el.addEventListener('click', closeDrawer));
+  drawerClose?.addEventListener('click', () => closeDrawer());
+  drawerBackdrop?.addEventListener('click', () => closeDrawer());
+  drawer?.querySelectorAll('a').forEach((el) => el.addEventListener('click', () => closeDrawer()));
+  window.matchMedia('(max-width: 1024px)').addEventListener('change', (event) => {
+    if (!event.matches) closeDrawer();
+  });
 
   const navLinks = document.querySelectorAll<HTMLElement>('[data-channel-link]');
   const sections = document.querySelectorAll<HTMLElement>('.channel');
@@ -1549,21 +1803,19 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
 
   /* ---------- Profile panel ---------- */
   const profileTriggers = document.querySelectorAll<HTMLElement>('[data-open-profile]');
-  const profilePanel = document.getElementById('profile-panel');
   const profileBackdrop = document.getElementById('profile-backdrop');
   const profileClose = document.getElementById('profile-close');
   const profileBack = document.getElementById('profile-back');
   let lastFocused: HTMLElement | null = null;
 
-  const isVisible = (el: HTMLElement | null): el is HTMLElement => !!el && el.offsetParent !== null;
-
   const openProfile = (trigger?: HTMLElement) => {
-    lastFocused = trigger ?? (document.activeElement as HTMLElement);
+    lastFocused = trigger?.closest('#drawer') ? hamburger : trigger ?? (document.activeElement as HTMLElement);
+    closeDrawer(false);
     profilePanel?.classList.add('is-open');
     profileBackdrop?.classList.add('is-open');
     profilePanel?.setAttribute('aria-hidden', 'false');
     profilePanel?.removeAttribute('inert');
-    document.body.style.overflow = 'hidden';
+    syncOverlayState();
     profileTriggers.forEach((el) => el.classList.add('is-active'));
     [profileBack, profileClose].find(isVisible)?.focus();
   };
@@ -1574,9 +1826,10 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     profileBackdrop?.classList.remove('is-open');
     profilePanel?.setAttribute('aria-hidden', 'true');
     profilePanel?.setAttribute('inert', '');
-    document.body.style.overflow = '';
+    syncOverlayState();
     profileTriggers.forEach((el) => el.classList.remove('is-active'));
-    lastFocused?.focus();
+    const target = isVisible(lastFocused) ? lastFocused : isVisible(hamburger) ? hamburger : document.querySelector<HTMLElement>('.sidebar [data-open-profile]');
+    target?.focus();
     lastFocused = null;
   };
 
@@ -1587,23 +1840,12 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      closeDrawer();
-      closeProfile();
+      if (profilePanel?.classList.contains('is-open')) closeProfile();
+      else closeDrawer();
     }
-    if (e.key === 'Tab' && profilePanel?.classList.contains('is-open')) {
-      const focusable = Array.from(
-        profilePanel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')
-      ).filter(isVisible);
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
+    if (e.key === 'Tab') {
+      if (profilePanel?.classList.contains('is-open')) trapFocus(e, profilePanel);
+      else if (drawer?.classList.contains('is-open')) trapFocus(e, drawer);
     }
   });
 
