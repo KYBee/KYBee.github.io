@@ -18,9 +18,9 @@ const profileFile = exts.map((ext) => `profile.${ext}`).find((f) => fs.existsSyn
 
 {
   profileFile ? (
-    <img src={`/${profileFile}`} alt={initials} class="avatar-photo" style={`width:${size}px;height:${size}px;border-radius:${radius};`} />
+    <img src={`/${profileFile}`} alt={initials} class="avatar-photo" style={`width:var(--message-avatar-size,${size}px);height:var(--message-avatar-size,${size}px);border-radius:${radius};`} />
   ) : (
-    <div class="avatar-fallback" style={`width:${size}px;height:${size}px;border-radius:${radius};font-size:${fontSize};`} aria-hidden="true">
+    <div class="avatar-fallback" style={`width:var(--message-avatar-size,${size}px);height:var(--message-avatar-size,${size}px);border-radius:${radius};font-size:var(--message-avatar-font,${fontSize});`} aria-hidden="true">
       {initials}
     </div>
   )

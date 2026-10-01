@@ -34,7 +34,9 @@
   --bullet-max-width: 62ch;
   --content-padding-x: 3rem; /* 48px desktop gutter */
   --content-padding-x-mobile: 1.25rem; /* 20px mobile gutter */
+  --content-padding-x-tablet: 2rem;
   --profile-panel-width: 360px;
+  --control-size: 44px;
 
   /* Spacing scale */
   --space-1: 0.25rem;
@@ -80,11 +82,11 @@
   --status-online: #2bac76;
 
   /* Profile panel — theme-invariant Slack-style tones */
-  --label-muted: #9ca3af;
   --slack-link: #1d9bd1;
 }
 
 [data-theme='light'] {
+  --label-muted: #64748b;
   --bg: #ffffff;
   --bg-elevated: #f8f8f8;
   --text: #1d1c1d;
@@ -101,6 +103,7 @@
 }
 
 [data-theme='dark'] {
+  --label-muted: #a1a1aa;
   --bg: #1a1d21;
   --bg-elevated: #222529;
   --text: #e4e4e7;
