@@ -7,29 +7,48 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     const html = await readFile(pagePath, 'utf8');
     const pills = html.match(/class="reaction-pill"/gu) ?? [];
 
-    assert.equal(pills.length, 26);
+    assert.equal(pills.length, 24);
     assert.doesNotMatch(html, /data-reaction-/u);
     assert.doesNotMatch(html, /reaction-action|reaction-launcher/u);
     assert.doesNotMatch(html, /workers\.dev|PUBLIC_REACTIONS_API_URL/u);
   });
 
-  test(`${pagePath} provides project navigation with valid destinations`, async () => {
+  test(`${pagePath} shows work projects without the removed shortcut index`, async () => {
     const html = await readFile(pagePath, 'utf8');
-    const index = html.match(/<details\b[^>]*\bid="project-index"[^>]*>([\s\S]*?)<\/details>/u);
-    assert.ok(index, 'Expected a pinned project index');
-    const links = [...index[1].matchAll(/href="#(project-[^"]+)"/gu)];
+    assert.doesNotMatch(html, /id="project-index"/u);
+    assert.doesNotMatch(html, /project-samsung-dedup/u);
     const projectMessages = findTags(html, 'div').filter((tag) =>
       tag.attributes.class?.split(/\s+/u).includes('work-project'),
     );
-    assert.ok(links.length > 0, 'Expected project links');
-    assert.equal(links.length, projectMessages.length, 'Every project should have a shortcut');
+    assert.equal(projectMessages.length, 7);
     const ids = findTags(html, 'div').map((tag) => tag.attributes.id);
-    for (const [, destination] of links) {
-      assert.equal(ids.filter((id) => id === destination).length, 1, `Invalid project destination: ${destination}`);
+    for (const { attributes: { id } } of projectMessages) {
+      assert.equal(ids.filter((destination) => id === destination).length, 1, `Invalid project destination: ${id}`);
     }
     const intro = html.match(/<div\b[^>]*class="channel-intro-links"[^>]*>([\s\S]*?)<\/div>/u);
     assert.ok(intro, 'Expected introduction links');
     assert.match(intro[1], /href="#work-projects"/u, 'Expected an introduction project shortcut');
+  });
+
+  test(`${pagePath} shows linked community activities in the main page`, async () => {
+    const html = await readFile(pagePath, 'utf8');
+    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/u)?.[1];
+    assert.ok(main, 'Expected main page content');
+    const list = main.match(/<ul\b[^>]*class="community-list"[^>]*>([\s\S]*?)<\/ul>/u)?.[1];
+    assert.ok(list, 'Expected community activities in main content');
+    const links = findTags(list, 'a');
+    assert.deepEqual(links.map(({ attributes }) => attributes.href), [
+      'https://sipe.team/', 'https://www.ssafy.com/', 'https://github.com/GDGoC-CAU',
+      'https://pirogramming.com/', 'https://umc.makeus.in/', 'https://www.sopt.org/',
+    ]);
+    for (const { attributes } of links) {
+      assert.equal(attributes.target, '_blank');
+      assert.ok(attributes.rel?.split(/\s+/u).includes('noopener'));
+    }
+    assert.equal(findTags(list, 'p').length, links.length, 'Each community needs an activity description');
+    assert.match(main, /href="#community-activities"/u);
+    assert.match(main, /id="community-activities"/u);
+    assert.doesNotMatch(html, /\[object Object\]/u);
   });
 }
 
