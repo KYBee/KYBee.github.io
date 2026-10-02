@@ -46,7 +46,11 @@ const about = defineCollection({
       email: z.string().email(),
     }),
     bullets: z.array(z.string()),
-    activities: z.string().optional(),
+    activities: z.array(z.object({
+      name: z.string(),
+      url: z.string().url(),
+      description: z.string(),
+    })).optional(),
     status: z.string(),
     activityStatus: z.string(),
     affiliation: z.string(),

@@ -78,7 +78,21 @@ content:
         list: true
       - name: activities
         label: 활동
-        type: string
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: 커뮤니티
+            type: string
+            required: true
+          - name: url
+            label: URL
+            type: string
+            required: true
+          - name: description
+            label: 활동 내용
+            type: string
+            required: true
       - name: status
         label: 상태
         type: string
@@ -169,7 +183,21 @@ content:
         list: true
       - name: activities
         label: Activities
-        type: string
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: Community
+            type: string
+            required: true
+          - name: url
+            label: URL
+            type: string
+            required: true
+          - name: description
+            label: Activity description
+            type: string
+            required: true
       - name: status
         label: Status
         type: string

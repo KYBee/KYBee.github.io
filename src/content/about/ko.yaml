@@ -11,7 +11,25 @@ bullets:
   - 삼성전자에서 수천만 사용자 규모 백업, 복원 서비스의 백엔드를 개발하고 운영합니다. (Java, Spring Boot, AWS, Kafka)
   - 운영 로그로 사용자 체감 품질을 확인합니다. 실패 원인을 찾아 서비스 기능과 운영 방식을 개선합니다.
   - 반복되는 분석 업무는 AI Agent로 자동화합니다. 테스트와 코드 리뷰로 변경 후 기존 동작을 확인합니다. 사내 Best Reviewer 자격을 취득했습니다.
-activities: SIPE 5기, SSAFY 8기 (Java 트랙), GDSC CAU, 피로그래밍, UMC, SOPT
+activities:
+  - name: SIPE
+    url: https://sipe.team/
+    description: 5기 참여
+  - name: SSAFY
+    url: https://www.ssafy.com/
+    description: 8기 Java 트랙 · 알고리즘 스터디장 · 멘토 활동
+  - name: GDSC CAU
+    url: https://github.com/GDGoC-CAU
+    description: MOA 1인 개발 · 학습 내용과 개발 경험 공유
+  - name: 피로그래밍
+    url: https://pirogramming.com/
+    description: 웹 개발 동아리 참여
+  - name: UMC
+    url: https://umc.makeus.in/
+    description: 대학생 IT 연합 동아리 참여
+  - name: SOPT
+    url: https://www.sopt.org/
+    description: 제16회 APPJAM · Booster 기획·PM · 대상
 status: Backend Engineer
 activityStatus: 실시간 접속 중
 affiliation: 삼성전자, Backend Engineer
