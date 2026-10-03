@@ -27,7 +27,7 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     }
     const intro = html.match(/<div\b[^>]*class="channel-intro-links"[^>]*>([\s\S]*?)<\/div>/u);
     assert.ok(intro, 'Expected introduction links');
-    assert.match(intro[1], /href="#work-projects"/u, 'Expected an introduction project shortcut');
+    assert.doesNotMatch(intro[1], /href="#(?:work-projects|community-activities)"/u, 'Internal introduction shortcuts should be removed');
   });
 
   test(`${pagePath} shows linked community activities in the main page`, async () => {
@@ -46,7 +46,6 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
       assert.ok(attributes.rel?.split(/\s+/u).includes('noopener'));
     }
     assert.equal(findTags(list, 'p').length, links.length, 'Each community needs an activity description');
-    assert.match(main, /href="#community-activities"/u);
     assert.match(main, /id="community-activities"/u);
     assert.doesNotMatch(html, /\[object Object\]/u);
   });

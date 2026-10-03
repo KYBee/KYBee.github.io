@@ -78,34 +78,38 @@ const copy = {
     channels: {
       experience: '경력',
       'work-projects': '업무-프로젝트',
+      'community-activities': '커뮤니티-활동',
       'side-projects': '사이드-프로젝트',
       skills: '기술',
       education: '학력-자격',
     },
     topics: {
       experience: firstJob ? firstJob.company : '',
-      'side-projects': '사이드 프로젝트 & 활동',
+      'community-activities': '함께 배우고 개발하며 나눈 경험',
+      'side-projects': '직접 기획하고 개발한 프로젝트',
       skills: '사용 기술 스택',
       education: education ? `${education.school} · ${education.detail}` : '',
     },
     previews: {
       experience: projectGroups.map((g) => g.company).join(' · '),
       'work-projects': samsungItems.slice(0, 2).map((p) => p.title).join(' · '),
+      'community-activities': (about.activities ?? []).map((a) => a.name).join(' · '),
       'side-projects': sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
       skills: skills.map((s) => s.category).join(' · '),
       education: education?.detail ?? '',
     },
     workProjectsContext: firstJob ? `${firstJob.company} 재직 중 수행 · ${firstJob.period}` : '',
     me: `${about.name} · 프로필`,
-    projectShortcut: '업무 프로젝트 보기',
-    communityTitle: '커뮤니티 활동',
-    communityShortcut: '커뮤니티 활동 보기',
     profileHint: '프로필 보기',
     hamburgerLabel: '메뉴 열기',
     closeLabel: '닫기',
     themeLabel: '테마 전환',
     also: '그 외',
-    certifications: '자격증 & 어학',
+    certifications: '자격증',
+    languages: '어학',
+    responsibilities: '담당 업무',
+    technicalStack: '사용한 기술',
+    dateNotProvided: '취득일 미기재',
     profileOpenLabel: `${about.name} 프로필 보기`,
     profileTitle: '프로필',
     backLabel: '뒤로가기',
@@ -117,7 +121,7 @@ const copy = {
       work: '하는 일',
       interests: '요즘 관심사',
       strengths: '잘하는 것',
-      communities: '커뮤니티',
+      experience: '경험해본 것',
       whereabouts: '출몰지역',
     },
   },
@@ -127,34 +131,38 @@ const copy = {
     channels: {
       experience: 'experience',
       'work-projects': 'work-projects',
+      'community-activities': 'community-activities',
       'side-projects': 'side-projects',
       skills: 'skills',
       education: 'education',
     },
     topics: {
       experience: firstJob ? firstJob.company : '',
-      'side-projects': 'Side projects & activities',
+      'community-activities': 'Learning, building and sharing with others',
+      'side-projects': 'Projects I planned and built',
       skills: 'Tech stack',
       education: education ? `${education.school} · ${education.detail}` : '',
     },
     previews: {
       experience: projectGroups.map((g) => g.company).join(' · '),
       'work-projects': samsungItems.slice(0, 2).map((p) => p.title).join(' · '),
+      'community-activities': (about.activities ?? []).map((a) => a.name).join(' · '),
       'side-projects': sideProjects.slice(0, 2).map((p) => p.name).join(' · '),
       skills: skills.map((s) => s.category).join(' · '),
       education: education?.detail ?? '',
     },
     workProjectsContext: firstJob ? `Completed while at ${firstJob.company} · ${firstJob.period}` : '',
     me: `${about.name} · Profile`,
-    projectShortcut: 'View work projects',
-    communityTitle: 'Community activities',
-    communityShortcut: 'View community activities',
     profileHint: 'View profile',
     hamburgerLabel: 'Open menu',
     closeLabel: 'Close',
     themeLabel: 'Toggle theme',
     also: 'Also',
-    certifications: 'Certifications & Languages',
+    certifications: 'Certifications',
+    languages: 'Languages',
+    responsibilities: 'Responsibilities',
+    technicalStack: 'Technical stack',
+    dateNotProvided: 'Date not listed',
     profileOpenLabel: `View ${about.name}'s profile`,
     profileTitle: 'Profile',
     backLabel: 'Back',
@@ -166,14 +174,14 @@ const copy = {
       work: 'What I do',
       interests: 'Into these days',
       strengths: 'Good at',
-      communities: 'Communities',
+      experience: 'Experience areas',
       whereabouts: 'Usually found in',
     },
   },
 } as const;
 
 const t = copy[lang];
-const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 'education'] as const;
+const channelOrder = ['experience', 'work-projects', 'community-activities', 'side-projects', 'skills', 'education'] as const;
 ---
 
 <div class="workspace">
@@ -284,17 +292,6 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
         {about.activityStatus}
       </div>
       <div class="channel-intro-links">
-        <a class="channel-intro-link intro-projects-link" href="#work-projects">
-          <span aria-hidden="true">#</span>
-          <span>{t.projectShortcut}</span>
-          <span aria-hidden="true">→</span>
-        </a>
-        {about.activities && about.activities.length > 0 && (
-          <a class="channel-intro-link" href="#community-activities">
-            <span>{t.communityShortcut}</span>
-            <span aria-hidden="true">→</span>
-          </a>
-        )}
         <a class="channel-intro-link" href={about.links.github} target="_blank" rel="noopener">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
           <span>GitHub</span>
@@ -338,7 +335,26 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
                 </p>
               </div>
               {gi === 0 ? (
-                <p class="message-summary">{about.work}</p>
+                <>
+                  <p class="message-summary">{about.careerOverview?.summary ?? about.work}</p>
+                  {about.careerOverview && (
+                    <>
+                      <h2 class="job-subtitle">{t.responsibilities}</h2>
+                      <ul class="message-bullets">
+                        {about.careerOverview.responsibilities.map((item) => <li>{item}</li>)}
+                      </ul>
+                      <h2 class="job-subtitle">{t.technicalStack}</h2>
+                      <dl class="job-stack">
+                        {about.careerOverview.stack.map((group) => (
+                          <div>
+                            <dt>{group.category}</dt>
+                            <dd class="reactions">{group.items.map((item) => <span class="tag-pill">{item}</span>)}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </>
+                  )}
+                </>
               ) : (
                 group.items.map((item) => (
                   <>
@@ -395,6 +411,33 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       ))}
     </section>
 
+    <section id="community-activities" class="channel community-channel" tabindex="-1">
+      <header class="channel-header">
+        <h1># {t.channels['community-activities']}</h1>
+        <p class="channel-topic">{t.topics['community-activities']}</p>
+      </header>
+      {about.activities && about.activities.length > 0 && (
+        <div class="message community-activities">
+          <div class="avatar"><Avatar initials={initials} size={44} /></div>
+          <div class="message-body">
+            <div class="message-meta">
+              <span class="message-author">{about.name}</span>
+            </div>
+            <ul class="community-list">
+              {about.activities.map((activity) => (
+                <li>
+                  <a href={activity.url} target="_blank" rel="noopener">
+                    {activity.name} <span aria-hidden="true">↗</span>
+                  </a>
+                  <p>{activity.description}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </section>
+
     <section id="side-projects" class="channel" tabindex="-1">
       <header class="channel-header">
         <h1># {t.channels['side-projects']}</h1>
@@ -423,27 +466,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
           </div>
         </div>
       ))}
-      {about.activities && about.activities.length > 0 && (
-        <div class="message community-activities" id="community-activities" tabindex="-1">
-          <div class="avatar"><Avatar initials={initials} size={44} /></div>
-          <div class="message-body">
-            <div class="message-meta">
-              <span class="message-author">{about.name}</span>
-            </div>
-            <h2 class="message-title">{t.communityTitle}</h2>
-            <ul class="community-list">
-              {about.activities.map((activity) => (
-                <li>
-                  <a href={activity.url} target="_blank" rel="noopener">
-                    {activity.name} <span aria-hidden="true">↗</span>
-                  </a>
-                  <p>{activity.description}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
+
     </section>
 
     <section id="skills" class="channel" tabindex="-1">
@@ -499,19 +522,32 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
           </div>
         </div>
       )}
-      <div class="message">
+      <div class="message credentials-message">
         <div class="avatar"><Avatar initials={initials} size={44} /></div>
         <div class="message-body">
           <div class="message-meta">
             <span class="message-author">{about.name}</span>
-            <span class="message-time">{t.certifications}</span>
           </div>
-          <div class="reactions">
-            {certifications.map((cert) => (
-              <span class="tag-pill">{cert.name}{cert.date ? ` · ${cert.date}` : ''}</span>
-            ))}
+          <div class="credential-groups">
+            <section class="credential-group" aria-labelledby="certifications-title">
+              <h2 class="message-title" id="certifications-title">{t.certifications}</h2>
+              <dl class="credential-list">
+                {certifications.map((cert) => (
+                  <div><dt>{cert.name}</dt><dd>{cert.date ?? t.dateNotProvided}</dd></div>
+                ))}
+              </dl>
+            </section>
+            {education?.languages && education.languages.length > 0 && (
+              <section class="credential-group" aria-labelledby="languages-title">
+                <h2 class="message-title" id="languages-title">{t.languages}</h2>
+                <dl class="credential-list">
+                  {education.languages.map((language) => (
+                    <div><dt>{language.name}</dt><dd>{language.level}</dd></div>
+                  ))}
+                </dl>
+              </section>
+            )}
           </div>
-          {education?.languages && <p class="message-summary">{education.languages}</p>}
         </div>
       </div>
     </section>
@@ -605,22 +641,28 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
               </a>
             </dd>
           </div>
-          {about.activities && about.activities.length > 0 && (
+          {about.experienceAreas && about.experienceAreas.length > 0 && (
             <div class="profile-field">
-              <dt>{t.fieldLabels.communities}</dt>
-              <dd>
-                <ul class="profile-community-list">
-                  {about.activities.map((activity) => (
-                    <li><a class="profile-field-link" href={activity.url} target="_blank" rel="noopener">{activity.name}</a></li>
-                  ))}
-                </ul>
-              </dd>
+              <dt>{t.fieldLabels.experience}</dt>
+              <dd><ul class="profile-experience-list">{about.experienceAreas.map((area) => <li>{area}</li>)}</ul></dd>
             </div>
           )}
           <div class="profile-field">
             <dt>{t.fieldLabels.whereabouts}</dt>
             <dd>{about.whereabouts}</dd>
           </div>
+        </dl>
+      </div>
+      <hr class="profile-divider" />
+      <div class="profile-section">
+        <h2 class="profile-section-title">{t.technicalStack}</h2>
+        <dl class="profile-field-list">
+          {skills.map((group) => (
+            <div class="profile-field">
+              <dt>{group.category}</dt>
+              <dd class="reactions">{group.items.map((item) => <span class="tag-pill">{item}</span>)}</dd>
+            </div>
+          ))}
         </dl>
       </div>
     </div>
@@ -1117,13 +1159,6 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     color: var(--accent);
   }
 
-  .intro-projects-link {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-    color: var(--accent);
-    font-weight: 600;
-  }
-
   .message {
     --message-avatar-size: 44px;
     --message-avatar-font: var(--fs-sm);
@@ -1268,6 +1303,63 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     margin-top: var(--space-5);
   }
 
+  .job-subtitle {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    margin: var(--space-4) 0 var(--space-2);
+  }
+
+  .job-stack {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .job-stack dt {
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-1);
+  }
+
+  .credential-groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .credentials-message .message-body {
+    flex: 1;
+  }
+
+  .credential-list > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    align-items: baseline;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-bullet);
+  }
+
+  .credential-list dt {
+    font-weight: 600;
+  }
+
+  .credential-list dd {
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    text-align: right;
+    max-width: 18ch;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-experience-list {
+    padding-left: var(--space-4);
+  }
+
+  .profile-experience-list li + li {
+    margin-top: var(--space-2);
+  }
+
   .job-header {
     max-width: var(--content-max-width);
     margin: 0 0 var(--space-tight);
@@ -1292,8 +1384,7 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     margin-top: 2px;
   }
 
-  .community-list,
-  .profile-community-list {
+  .community-list {
     list-style: none;
   }
 
@@ -1318,12 +1409,6 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
     font-size: var(--fs-bullet);
     line-height: var(--lh-body);
     overflow-wrap: anywhere;
-  }
-
-  .profile-community-list a {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--control-size);
   }
 
   .skill-group {
@@ -1628,9 +1713,8 @@ const channelOrder = ['experience', 'work-projects', 'side-projects', 'skills', 
       margin-bottom: 0;
     }
 
-    .intro-projects-link {
-      flex-basis: 100%;
-      justify-content: center;
+    .credential-groups {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .reactions {

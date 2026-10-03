@@ -11,16 +11,39 @@ bullets:
   - I build and operate the backend of a backup and restore service for tens of millions of users at Samsung Electronics. (Java, Spring Boot, AWS, Kafka)
   - I use operational logs to measure user experience. I find failure causes and improve service behavior and operations.
   - I automate repetitive analysis with AI agents. I use tests and code reviews to check existing behavior after changes. I hold the in-house Best Reviewer certification.
+careerOverview:
+  summary: I develop and operate the backend of a cloud backup and restore service used by tens of millions of people. My work covers service features, operational log analysis, quality metrics and tools for everyday workflows.
+  responsibilities:
+    - I build APIs and business logic with Java and Spring Boot, and operate an AWS-based microservice environment connecting databases, storage and messaging.
+    - I process large volumes of operational logs to calculate user-perceived quality metrics, find failure causes and improve backup features and operations.
+    - I build VOC lookup tools, shared log query tools and AI agents to reduce repetitive analysis and response work. I check behavior after changes with tests and code reviews.
+  stack:
+    - category: Backend
+      items: [Java, Spring Boot, Python, FastAPI]
+    - category: Data & messaging
+      items: [DynamoDB, RDS, Cassandra, S3, Kafka]
+    - category: Logs & quality metrics
+      items: [PySpark, Airflow, InfluxDB, Grafana]
+    - category: Infrastructure & automation
+      items: [AWS EC2, EKS, AWS Lambda, Athena, GitHub Actions]
+    - category: Developer tools
+      items: [TypeScript, React, Electron, tmux, WebSocket]
+experienceAreas:
+  - Cloud backup and restore service development and operations
+  - Operational log analysis and data pipelines
+  - User-perceived quality metrics and monitoring
+  - AI agents and development and operations automation
+  - Web service planning, development and deployment
 activities:
   - name: SIPE
     url: https://sipe.team/
     description: 5th cohort participant
   - name: SSAFY
     url: https://www.ssafy.com/
-    description: 8th cohort, Java track · Algorithm study lead · Mentor
+    description: I studied Java, Spring and algorithms in the 8th cohort's Java track and led an algorithm study group. I built, deployed and operated an attendance excuse generator, and now share learning and development experience as a mentor.
   - name: GDSC CAU
     url: https://github.com/GDGoC-CAU
-    description: Solo development of MOA · Shared learning and development experience
+    description: I studied web development weekly and shared development experience. I planned and built the delivery mate matching service MOA on my own, including the frontend, backend, database and deployment, and incorporated feedback from club members.
   - name: Pirogramming
     url: https://pirogramming.com/
     description: Web development club participant
@@ -29,7 +52,7 @@ activities:
     description: University IT club participant
   - name: SOPT
     url: https://www.sopt.org/
-    description: 16th APPJAM · Booster planning and PM · Grand prize
+    description: I led planning and project management for Booster, a print pre-order app, at the 16th APPJAM. I defined user flows, priorities and schedules, coordinated developers and designers, and won the grand prize.
 status: Backend Engineer
 activityStatus: Online now
 affiliation: Samsung Electronics, Backend Engineer

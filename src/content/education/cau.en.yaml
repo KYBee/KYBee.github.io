@@ -21,6 +21,12 @@ courses:
       - Security Data Analysis
       - Cyber Incident Response
       - Industrial Security Investigation & Forensics
-languages: Korean (native) · English (advanced) · Chinese (intermediate, business communication)
+languages:
+  - name: Korean
+    level: Native
+  - name: English
+    level: Advanced
+  - name: Chinese
+    level: Intermediate · Business communication
 lang: en
 order: 10

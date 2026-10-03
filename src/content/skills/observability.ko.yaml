@@ -1,4 +1,4 @@
 category: Observability
-items: [OpenTelemetry, Grafana, Prometheus]
+items: [OpenTelemetry, InfluxDB, Grafana, Prometheus]
 lang: ko
 order: 40

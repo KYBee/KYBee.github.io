@@ -1,4 +1,4 @@
 category: Infra
-items: ["AWS (DynamoDB, S3)", Kubernetes, Docker, GitHub Actions]
+items: [AWS EC2, AWS EKS, AWS Lambda, S3, Kubernetes, Docker, GitHub Actions]
 lang: en
 order: 30

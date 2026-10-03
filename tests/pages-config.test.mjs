@@ -27,6 +27,8 @@ const textEditorExceptions = {
   about: [
     'tagline',
     'bullets',
+    'careerOverview.summary',
+    'careerOverview.responsibilities',
     'work',
     'interests',
     'strengths',

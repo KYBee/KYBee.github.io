@@ -46,6 +46,15 @@ const about = defineCollection({
       email: z.string().email(),
     }),
     bullets: z.array(z.string()),
+    careerOverview: z.object({
+      summary: z.string(),
+      responsibilities: z.array(z.string()),
+      stack: z.array(z.object({
+        category: z.string(),
+        items: z.array(z.string()),
+      })),
+    }).optional(),
+    experienceAreas: z.array(z.string()).optional(),
     activities: z.array(z.object({
       name: z.string(),
       url: z.string().url(),
@@ -77,7 +86,10 @@ const education = defineCollection({
         })
       )
       .optional(),
-    languages: z.string().optional(),
+    languages: z.array(z.object({
+      name: z.string(),
+      level: z.string(),
+    })).optional(),
     lang: langEnum,
     order: z.number(),
   }),

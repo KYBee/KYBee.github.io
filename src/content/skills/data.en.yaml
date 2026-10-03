@@ -1,4 +1,4 @@
 category: Data
-items: [Airflow, PySpark, Kafka, InfluxDB]
+items: [DynamoDB, RDS, Cassandra, MySQL, Kafka]
 lang: en
 order: 20
