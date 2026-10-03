@@ -76,6 +76,38 @@ content:
         type: text
         required: true
         list: true
+      - name: careerOverview
+        label: 경력 소개
+        type: object
+        fields:
+          - name: summary
+            label: 요약
+            type: text
+            required: true
+          - name: responsibilities
+            label: 담당 업무
+            type: text
+            list: true
+            required: true
+          - name: stack
+            label: 기술 스택
+            type: object
+            list: true
+            required: true
+            fields:
+              - name: category
+                label: 분류
+                type: string
+                required: true
+              - name: items
+                label: 기술
+                type: string
+                list: true
+                required: true
+      - name: experienceAreas
+        label: 경험 분야
+        type: string
+        list: true
       - name: activities
         label: 활동
         type: object
@@ -180,6 +212,38 @@ content:
         label: Highlights
         type: text
         required: true
+        list: true
+      - name: careerOverview
+        label: Career overview
+        type: object
+        fields:
+          - name: summary
+            label: Summary
+            type: text
+            required: true
+          - name: responsibilities
+            label: Responsibilities
+            type: text
+            list: true
+            required: true
+          - name: stack
+            label: Technical stack
+            type: object
+            list: true
+            required: true
+            fields:
+              - name: category
+                label: Category
+                type: string
+                required: true
+              - name: items
+                label: Technologies
+                type: string
+                list: true
+                required: true
+      - name: experienceAreas
+        label: Experience areas
+        type: string
         list: true
       - name: activities
         label: Activities
@@ -441,8 +505,18 @@ content:
             required: true
             list: true
       - name: languages
-        label: 언어
-        type: string
+        label: 어학
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: 언어
+            type: string
+            required: true
+          - name: level
+            label: 수준
+            type: string
+            required: true
       - name: lang
         label: 콘텐츠 언어
         type: select

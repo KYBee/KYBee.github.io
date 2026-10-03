@@ -1,0 +1,4 @@
+category: Data Pipelines
+items: [Airflow, PySpark, Jupyter Notebook, Athena]
+lang: ko
+order: 25

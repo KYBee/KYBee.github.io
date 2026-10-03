@@ -11,16 +11,39 @@ bullets:
   - 삼성전자에서 수천만 사용자 규모 백업, 복원 서비스의 백엔드를 개발하고 운영합니다. (Java, Spring Boot, AWS, Kafka)
   - 운영 로그로 사용자 체감 품질을 확인합니다. 실패 원인을 찾아 서비스 기능과 운영 방식을 개선합니다.
   - 반복되는 분석 업무는 AI Agent로 자동화합니다. 테스트와 코드 리뷰로 변경 후 기존 동작을 확인합니다. 사내 Best Reviewer 자격을 취득했습니다.
+careerOverview:
+  summary: 수천만 사용자가 이용하는 클라우드 백업·복원 서비스의 백엔드를 개발하고 운영합니다. 서비스 기능 개발부터 운영 로그 분석, 품질 지표 관리와 업무 도구 개발까지 맡고 있습니다.
+  responsibilities:
+    - Java와 Spring Boot로 API와 비즈니스 로직을 개발하고, 데이터베이스·스토리지·메시징을 연동한 AWS 기반 MSA 환경에서 서비스를 운영합니다.
+    - 대규모 운영 로그를 가공해 사용자 체감 품질 지표를 산출합니다. 실패 원인을 찾아 백업 기능과 운영 방식을 개선합니다.
+    - VOC 조회 웹, 팀 로그 조회 도구와 AI Agent를 개발해 반복되는 분석·대응 업무를 줄입니다. 테스트와 코드 리뷰를 통해 변경 후 동작을 확인합니다.
+  stack:
+    - category: 백엔드
+      items: [Java, Spring Boot, Python, FastAPI]
+    - category: 데이터·메시징
+      items: [DynamoDB, RDS, Cassandra, S3, Kafka]
+    - category: 로그·품질 지표
+      items: [PySpark, Airflow, InfluxDB, Grafana]
+    - category: 인프라·자동화
+      items: [AWS EC2, EKS, AWS Lambda, Athena, GitHub Actions]
+    - category: 개발 도구
+      items: [TypeScript, React, Electron, tmux, WebSocket]
+experienceAreas:
+  - 클라우드 백업·복원 서비스 개발과 운영
+  - 대규모 운영 로그 분석과 데이터 파이프라인
+  - 사용자 체감 품질 지표와 모니터링
+  - AI Agent와 개발·운영 도구 자동화
+  - 웹 서비스 기획, 개발과 배포
 activities:
   - name: SIPE
     url: https://sipe.team/
     description: 5기 참여
   - name: SSAFY
     url: https://www.ssafy.com/
-    description: 8기 Java 트랙 · 알고리즘 스터디장 · 멘토 활동
+    description: 8기 Java 트랙에서 Java, Spring과 알고리즘을 학습하고 알고리즘 스터디장을 맡았습니다. 출결 소명서 생성 서비스를 직접 개발·배포해 운영했고, 현재는 멘토로 학습과 개발 경험을 나누고 있습니다.
   - name: GDSC CAU
     url: https://github.com/GDGoC-CAU
-    description: MOA 1인 개발 · 학습 내용과 개발 경험 공유
+    description: 매주 웹 개발을 학습하고 개발 경험을 공유했습니다. 배달 메이트 매칭 서비스 MOA를 혼자 기획하고 프론트엔드·백엔드·DB·배포까지 맡았으며, 동아리원들의 피드백을 반영했습니다.
   - name: 피로그래밍
     url: https://pirogramming.com/
     description: 웹 개발 동아리 참여
@@ -29,7 +52,7 @@ activities:
     description: 대학생 IT 연합 동아리 참여
   - name: SOPT
     url: https://www.sopt.org/
-    description: 제16회 APPJAM · Booster 기획·PM · 대상
+    description: 제16회 APPJAM에서 인쇄물 사전 출력 앱 Booster의 기획과 PM을 맡았습니다. 사용자 흐름, 기능 우선순위와 일정을 정하고 개발자·디자이너의 협업을 조율해 대상을 수상했습니다.
 status: Backend Engineer
 activityStatus: 실시간 접속 중
 affiliation: 삼성전자, Backend Engineer

@@ -21,6 +21,12 @@ courses:
       - 보안데이터분석
       - 사이버침해사고대응
       - 산업보안수사포렌식
-languages: 한국어 (모국어) · 영어 (상급) · 중국어 (중급, 업무 의사소통)
+languages:
+  - name: 한국어
+    level: 모국어
+  - name: 영어
+    level: 상급
+  - name: 중국어
+    level: 중급 · 업무 의사소통
 lang: ko
 order: 10
