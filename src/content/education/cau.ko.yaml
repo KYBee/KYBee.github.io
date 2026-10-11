@@ -27,6 +27,6 @@ languages:
   - name: 영어
     level: 상급
   - name: 중국어
-    level: 중급 · 업무 의사소통
+    level: 중급
 lang: ko
 order: 10

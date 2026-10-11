@@ -27,6 +27,6 @@ languages:
   - name: English
     level: Advanced
   - name: Chinese
-    level: Intermediate · Business communication
+    level: Intermediate
 lang: en
 order: 10
