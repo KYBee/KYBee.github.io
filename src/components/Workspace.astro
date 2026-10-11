@@ -108,6 +108,7 @@ const copy = {
     certifications: '자격증',
     languages: '어학',
     responsibilities: '담당 업무',
+    communitySite: '커뮤니티',
     dateNotProvided: '취득일 미기재',
     profileOpenLabel: `${about.name} 프로필 보기`,
     profileTitle: '프로필',
@@ -158,6 +159,7 @@ const copy = {
     certifications: 'Certifications',
     languages: 'Languages',
     responsibilities: 'Responsibilities',
+    communitySite: 'Community',
     dateNotProvided: 'Date not listed',
     profileOpenLabel: `View ${about.name}'s profile`,
     profileTitle: 'Profile',
@@ -344,13 +346,6 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
                 group.items.map((item) => (
                   <>
                     {item.summary && <p class="message-summary">{item.summary}</p>}
-                    {item.tags.length > 0 && (
-                      <div class="reactions">
-                        {item.tags.map((tag) => (
-                          <span class="tag-pill">{tag}</span>
-                        ))}
-                      </div>
-                    )}
                   </>
                 ))
               )}
@@ -402,24 +397,28 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
         <p class="channel-topic">{t.topics['community-activities']}</p>
       </header>
       {about.activities && about.activities.length > 0 && (
-        <div class="message community-activities">
-          <div class="avatar"><Avatar initials={initials} size={44} /></div>
-          <div class="message-body">
-            <div class="message-meta">
-              <span class="message-author">{about.name}</span>
-            </div>
-            <ul class="community-list">
-              {about.activities.map((activity) => (
-                <li>
-                  <a href={activity.url} target="_blank" rel="noopener">
-                    {activity.name} <span aria-hidden="true">↗</span>
-                  </a>
-                  <p>{activity.description}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <ul class="community-list">
+          {about.activities.map((activity) => (
+            <li class="community-card">
+              <div class="community-card-header">
+                {activity.icon && <img class="community-icon" src={activity.icon} alt="" width="48" height="48" loading="lazy" decoding="async" />}
+                <div>
+                  <h2 class="community-name">{activity.name}</h2>
+                  {activity.role && <p class="community-role">{activity.role}</p>}
+                </div>
+              </div>
+              <p class="community-description">{activity.description}</p>
+              <div class="community-links">
+                <a href={activity.url} target="_blank" rel="noopener" aria-label={`${activity.name} · ${t.communitySite}`}>
+                  {t.communitySite} <span aria-hidden="true">↗</span>
+                </a>
+                {activity.links?.map((link) => (
+                  <a href={link.url} target="_blank" rel="noopener">{link.label} <span aria-hidden="true">↗</span></a>
+                ))}
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
     </section>
 
@@ -492,7 +491,7 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
               <span class="message-author">{about.name}</span>
               <span class="message-time">{education.period}</span>
             </div>
-            <p class="message-title">{education.school}</p>
+            <p class="message-title school-title"><svg class="school-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-6 9 6M4 9h16v12H4zM2 21h20M9 21v-6h6v6M8 11h1m6 0h1" /></svg>{education.school}</p>
             <p class="message-summary">{education.department}</p>
             <blockquote class="quote-block">{education.detail}</blockquote>
             {education.courses && (
@@ -1187,6 +1186,17 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
     margin-bottom: var(--space-tight);
   }
 
+  .school-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .school-icon {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+  }
+
   .message-summary {
     color: var(--text-secondary);
     font-size: var(--fs-summary);
@@ -1337,28 +1347,71 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
 
   .community-list {
     list-style: none;
-  }
-
-  .community-list {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-4);
   }
 
-  .community-list a {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: var(--control-size);
-    color: var(--accent);
-    font-weight: 600;
-    text-decoration: underline;
-    text-underline-offset: var(--space-1);
+  .community-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
   }
 
-  .community-list p {
+  .community-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .community-icon {
+    flex-shrink: 0;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    background: var(--community-icon-bg);
+  }
+
+  .community-name {
+    font-size: var(--fs-title-md);
+    font-weight: 600;
+  }
+
+  .community-role {
+    margin-top: var(--space-1);
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    overflow-wrap: anywhere;
+  }
+
+  .community-description {
     color: var(--text-secondary);
     font-size: var(--fs-bullet);
     line-height: var(--lh-body);
+    overflow-wrap: anywhere;
+  }
+
+  .community-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-top: auto;
+  }
+
+  .community-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: var(--control-size);
+    color: var(--accent);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: var(--space-1);
     overflow-wrap: anywhere;
   }
 
@@ -1664,6 +1717,7 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
       margin-bottom: 0;
     }
 
+    .community-list,
     .credential-groups {
       grid-template-columns: minmax(0, 1fr);
     }

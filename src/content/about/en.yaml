@@ -36,21 +36,39 @@ experienceAreas:
   - Web service planning, development and deployment
 activities:
   - name: SIPE
+    role: 5th cohort participant
+    icon: /communities/sipe.png
     url: https://sipe.team/
     description: 5th cohort participant
   - name: SSAFY
+    role: 8th cohort · Study group lead · Mentor
+    icon: /communities/ssafy.png
+    links:
+      - label: Attendance generator GitHub
+        url: https://github.com/ssafy-attendance/Server
     url: https://www.ssafy.com/
     description: I studied Java, Spring and algorithms in the 8th cohort's Java track and led an algorithm study group. I built, deployed and operated an attendance excuse generator, and now share learning and development experience as a mentor.
   - name: GDSC CAU
+    role: Web development · MOA developer
+    icon: /communities/gdsc-cau.png
+    links:
+      - label: MOA GitHub
+        url: https://github.com/KYBee/Moa
     url: https://github.com/GDGoC-CAU
     description: I studied web development weekly and shared development experience. I planned and built the delivery mate matching service MOA on my own, including the frontend, backend, database and deployment, and incorporated feedback from club members.
   - name: Pirogramming
+    role: Web development club
+    icon: /communities/pirogramming.png
     url: https://pirogramming.com/
     description: Web development club participant
   - name: UMC
+    role: University IT club
+    icon: /communities/umc.svg
     url: https://umc.makeus.in/
     description: University IT club participant
   - name: SOPT
+    role: Booster planner & PM · 16th APPJAM Grand Prize
+    icon: /communities/sopt.png
     url: https://www.sopt.org/
     description: I led planning and project management for Booster, a print pre-order app, at the 16th APPJAM. I defined user flows, priorities and schedules, coordinated developers and designers, and won the grand prize.
 status: Backend Engineer
