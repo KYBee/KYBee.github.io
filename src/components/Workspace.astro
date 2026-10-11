@@ -108,7 +108,6 @@ const copy = {
     certifications: '자격증',
     languages: '어학',
     responsibilities: '담당 업무',
-    technicalStack: '사용한 기술',
     dateNotProvided: '취득일 미기재',
     profileOpenLabel: `${about.name} 프로필 보기`,
     profileTitle: '프로필',
@@ -120,9 +119,7 @@ const copy = {
       affiliation: '소속',
       work: '하는 일',
       interests: '요즘 관심사',
-      strengths: '잘하는 것',
       experience: '경험해본 것',
-      whereabouts: '출몰지역',
     },
   },
   en: {
@@ -161,7 +158,6 @@ const copy = {
     certifications: 'Certifications',
     languages: 'Languages',
     responsibilities: 'Responsibilities',
-    technicalStack: 'Technical stack',
     dateNotProvided: 'Date not listed',
     profileOpenLabel: `View ${about.name}'s profile`,
     profileTitle: 'Profile',
@@ -173,9 +169,7 @@ const copy = {
       affiliation: 'Team',
       work: 'What I do',
       interests: 'Into these days',
-      strengths: 'Good at',
       experience: 'Experience areas',
-      whereabouts: 'Usually found in',
     },
   },
 } as const;
@@ -343,15 +337,6 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
                       <ul class="message-bullets">
                         {about.careerOverview.responsibilities.map((item) => <li>{item}</li>)}
                       </ul>
-                      <h2 class="job-subtitle">{t.technicalStack}</h2>
-                      <dl class="job-stack">
-                        {about.careerOverview.stack.map((group) => (
-                          <div>
-                            <dt>{group.category}</dt>
-                            <dd class="reactions">{group.items.map((item) => <span class="tag-pill">{item}</span>)}</dd>
-                          </div>
-                        ))}
-                      </dl>
                     </>
                   )}
                 </>
@@ -614,10 +599,6 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
             <dd>{about.interests}</dd>
           </div>
           <div class="profile-field">
-            <dt>{t.fieldLabels.strengths}</dt>
-            <dd>{about.strengths}</dd>
-          </div>
-          <div class="profile-field">
             <dt>GitHub</dt>
             <dd>
               <a class="profile-field-link" href={about.links.github} target="_blank" rel="noopener">
@@ -647,22 +628,6 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
               <dd><ul class="profile-experience-list">{about.experienceAreas.map((area) => <li>{area}</li>)}</ul></dd>
             </div>
           )}
-          <div class="profile-field">
-            <dt>{t.fieldLabels.whereabouts}</dt>
-            <dd>{about.whereabouts}</dd>
-          </div>
-        </dl>
-      </div>
-      <hr class="profile-divider" />
-      <div class="profile-section">
-        <h2 class="profile-section-title">{t.technicalStack}</h2>
-        <dl class="profile-field-list">
-          {skills.map((group) => (
-            <div class="profile-field">
-              <dt>{group.category}</dt>
-              <dd class="reactions">{group.items.map((item) => <span class="tag-pill">{item}</span>)}</dd>
-            </div>
-          ))}
         </dl>
       </div>
     </div>
@@ -1196,6 +1161,7 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
   }
 
   .message-body {
+    flex: 1;
     min-width: 0;
   }
 
@@ -1309,25 +1275,10 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
     margin: var(--space-4) 0 var(--space-2);
   }
 
-  .job-stack {
-    display: grid;
-    gap: var(--space-3);
-  }
-
-  .job-stack dt {
-    color: var(--text-secondary);
-    font-size: var(--fs-sm);
-    margin-bottom: var(--space-1);
-  }
-
   .credential-groups {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-5);
-  }
-
-  .credentials-message .message-body {
-    flex: 1;
   }
 
   .credential-list > div {
