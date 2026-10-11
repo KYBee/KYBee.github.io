@@ -125,6 +125,25 @@ content:
             label: 활동 내용
             type: string
             required: true
+          - name: role
+            label: 기수 및 역할
+            type: string
+          - name: icon
+            label: 아이콘 경로
+            type: string
+          - name: links
+            label: 결과물 링크
+            type: object
+            list: true
+            fields:
+              - name: label
+                label: 링크 이름
+                type: string
+                required: true
+              - name: url
+                label: URL
+                type: string
+                required: true
       - name: status
         label: 상태
         type: string
@@ -262,6 +281,25 @@ content:
             label: Activity description
             type: string
             required: true
+          - name: role
+            label: Cohort and role
+            type: string
+          - name: icon
+            label: Icon path
+            type: string
+          - name: links
+            label: Result links
+            type: object
+            list: true
+            fields:
+              - name: label
+                label: Link label
+                type: string
+                required: true
+              - name: url
+                label: URL
+                type: string
+                required: true
       - name: status
         label: Status
         type: string

@@ -38,14 +38,24 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     assert.ok(list, 'Expected community activities in main content');
     const links = findTags(list, 'a');
     assert.deepEqual(links.map(({ attributes }) => attributes.href), [
-      'https://sipe.team/', 'https://www.ssafy.com/', 'https://github.com/GDGoC-CAU',
+      'https://sipe.team/', 'https://www.ssafy.com/', 'https://github.com/ssafy-attendance/Server',
+      'https://github.com/GDGoC-CAU', 'https://github.com/KYBee/Moa',
       'https://pirogramming.com/', 'https://umc.makeus.in/', 'https://www.sopt.org/',
     ]);
     for (const { attributes } of links) {
       assert.equal(attributes.target, '_blank');
       assert.ok(attributes.rel?.split(/\s+/u).includes('noopener'));
     }
-    assert.equal(findTags(list, 'p').length, links.length, 'Each community needs an activity description');
+    assert.equal(findTags(list, 'li').length, 6, 'Expected one card per community');
+    assert.equal(findTags(list, 'h2').length, 6, 'Each card needs a community heading');
+    const icons = findTags(list, 'img');
+    assert.equal(icons.length, 6);
+    for (const { attributes } of icons) {
+      assert.ok(attributes.src.startsWith('/communities/'), 'Community icons must be served locally');
+      assert.equal(attributes.alt, '', 'Named community icons are decorative');
+      await readFile(`dist${attributes.src}`);
+    }
+    assert.equal(findTags(list, 'p').filter(({ attributes }) => attributes.class === 'community-description').length, 6, 'Each community needs an activity description');
     assert.match(main, /id="community-activities"/u);
     assert.doesNotMatch(html, /\[object Object\]/u);
   });

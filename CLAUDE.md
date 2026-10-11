@@ -74,7 +74,7 @@
   프로필은 채널이 아니므로 `channelOrder`에 추가하지 않는다
 - `# 업무-프로젝트`는 바로 프로젝트 메시지로 시작하며 별도의 바로가기 목록을 넣지 않는다. 콘텐츠 identifier로 만든
   프로젝트 anchor는 ko/en에서 같게 유지한다. 소개에는 업무 프로젝트·커뮤니티 내부 바로가기를 넣지 않는다
-- `about.activities`는 `{ name, url, description }` 배열이다. 커뮤니티는 별도 채널에 표시하고 사이드 프로젝트와 채널 구분선으로 나눈다.
+- `about.activities`는 `{ name, url, description, role?, icon?, links? }` 배열이다. 커뮤니티는 공식 아이콘·역할·활동 설명·외부 링크를 담은 카드로 렌더링하며 768px 이하 1열, 그 이상 2열이다. 공식 아이콘은 `public/communities/`에 저장하고 `SOURCES.md`에 출처를 기록한다. 커뮤니티는 별도 채널에 표시하고 사이드 프로젝트와 채널 구분선으로 나눈다.
 - 프로필에는 `about.experienceAreas`를 표시한다. 커뮤니티, 잘하는 것, 출몰지역, 분야별 기술 목록은 프로필에 넣지 않는다.
 - `about.careerOverview`의 summary/responsibilities를 현재 재직 중인 회사의 소개에 사용한다.
 - `education.languages`는 `{ name, level }` 배열이다. 자격증은 이름·취득일, 어학은 언어·수준을 구분한 행으로 표시한다

@@ -37,6 +37,7 @@
   --content-padding-x-tablet: 2rem;
   --profile-panel-width: 360px;
   --control-size: 44px;
+  --community-icon-bg: #1a1d21; /* Preserve white official marks in both themes */
 
   /* Spacing scale */
   --space-1: 0.25rem;

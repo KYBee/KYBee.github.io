@@ -36,21 +36,39 @@ experienceAreas:
   - 웹 서비스 기획, 개발과 배포
 activities:
   - name: SIPE
+    role: 5기 참여
+    icon: /communities/sipe.png
     url: https://sipe.team/
     description: 5기 참여
   - name: SSAFY
+    role: 8기 Java 트랙 · 스터디장 · 멘토
+    icon: /communities/ssafy.png
+    links:
+      - label: 출결 소명 생성기 GitHub
+        url: https://github.com/ssafy-attendance/Server
     url: https://www.ssafy.com/
     description: 8기 Java 트랙에서 Java, Spring과 알고리즘을 학습하고 알고리즘 스터디장을 맡았습니다. 출결 소명서 생성 서비스를 직접 개발·배포해 운영했고, 현재는 멘토로 학습과 개발 경험을 나누고 있습니다.
   - name: GDSC CAU
+    role: 웹 개발 학습 · MOA 개발
+    icon: /communities/gdsc-cau.png
+    links:
+      - label: MOA GitHub
+        url: https://github.com/KYBee/Moa
     url: https://github.com/GDGoC-CAU
     description: 매주 웹 개발을 학습하고 개발 경험을 공유했습니다. 배달 메이트 매칭 서비스 MOA를 혼자 기획하고 프론트엔드·백엔드·DB·배포까지 맡았으며, 동아리원들의 피드백을 반영했습니다.
   - name: 피로그래밍
+    role: 웹 개발 동아리
+    icon: /communities/pirogramming.png
     url: https://pirogramming.com/
     description: 웹 개발 동아리 참여
   - name: UMC
+    role: 대학생 IT 연합 동아리
+    icon: /communities/umc.svg
     url: https://umc.makeus.in/
     description: 대학생 IT 연합 동아리 참여
   - name: SOPT
+    role: Booster 기획·PM · 제16회 APPJAM 대상
+    icon: /communities/sopt.png
     url: https://www.sopt.org/
     description: 제16회 APPJAM에서 인쇄물 사전 출력 앱 Booster의 기획과 PM을 맡았습니다. 사용자 흐름, 기능 우선순위와 일정을 정하고 개발자·디자이너의 협업을 조율해 대상을 수상했습니다.
 status: Backend Engineer
