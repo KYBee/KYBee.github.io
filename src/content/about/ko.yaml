@@ -36,10 +36,15 @@ experienceAreas:
   - 웹 서비스 기획, 개발과 배포
 activities:
   - name: SIPE
-    role: 5기 참여
+    role: 5기 · 디자인 시스템(side) · Linktrip 개발
     icon: /communities/sipe.png
+    links:
+      - label: side GitHub
+        url: https://github.com/sipe-team/side
+      - label: Linktrip GitHub
+        url: https://github.com/sipe-team/5-2_link_trip
     url: https://sipe.team/
-    description: 5기 참여
+    description: 5기 1차 미션에서 자체 디자인 시스템(@sipe-team/side)의 시맨틱 토큰, 접근성 훅, 반응형 Flex 컴포넌트를 구현하고 공식 홈페이지 레이아웃을 마이그레이션했습니다. 2차 미션에서는 단톡방 대화 링크에서 장소를 추출해 공유 지도로 만드는 Linktrip의 장소 후보 필터링과 공유 화면을 개발했습니다.
   - name: SSAFY
     role: 8기 Java 트랙 · 스터디장 · 멘토
     icon: /communities/ssafy.png
@@ -57,17 +62,25 @@ activities:
     url: https://github.com/GDGoC-CAU
     description: 매주 웹 개발을 학습하고 개발 경험을 공유했습니다. 배달 메이트 매칭 서비스 MOA를 혼자 기획하고 프론트엔드·백엔드·DB·배포까지 맡았으며, 동아리원들의 피드백을 반영했습니다.
   - name: 피로그래밍
-    role: 웹 개발 동아리
+    role: 14기 · DOWITH 팀장 · 후배 기수 세션 연사
     icon: /communities/pirogramming.png
+    links:
+      - label: DOWITH GitHub
+        url: https://github.com/DOWITH-Developer/DOWITH
+      - label: 배포 세션 자료
+        url: https://github.com/KYBee/DeploymentSessionPiro20
     url: https://pirogramming.com/
-    description: 웹 개발 동아리 참여
+    description: 14기에서 Python과 Django 기반 웹 개발을 학습하고, 팀장으로 습관 형성 챌린지 서비스 DOWITH의 기획·DB 모델링·개발과 AWS EC2 배포를 이끌었습니다. 수료 후에도 15·16기 Django 환경 구축 세션과 17·20기 AWS EC2 배포 실습 세션을 진행하며 후배 기수들과 경험을 나눴습니다.
   - name: UMC
-    role: 대학생 IT 연합 동아리
+    role: 2기 Node.js 파트 · 팀 프로젝트 서버 개발
     icon: /communities/umc.svg
+    links:
+      - label: Money Heist GitHub
+        url: https://github.com/No-Je/Money-Heist
     url: https://umc.makeus.in/
-    description: 대학생 IT 연합 동아리 참여
+    description: 2기 중앙대 지부 Node.js 파트에서 Express와 MySQL 기반의 계층형 REST API 설계와 서버 구축을 학습했습니다. 파트원들과 팀을 이뤄 드라마 공개에 맞춘 등장인물 성격 유형 테스트 웹 서비스를 기획하고, Node.js와 AWS RDS 기반의 결과 매칭 API 개발과 배포를 맡았습니다.
   - name: SOPT
-    role: Booster 기획·PM · 제16회 APPJAM 대상
+    role: 26기 기획 파트 · Booster 기획·PM · 제16회 APPJAM 대상
     icon: /communities/sopt.png
     url: https://www.sopt.org/
     description: 제16회 APPJAM에서 인쇄물 사전 출력 앱 Booster의 기획과 PM을 맡았습니다. 사용자 흐름, 기능 우선순위와 일정을 정하고 개발자·디자이너의 협업을 조율해 대상을 수상했습니다.

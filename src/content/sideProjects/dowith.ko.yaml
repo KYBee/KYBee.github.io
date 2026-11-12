@@ -1,5 +1,6 @@
 name: DOWITH
-tech: Django
-description: 함께 습관을 만들어가는 서비스 (피로그래밍)
+tech: Python, Django, JavaScript, AWS EC2
+description: 혼자서는 작심삼일로 끝나기 쉬운 계획을 다른 사람들과 함께 실천하며 루틴으로 만드는 웹 서비스입니다. 5인 팀의 팀장으로 기획, DB 모델링, 친구·챌린지 기능 개발과 AWS EC2 배포를 이끌었습니다.
+url: https://github.com/DOWITH-Developer/DOWITH
 lang: ko
 order: 10

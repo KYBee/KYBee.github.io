@@ -1,0 +1,14 @@
+company: "Samsung Electronics"
+role: "Backend Engineer"
+period: "Jan 2023 – Present"
+location: "Suwon"
+title: "Mobile Backup E2E Test Automation and Daily Quality Reporting"
+summary: "I automated real-device E2E verification tests that were previously run and compiled manually every day, and built daily reports and a dashboard to track failure causes and quality trends by device."
+bullets:
+  - "Analyzed client code to implement core verification scenarios as automated real-device tests. Built a daily pipeline that runs tests on schedule, collects log and video evidence, masks personal data, classifies failure types, and generates reports."
+  - "Visualized accumulated test results as a device-and-test heatmap web dashboard to identify and fix flaky tests on specific models."
+  - "Built a bot workflow where teams trigger test runs via messenger mentions and check progress and results in threads, now used across the backup organization and partner teams."
+metric: "Automated daily real-device testing & reporting (privacy check: 18 min → 2 min)"
+tags: [Python, Test Automation, LLM]
+lang: en
+order: 30

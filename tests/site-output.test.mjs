@@ -7,7 +7,7 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     const html = await readFile(pagePath, 'utf8');
     const pills = html.match(/class="reaction-pill"/gu) ?? [];
 
-    assert.equal(pills.length, 22);
+    assert.equal(pills.length, 24);
     assert.doesNotMatch(html, /data-reaction-/u);
     assert.doesNotMatch(html, /reaction-action|reaction-launcher/u);
     assert.doesNotMatch(html, /workers\.dev|PUBLIC_REACTIONS_API_URL/u);
@@ -20,7 +20,7 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     const projectMessages = findTags(html, 'div').filter((tag) =>
       tag.attributes.class?.split(/\s+/u).includes('work-project'),
     );
-    assert.equal(projectMessages.length, 7);
+    assert.equal(projectMessages.length, 8);
     const ids = findTags(html, 'div').map((tag) => tag.attributes.id);
     for (const { attributes: { id } } of projectMessages) {
       assert.equal(ids.filter((destination) => id === destination).length, 1, `Invalid project destination: ${id}`);
@@ -38,9 +38,12 @@ for (const pagePath of ['dist/index.html', 'dist/en/index.html']) {
     assert.ok(list, 'Expected community activities in main content');
     const links = findTags(list, 'a');
     assert.deepEqual(links.map(({ attributes }) => attributes.href), [
-      'https://sipe.team/', 'https://www.ssafy.com/', 'https://github.com/ssafy-attendance/Server',
+      'https://sipe.team/', 'https://github.com/sipe-team/side', 'https://github.com/sipe-team/5-2_link_trip',
+      'https://www.ssafy.com/', 'https://github.com/ssafy-attendance/Server',
       'https://github.com/GDGoC-CAU', 'https://github.com/KYBee/Moa',
-      'https://pirogramming.com/', 'https://umc.makeus.in/', 'https://www.sopt.org/',
+      'https://pirogramming.com/', 'https://github.com/DOWITH-Developer/DOWITH', 'https://github.com/KYBee/DeploymentSessionPiro20',
+      'https://umc.makeus.in/', 'https://github.com/No-Je/Money-Heist',
+      'https://www.sopt.org/',
     ]);
     for (const { attributes } of links) {
       assert.equal(attributes.target, '_blank');
