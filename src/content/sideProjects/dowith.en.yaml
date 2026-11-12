@@ -1,5 +1,6 @@
 name: DOWITH
-tech: Django
-description: Collaborative habit-building service (Pirogramming)
+tech: Python, Django, JavaScript, AWS EC2
+description: A web service where people build daily routines together instead of giving up on plans alone. As team lead of a five-person team, I led planning, database modeling, friend and challenge feature development, and AWS EC2 deployment.
+url: https://github.com/DOWITH-Developer/DOWITH
 lang: en
 order: 10

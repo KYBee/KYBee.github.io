@@ -60,6 +60,7 @@ const workReactionSet: Record<string, number> = {
   'project-samsung-metrics': 0,
   'project-samsung-sli': 1,
   'project-samsung-voc': 2,
+  'project-samsung-e2e-test': 3,
   'project-samsung-agenthub': 0,
   'project-samsung-logquery': 1,
   'project-samsung-best-reviewer': 2,
@@ -397,28 +398,36 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
         <p class="channel-topic">{t.topics['community-activities']}</p>
       </header>
       {about.activities && about.activities.length > 0 && (
-        <ul class="community-list">
-          {about.activities.map((activity) => (
-            <li class="community-card">
-              <div class="community-card-header">
-                {activity.icon && <img class="community-icon" src={activity.icon} alt="" width="48" height="48" loading="lazy" decoding="async" />}
-                <div>
-                  <h2 class="community-name">{activity.name}</h2>
-                  {activity.role && <p class="community-role">{activity.role}</p>}
-                </div>
-              </div>
-              <p class="community-description">{activity.description}</p>
-              <div class="community-links">
-                <a href={activity.url} target="_blank" rel="noopener" aria-label={`${activity.name} · ${t.communitySite}`}>
-                  {t.communitySite} <span aria-hidden="true">↗</span>
-                </a>
-                {activity.links?.map((link) => (
-                  <a href={link.url} target="_blank" rel="noopener">{link.label} <span aria-hidden="true">↗</span></a>
-                ))}
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div class="message">
+          <div class="avatar"><Avatar initials={initials} size={44} /></div>
+          <div class="message-body">
+            <div class="message-meta">
+              <span class="message-author">{about.name}</span>
+            </div>
+            <ul class="community-list">
+              {about.activities.map((activity) => (
+                <li class="community-card">
+                  <div class="community-card-header">
+                    {activity.icon && <img class="community-icon" src={activity.icon} alt="" width="48" height="48" loading="lazy" decoding="async" />}
+                    <div>
+                      <h2 class="community-name">{activity.name}</h2>
+                      {activity.role && <p class="community-role">{activity.role}</p>}
+                    </div>
+                  </div>
+                  <p class="community-description">{activity.description}</p>
+                  <div class="community-links">
+                    <a href={activity.url} target="_blank" rel="noopener" aria-label={`${activity.name} · ${t.communitySite}`}>
+                      {t.communitySite} <span aria-hidden="true">↗</span>
+                    </a>
+                    {activity.links?.map((link) => (
+                      <a href={link.url} target="_blank" rel="noopener">{link.label} <span aria-hidden="true">↗</span></a>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       )}
     </section>
 
@@ -1159,6 +1168,15 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
     cursor: pointer;
   }
 
+  .avatar:hover {
+    opacity: 0.9;
+  }
+
+  .message-author:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   .message-body {
     flex: 1;
     min-width: 0;
@@ -1350,6 +1368,7 @@ const channelOrder = ['experience', 'work-projects', 'community-activities', 'si
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-4);
+    margin-top: var(--space-tight);
   }
 
   .community-card {

@@ -36,10 +36,15 @@ experienceAreas:
   - Web service planning, development and deployment
 activities:
   - name: SIPE
-    role: 5th cohort participant
+    role: 5th cohort · Design system (side) · Linktrip developer
     icon: /communities/sipe.png
+    links:
+      - label: side GitHub
+        url: https://github.com/sipe-team/side
+      - label: Linktrip GitHub
+        url: https://github.com/sipe-team/5-2_link_trip
     url: https://sipe.team/
-    description: 5th cohort participant
+    description: In the first mission of the 5th cohort, I implemented semantic tokens, accessibility hooks, and responsive Flex components for the in-house design system (@sipe-team/side) and migrated layouts on the official website. In the second mission, I developed place candidate filtering and shared map views for Linktrip, a service that extracts places from group chat links.
   - name: SSAFY
     role: 8th cohort · Study group lead · Mentor
     icon: /communities/ssafy.png
@@ -57,17 +62,25 @@ activities:
     url: https://github.com/GDGoC-CAU
     description: I studied web development weekly and shared development experience. I planned and built the delivery mate matching service MOA on my own, including the frontend, backend, database and deployment, and incorporated feedback from club members.
   - name: Pirogramming
-    role: Web development club
+    role: 14th cohort · DOWITH team lead · Session speaker
     icon: /communities/pirogramming.png
+    links:
+      - label: DOWITH GitHub
+        url: https://github.com/DOWITH-Developer/DOWITH
+      - label: Deployment session GitHub
+        url: https://github.com/KYBee/DeploymentSessionPiro20
     url: https://pirogramming.com/
-    description: Web development club participant
+    description: I studied Python and Django web development in the 14th cohort and led planning, database modeling, development, and AWS EC2 deployment as team lead for DOWITH, a habit-building challenge service. After graduating, I led Django environment sessions for the 15th and 16th cohorts and AWS EC2 deployment sessions for the 17th and 20th cohorts.
   - name: UMC
-    role: University IT club
+    role: 2nd cohort Node.js track · Team project backend developer
     icon: /communities/umc.svg
+    links:
+      - label: Money Heist GitHub
+        url: https://github.com/No-Je/Money-Heist
     url: https://umc.makeus.in/
-    description: University IT club participant
+    description: I studied layered REST API design and server development with Express and MySQL in the 2nd cohort's Node.js track at Chung-Ang University. With my track teammates, I planned a character personality test web service timed with a drama release and built and deployed the result-matching API using Node.js and AWS RDS.
   - name: SOPT
-    role: Booster planner & PM · 16th APPJAM Grand Prize
+    role: 26th cohort Planning track · Booster planner & PM · 16th APPJAM Grand Prize
     icon: /communities/sopt.png
     url: https://www.sopt.org/
     description: I led planning and project management for Booster, a print pre-order app, at the 16th APPJAM. I defined user flows, priorities and schedules, coordinated developers and designers, and won the grand prize.
